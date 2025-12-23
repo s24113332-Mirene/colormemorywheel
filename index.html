@@ -12,6 +12,9 @@
   --text: rgba(255,255,255,.95);
   --muted: rgba(255,255,255,.78);
   --shadow: 0 18px 50px rgba(0,0,0,.45);
+
+  /* ✅ Game auto-scale */
+  --appScale: 1;
 }
 
 *{ box-sizing: border-box; }
@@ -19,12 +22,10 @@ html, body{ height: 100%; }
 
 body{
   margin: 0;
-  min-height: 100vh;
-  height: auto;
+  height: 100vh;
 
-  /* ✅ allow scrolling on any PC */
-  overflow-x: hidden;
-  overflow-y: auto;
+  /* ✅ NO PAGE SCROLL */
+  overflow: hidden;
 
   color: var(--text);
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -100,34 +101,39 @@ body::before{
   100%{ transform: translateY(-140vh) rotate(2deg); opacity: 0; }
 }
 
-/* App */
-.app{
-  position: relative;
+/* ✅ SCALE ROOT (entire game fits on ONE screen) */
+#scaleRoot{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(var(--appScale));
+  transform-origin: center;
   z-index: 1;
   width: min(1440px, 98vw);
-  margin: 10px auto;
+}
 
-  /* ✅ let page grow + scroll if needed */
-  min-height: calc(100vh - 20px);
+/* App */
+.app{
+  width: 100%;
   height: auto;
-
   padding: 6px 0;
   display: grid;
   grid-template-rows: 1fr auto;
 }
+
+/* ✅ Keep 3 columns always (do NOT stack into tall layout) */
 .stage{
   display: grid;
-  grid-template-columns: 300px 1fr 360px;
+  grid-template-columns:
+    clamp(240px, 22vw, 300px)
+    1fr
+    clamp(280px, 26vw, 360px);
   gap: 12px;
   align-items: start;
 
-  /* ✅ allow layout to grow naturally */
+  /* “one screen” sizing */
+  height: calc(100vh - 20px);
   min-height: 0;
-}
-
-/* Keep responsive stacking */
-@media (max-width: 1100px){
-  .stage{ grid-template-columns: 1fr; }
 }
 
 .leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
@@ -179,6 +185,9 @@ body::before{
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
+
+  /* ✅ prevent panel from pushing page taller */
+  min-height: 0;
 }
 .status{ font-weight: 600; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
 .rows{ display: grid; gap: 10px; margin-bottom: 10px; }
@@ -216,10 +225,10 @@ body::before{
 .bonusBalloon:hover{ filter: brightness(1.08); transform: translateY(-1px) scale(1.02); }
 .bonusBalloon.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* ✅ Wheel scales better for any device */
+/* Wheel */
 .wheelWrap{
   position: relative;
-  width: min(980px, 92vw, 78vh);
+  width: min(860px, 52vw, 66vh);
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
@@ -229,7 +238,6 @@ body::before{
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
 }
-
 .pointer{
   position: absolute;
   top: 8px;
@@ -259,7 +267,6 @@ body::before{
   transition: opacity 140ms ease, stroke-width 140ms ease;
 }
 .sliceDim{ opacity: .18; }
-
 @keyframes whiteBorderFlash{
   0%{ opacity:1; stroke: rgba(255,255,255,.65); stroke-width:2; filter:none; }
   35%{ opacity:1; stroke: rgba(255,255,255,1); stroke-width:14; filter: drop-shadow(0 0 24px var(--glow)); }
@@ -318,30 +325,15 @@ body::before{
 .hgNeck{ stroke: rgba(255,255,255,.9); stroke-width: 4; stroke-linecap: round; }
 .timerText{ font-weight: 600; font-size: 14px; color: rgba(255,255,255,.95); }
 
-/* Toys */
-.shopChip{
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  border: 1px dashed rgba(255,255,255,.18);
-  font-weight: 600;
-}
-.shopChip .k{ color: rgba(255,255,255,.78); }
-
+/* Toy list: scroll inside panel if needed */
 .toyList{
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
   min-height: 0;
-
-  /* ✅ if list is long, scroll it instead of breaking layout */
   overflow: auto;
-  max-height: 60vh;
+  max-height: clamp(240px, 42vh, 520px);
 }
-@media (max-width: 1100px){
-  .toyList{ max-height: none; }
-}
-
 .toyCard{
   border-radius: 16px;
   padding: 12px;
@@ -395,7 +387,7 @@ body::before{
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
 
-/* Modals */
+/* Modals (they fit screen; if needed, they scroll INSIDE) */
 .modal{
   position: fixed;
   inset: 0;
@@ -404,14 +396,10 @@ body::before{
   place-items: center;
   background: rgba(0,0,0,.60);
   backdrop-filter: blur(7px);
-
-  /* ✅ if modal content is taller than screen, allow scrolling */
-  overflow: auto;
   padding: 18px;
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
-
 .modalCard{
   width: min(560px, 92vw);
   border-radius: 20px;
@@ -419,8 +407,6 @@ body::before{
   background: rgba(0,0,0,.30);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
-
-  /* ✅ internal scroll if needed */
   max-height: calc(100vh - 36px);
   overflow: auto;
 }
@@ -429,7 +415,6 @@ body::before{
   max-height: calc(100vh - 36px);
   overflow: auto;
 }
-
 .modalTitle{
   margin: 0 0 4px 0;
   font-family: "Playfair Display", serif;
@@ -584,7 +569,6 @@ body::before{
   place-items: center;
   background: rgba(0,0,0,.50);
   backdrop-filter: blur(5px);
-  overflow: auto;
   padding: 18px;
 }
 .bigMsg.hidden{ display: none; }
@@ -610,7 +594,16 @@ body::before{
   font-weight: 500;
 }
 
-/* Prize shop */
+/* Prize shop UI */
+.shopChip{
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  border: 1px dashed rgba(255,255,255,.18);
+  font-weight: 600;
+}
+.shopChip .k{ color: rgba(255,255,255,.78); }
+
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 14px; }
 .shopGrid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 @media (max-width: 900px){ .shopGrid{ grid-template-columns: 1fr; } }
@@ -713,100 +706,103 @@ body::before{
     </div>
   </div>
 
-  <main class="app">
-    <section class="stage">
-      <aside class="leftPanel">
-        <div class="panelTitle">Game Details</div>
+  <!-- ✅ SCALE ROOT WRAPPER -->
+  <div id="scaleRoot">
+    <main class="app">
+      <section class="stage">
+        <aside class="leftPanel">
+          <div class="panelTitle">Game Details</div>
 
-        <div class="hudGrid">
-          <div class="stat">
-            <div class="statLabel">Round</div>
-            <div class="statValue" id="roundEl">0</div>
-          </div>
-          <div class="stat">
-            <div class="statLabel">Tickets</div>
-            <div class="statValue" id="ticketsEl">0</div>
-          </div>
-          <div class="stat">
-            <div class="statLabel">Prizes</div>
-            <div class="statValue" id="prizesEl">0</div>
-          </div>
-          <div class="stat">
-            <div class="statLabel">Best</div>
-            <div class="statValue" id="bestEl">0</div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
-
-          <div class="bonusWrap">
-            <div class="bonusLabel">Bonus Balloon (each round)</div>
-            <div id="bonusBalloons" class="bonusBalloons"></div>
-          </div>
-
-          <div class="rows">
-            <div class="row">
-              <div class="rowLabel">Pattern length</div>
-              <div class="pips" id="patternSlots"></div>
+          <div class="hudGrid">
+            <div class="stat">
+              <div class="statLabel">Round</div>
+              <div class="statValue" id="roundEl">0</div>
             </div>
-
-            <div class="row">
-              <div class="rowLabel">Your input</div>
-              <div class="pips" id="playerPips"></div>
+            <div class="stat">
+              <div class="statLabel">Tickets</div>
+              <div class="statValue" id="ticketsEl">0</div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Prizes</div>
+              <div class="statValue" id="prizesEl">0</div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Best</div>
+              <div class="statValue" id="bestEl">0</div>
             </div>
           </div>
 
-          <div class="hint">Tip: Memorize the sequence as numbers (1–10) as it flashes, then tap in the same order.</div>
-        </div>
-      </aside>
+          <div class="panel">
+            <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
 
-      <section class="centerCol">
-        <div class="centerHeader">
-          <div class="centerTitle">Color Memory Wheel</div>
-          <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
-        </div>
+            <div class="bonusWrap">
+              <div class="bonusLabel">Bonus Balloon (each round)</div>
+              <div id="bonusBalloons" class="bonusBalloons"></div>
+            </div>
 
-        <div class="wheelWrap">
-          <div class="pointer" aria-hidden="true"></div>
-          <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
+            <div class="rows">
+              <div class="row">
+                <div class="rowLabel">Pattern length</div>
+                <div class="pips" id="patternSlots"></div>
+              </div>
 
-          <div id="rotator" class="rotator">
-            <svg id="wheelSvg" viewBox="0 0 300 300" role="img" aria-label="Color memory wheel"></svg>
+              <div class="row">
+                <div class="rowLabel">Your input</div>
+                <div class="pips" id="playerPips"></div>
+              </div>
+            </div>
+
+            <div class="hint">Tip: Memorize the sequence as numbers (1–10) as it flashes, then tap in the same order.</div>
+          </div>
+        </aside>
+
+        <section class="centerCol">
+          <div class="centerHeader">
+            <div class="centerTitle">Color Memory Wheel</div>
+            <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
           </div>
 
-          <div class="centerOverlay" aria-hidden="true">
-            <div class="centerGlass">
-              <svg class="hg" viewBox="0 0 100 100">
-                <defs>
-                  <clipPath id="topClip"><rect id="topRect" x="25" y="10" width="50" height="40"></rect></clipPath>
-                  <clipPath id="bottomClip"><rect id="bottomRect" x="25" y="90" width="50" height="0"></rect></clipPath>
-                </defs>
-                <polygon class="hgSand" points="25,10 75,10 60,50 40,50" clip-path="url(#topClip)"></polygon>
-                <polygon class="hgSand" points="40,50 60,50 75,90 25,90" clip-path="url(#bottomClip)"></polygon>
-                <polygon class="hgGlass" points="25,10 75,10 60,50 75,90 25,90 40,50"></polygon>
-                <line class="hgNeck" x1="50" y1="48" x2="50" y2="52"></line>
-              </svg>
-              <div class="timerText" id="timerText">--</div>
+          <div class="wheelWrap">
+            <div class="pointer" aria-hidden="true"></div>
+            <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
+
+            <div id="rotator" class="rotator">
+              <svg id="wheelSvg" viewBox="0 0 300 300" role="img" aria-label="Color memory wheel"></svg>
+            </div>
+
+            <div class="centerOverlay" aria-hidden="true">
+              <div class="centerGlass">
+                <svg class="hg" viewBox="0 0 100 100">
+                  <defs>
+                    <clipPath id="topClip"><rect id="topRect" x="25" y="10" width="50" height="40"></rect></clipPath>
+                    <clipPath id="bottomClip"><rect id="bottomRect" x="25" y="90" width="50" height="0"></rect></clipPath>
+                  </defs>
+                  <polygon class="hgSand" points="25,10 75,10 60,50 40,50" clip-path="url(#topClip)"></polygon>
+                  <polygon class="hgSand" points="40,50 60,50 75,90 25,90" clip-path="url(#bottomClip)"></polygon>
+                  <polygon class="hgGlass" points="25,10 75,10 60,50 75,90 25,90 40,50"></polygon>
+                  <line class="hgNeck" x1="50" y1="48" x2="50" y2="52"></line>
+                </svg>
+                <div class="timerText" id="timerText">--</div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <aside class="rightPanel">
+          <div class="panelTitle">Prize Toys (Night Market)</div>
+          <div class="shopChip"><span class="k">Owned:</span> <span id="shelfCount">0</span></div>
+          <div id="toyList" class="toyList"></div>
+          <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
+            Lose a run to open the Prize Shop.
+          </div>
+        </aside>
       </section>
 
-      <aside class="rightPanel">
-        <div class="panelTitle">Prize Toys (Night Market)</div>
-        <div class="shopChip"><span class="k">Owned:</span> <span id="shelfCount">0</span></div>
-        <div id="toyList" class="toyList"></div>
-        <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
-          Lose a run to open the Prize Shop.
-        </div>
-      </aside>
-    </section>
-
-    <footer class="footer">
-      <span>Created by Mirene Jane Grejalde (貴敏希)</span>
-    </footer>
-  </main>
+      <footer class="footer">
+        <span>Created by Mirene Jane Grejalde (貴敏希)</span>
+      </footer>
+    </main>
+  </div>
 
   <script>
 const SLICE_COLORS = [
@@ -829,6 +825,8 @@ sortShopItems();
 
 const els = {
   balloons: document.getElementById("balloons"),
+  scaleRoot: document.getElementById("scaleRoot"),
+
   welcomeModal: document.getElementById("welcomeModal"),
   startBtn: document.getElementById("startBtn"),
   coin: document.getElementById("coin"),
@@ -905,6 +903,24 @@ function shuffle(arr){
   return a;
 }
 function setStatus(msg){ els.statusEl.textContent = msg; }
+
+/* ✅ Auto-scale the WHOLE GAME so it fits one screen */
+function applyAppScale(){
+  // Temporarily set to 1 to measure true size at current layout
+  document.documentElement.style.setProperty("--appScale", "1");
+  const rect = els.scaleRoot.getBoundingClientRect();
+
+  const pad = 18; // breathing room
+  const vw = window.innerWidth - pad * 2;
+  const vh = window.innerHeight - pad * 2;
+
+  const sx = vw / rect.width;
+  const sy = vh / rect.height;
+
+  const s = Math.min(1, sx, sy);
+  document.documentElement.style.setProperty("--appScale", String(s));
+}
+window.addEventListener("resize", applyAppScale);
 
 function updateHUD(){
   els.roundEl.textContent = String(round);
@@ -1063,13 +1079,10 @@ function stopTimer(){
 }
 function startTimer(){
   stopTimer();
-
-  /* ✅ timer INCREASES with pattern length (rounds) */
-  const perPick = 950;              // ~0.95s per click needed
-  const baseBuffer = 2500;          // starting buffer time
-  const want = baseBuffer + (expected.length * perPick);
-  timerTotal = Math.min(30000, want); // cap at 30s
-
+  const base = 2500;
+  const perPick = 950;
+  const want = base + (expected.length * perPick);
+  timerTotal = Math.min(30000, want);
   timerStart = performance.now();
   const tick = (now) => {
     const elapsed = now - timerStart;
@@ -1548,6 +1561,12 @@ function init(){
   resetCoinUI();
   clearBonusBalloons();
   showWelcome();
+
+  // ✅ scale after first layout paint
+  requestAnimationFrame(() => {
+    applyAppScale();
+    requestAnimationFrame(applyAppScale);
+  });
 }
 init();
   </script>
