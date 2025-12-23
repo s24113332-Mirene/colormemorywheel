@@ -133,7 +133,7 @@ body::before{
   grid-template-columns:
     clamp(240px, 22vw, 300px)
     1fr
-    clamp(360px, 30vw, 520px); /* ✅ more space for all-toys beside wheel */
+    clamp(360px, 30vw, 520px);
   gap: 12px;
   align-items: start;
   height: calc(100vh - 20px);
@@ -226,10 +226,10 @@ body::before{
 .bonusBalloon:hover{ filter: brightness(1.08); transform: translateY(-1px) scale(1.02); }
 .bonusBalloon.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* ✅ Wheel bigger (scaleRoot still guarantees it fits the screen) */
+/* ✅ Wheel a little bigger (scaleRoot still guarantees it fits the screen) */
 .wheelWrap{
   position: relative;
-  width: min(1040px, 74vh, 56vw);
+  width: min(1120px, 78vh, 60vw); /* was min(1040px, 74vh, 56vw) */
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
@@ -336,29 +336,53 @@ body::before{
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
-/* ✅ All toys beside the wheel (all visible, no shelf paging) */
+/* ✅ Toy prizes beside the game arranged VERTICALLY */
 .allToysGrid{
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr)); /* 8 toys = 2 rows */
+  display: flex;
+  flex-direction: column;
   gap: 10px;
+  min-height: 0;
 }
 .toyMini{
   border-radius: 16px;
-  padding: 12px 10px;
+  padding: 10px 10px;
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: 0 10px 26px rgba(0,0,0,.18);
   display: grid;
-  gap: 6px;
-  align-content: start;
-}
-.toyMiniTop{
-  display: flex;
+  grid-template-columns: 44px 1fr auto;
+  gap: 10px;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
 }
-.toyMiniEmoji{ font-size: 28px; line-height: 1; }
+.toyMiniEmoji{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.toyMiniMid{ display: grid; gap: 2px; min-width: 0; }
+.toyMiniName{
+  font-weight: 1000;
+  font-size: 12px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toyMiniDesc{
+  font-size: 11px;
+  line-height: 1.2;
+  color: rgba(255,255,255,.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toyMiniRight{ display: grid; gap: 6px; justify-items: end; }
 .toyMiniCost{
   font-weight: 1000;
   font-size: 11px;
@@ -368,19 +392,9 @@ body::before{
   border: 1px dashed rgba(255,255,255,.16);
   white-space: nowrap;
 }
-.toyMiniName{
-  font-weight: 1000;
-  font-size: 12px;
-  line-height: 1.15;
-}
-.toyMiniDesc{
-  font-size: 11px;
-  line-height: 1.25;
-  color: rgba(255,255,255,.78);
-}
 .toyMiniOwned{
   display: inline-flex;
-  justify-self: start;
+  justify-self: end;
   font-size: 10px;
   font-weight: 1000;
   padding: 6px 10px;
@@ -412,7 +426,7 @@ body::before{
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
 
-/* Modals (no scroll; scaleRoot keeps screen fit) */
+/* Modals */
 .modal{
   position: fixed;
   inset: 0;
@@ -474,79 +488,82 @@ body::before{
   font-weight: 600;
 }
 
-/* ✅ Prettier animated carnival welcome (replace dots with night-market lantern) */
+/* ✅ Carnival Rush inspired welcome (NO DOTS) */
 .welcomeWrap{
   text-align: center;
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
-.carnivalSign{
+.rushBanner{
   position: relative;
   border-radius: 22px;
-  padding: 16px 14px;
+  padding: 16px 14px 14px;
   border: 1px solid rgba(255,255,255,.16);
   background:
-    radial-gradient(900px circle at 20% 15%, rgba(255,255,255,.16), transparent 58%),
-    radial-gradient(800px circle at 85% 20%, rgba(255,0,150,.14), transparent 58%),
-    radial-gradient(900px circle at 50% 100%, rgba(0,255,200,.12), transparent 62%),
-    linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.18));
-  box-shadow: 0 18px 60px rgba(0,0,0,.40);
+    radial-gradient(1000px circle at 50% 10%, rgba(255,255,255,.18), transparent 55%),
+    radial-gradient(900px circle at 15% 35%, rgba(255,150,40,.16), transparent 58%),
+    radial-gradient(900px circle at 85% 35%, rgba(255,0,150,.14), transparent 58%),
+    linear-gradient(180deg, rgba(12,14,30,.55), rgba(0,0,0,.18));
+  box-shadow: 0 18px 60px rgba(0,0,0,.42);
   overflow: hidden;
 }
-.carnivalSign::before{
+.rushBanner::before{
+  /* tent stripe top */
   content:"";
   position: absolute;
-  inset: -50px;
+  left: -20px;
+  right: -20px;
+  top: -26px;
+  height: 86px;
   background:
-    radial-gradient(circle at 20% 30%, rgba(255,255,255,.10), transparent 40%),
-    radial-gradient(circle at 70% 10%, rgba(255,80,190,.12), transparent 45%),
-    radial-gradient(circle at 55% 80%, rgba(0,255,210,.10), transparent 45%);
-  animation: signGlow 6s ease-in-out infinite;
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,60,60,.95) 0 34px,
+      rgba(255,255,255,.95) 34px 68px
+    );
+  transform: rotate(-2deg);
+  filter: drop-shadow(0 14px 20px rgba(0,0,0,.25));
+  opacity: .92;
 }
-@keyframes signGlow{
-  0%,100%{ transform: translate3d(0,0,0) rotate(0deg); opacity: .9; }
-  50%{ transform: translate3d(8px,-10px,0) rotate(2deg); opacity: 1; }
+.bulbRow{
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
 }
-.carnivalSignInner{
+.bulb{
+  width: 10px;
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,245,210,.98), rgba(255,185,80,.92));
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 0 0 14px rgba(255,210,120,.28);
+  opacity: .88;
+  animation: bulbTwinkle 1.6s ease-in-out infinite;
+  animation-delay: var(--d);
+}
+@keyframes bulbTwinkle{
+  0%,100%{ transform: translateY(0); opacity: .70; filter: brightness(.95); }
+  50%{ transform: translateY(-1px); opacity: 1; filter: brightness(1.25); }
+}
+.rushInner{
   position: relative;
   z-index: 1;
   display: grid;
   gap: 10px;
   justify-items: center;
+  padding-top: 28px;
 }
-.marquee{
-  position: relative;
-  width: 100%;
-  border-radius: 18px;
-  padding: 14px 12px;
-  background: rgba(0,0,0,.22);
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
-}
-.marquee::before{
-  content:"";
-  position: absolute;
-  inset: -10px;
-  border-radius: 24px;
-  /* lantern-ish warm bulbs instead of white dots */
-  background:
-    radial-gradient(circle, rgba(255,210,140,.95) 0 5px, transparent 6px) 0 0 / 26px 26px;
-  opacity: .95;
-  filter: drop-shadow(0 0 14px rgba(255,190,120,.25));
-  animation: lightsChase 1.4s linear infinite;
-}
-@keyframes lightsChase{
-  0%{ transform: translateX(0); filter: brightness(.98); }
-  50%{ filter: brightness(1.18); }
-  100%{ transform: translateX(26px); filter: brightness(.98); }
-}
-.neonTopTag{
+.rushTopTag{
   display: inline-flex;
   gap: 10px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 9px 12px;
   border-radius: 999px;
-  font-weight: 900;
+  font-weight: 1000;
   letter-spacing: .7px;
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.18);
@@ -557,20 +574,35 @@ body::before{
   place-items: center;
   width: 22px; height: 22px;
   font-size: 18px;
-  filter: drop-shadow(0 0 10px rgba(255,180,110,.55));
+  filter: drop-shadow(0 0 12px rgba(255,180,110,.55));
   animation: lanternFloat 1.8s ease-in-out infinite;
 }
 @keyframes lanternFloat{
   0%,100%{ transform: translateY(0) rotate(-2deg); opacity: .92; }
   50%{ transform: translateY(-3px) rotate(2deg); opacity: 1; }
 }
-.welcomeBig{
+.rushTitle{
   margin: 0;
-  font-family: "Playfair Display", serif;
-  font-weight: 800;
-  font-size: clamp(28px, 3.4vw, 42px);
-  letter-spacing: .2px;
-  text-shadow: 0 10px 30px rgba(0,0,0,.35);
+  font-size: clamp(30px, 3.8vw, 46px);
+  font-weight: 1000;
+  letter-spacing: .6px;
+  text-transform: uppercase;
+  text-shadow: 0 14px 28px rgba(0,0,0,.38);
+  line-height: 1.02;
+}
+.rushTitle .gold{
+  background: linear-gradient(180deg, #fff1a8, #ffb12d 45%, #b35b00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 0 rgba(70,25,0,.45));
+}
+.rushTitle .pink{
+  background: linear-gradient(180deg, #ffd4ff, #ff77d6 45%, #7a1a8b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 0 rgba(40,0,55,.45));
 }
 .welcomeLine{
   margin: 0;
@@ -625,8 +657,6 @@ body::before{
   50%{ opacity: .8; }
   100%{ transform: translateX(60%); opacity: .35; }
 }
-
-/* Welcome internal nav */
 .modalNav{
   display: flex;
   gap: 10px;
@@ -782,12 +812,12 @@ body::before{
   font-weight: 700;
 }
 
-/* ✅ Prize shop (ALL ITEMS ON ONE SCREEN, no paging) */
+/* Prize shop (all items one screen) */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 12px; justify-content: center; }
 .shopGrid{
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(4, minmax(0,1fr)); /* 8 items fits as 2 rows */
+  grid-template-columns: repeat(4, minmax(0,1fr));
 }
 .shopItem{
   border-radius: 18px;
@@ -806,9 +836,7 @@ body::before{
 .shopItem:nth-child(6){ animation-delay: .25s; }
 .shopItem:nth-child(7){ animation-delay: .30s; }
 .shopItem:nth-child(8){ animation-delay: .35s; }
-@keyframes shopIn{
-  to{ transform: translateY(0); opacity: 1; }
-}
+@keyframes shopIn{ to{ transform: translateY(0); opacity: 1; } }
 .shopName{
   font-weight: 1000;
   margin: 0 0 8px 0;
@@ -845,17 +873,20 @@ body::before{
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
 
-      <!-- PAGE 1: Night market welcome -->
+      <!-- PAGE 1: Carnival Rush inspired welcome -->
       <div id="welcomePage">
         <div class="welcomeWrap">
-          <div class="carnivalSign">
-            <div class="carnivalSignInner">
-              <div class="neonTopTag"><span class="lanternIcon" aria-hidden="true">🏮</span> NIGHT MARKET CARNIVAL</div>
+          <div class="rushBanner">
+            <div class="bulbRow" aria-hidden="true" id="bulbRow"></div>
 
-              <div class="marquee">
-                <h2 class="welcomeBig">Welcome to 貴敏希's Carnival 🎡</h2>
-                <p class="welcomeLine">Spin the wheel, remember the colors, and win tickets for night market prizes!</p>
-              </div>
+            <div class="rushInner">
+              <div class="rushTopTag"><span class="lanternIcon" aria-hidden="true">🎪</span> NIGHT MARKET CARNIVAL</div>
+
+              <h2 class="rushTitle">
+                <span class="gold">CARNIVAL</span> <span class="pink">RUSH</span>
+              </h2>
+
+              <p class="welcomeLine">Spin the wheel, remember the colors, and win tickets for night market prizes!</p>
 
               <div class="welcomeIcons" aria-hidden="true">
                 <div class="wi">🎟️ Tickets</div>
@@ -997,7 +1028,7 @@ body::before{
             <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
           </div>
 
-          <div id="wheelWrap" class="wheelWrap">
+          <div class="wheelWrap">
             <div class="pointer" aria-hidden="true"></div>
             <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
 
@@ -1024,14 +1055,14 @@ body::before{
         </section>
 
         <aside class="rightPanel">
-          <div class="panelTitle">All Prize Toys (Night Market)</div>
+          <div class="panelTitle">Prize Toys (Night Market)</div>
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
             <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
             <div class="shopChip"><span class="k">Tickets:</span> <span id="ticketsChip">0</span></div>
           </div>
 
-          <!-- ✅ show ALL toys beside the wheel (no shelf mode, all visible) -->
+          <!-- ✅ vertical list -->
           <div id="allToysGrid" class="allToysGrid"></div>
 
           <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
@@ -1070,6 +1101,8 @@ const els = {
   confetti: document.getElementById("confetti"),
   fxLayer: document.getElementById("fxLayer"),
   scaleRoot: document.getElementById("scaleRoot"),
+
+  bulbRow: document.getElementById("bulbRow"),
 
   welcomeModal: document.getElementById("welcomeModal"),
   welcomePage: document.getElementById("welcomePage"),
@@ -1154,6 +1187,17 @@ function shuffle(arr){
   return a;
 }
 function setStatus(msg){ els.statusEl.textContent = msg; }
+
+/* ✅ build bulbs (no dots) */
+function buildBulbRow(){
+  els.bulbRow.innerHTML = "";
+  for (let i=0;i<26;i++){
+    const s = document.createElement("span");
+    s.className = "bulb";
+    s.style.setProperty("--d", `${(-Math.random()*1.6).toFixed(2)}s`);
+    els.bulbRow.appendChild(s);
+  }
+}
 
 /* ✅ Auto-scale: fit everything on screen (no page scrolling) */
 function applyAppScale(){
@@ -1334,13 +1378,10 @@ function stopTimer(){
 }
 function startTimer(){
   stopTimer();
-  // Time scales with how many picks the player must input
   const base = 2400;
   const perPick = 980;
-  const want = base + (expected.length * perPick);
-  timerTotal = Math.min(32000, want);
+  timerTotal = Math.min(32000, base + (expected.length * perPick));
   timerStart = performance.now();
-
   const tick = (now) => {
     const elapsed = now - timerStart;
     const remaining = Math.max(0, timerTotal - elapsed);
@@ -1417,8 +1458,6 @@ function randomColorIndex(){
   }
   return idx;
 }
-
-/* Faster flashes as rounds increase */
 function getFlashTiming(){
   const flashMs = clamp(520 - round * 28, 170, 520);
   const gapMs   = clamp(120 - round * 5,  50, 120);
@@ -1458,7 +1497,6 @@ async function playRound(){
 
   startTimer();
 }
-
 async function advanceRound(){
   round += 1;
   sequence.push(randomColorIndex());
@@ -1521,7 +1559,6 @@ function onPlayerPick(colorIndex){
     setStatus("Correct! +1 ticket. Next round...");
     updateHUD();
 
-    // ✅ confetti only (no wheel shake)
     const w = els.wheelSvg.getBoundingClientRect();
     confettiBurst(w.left + w.width/2, w.top + w.height/2, 140, 4.4);
 
@@ -1561,7 +1598,7 @@ async function startNewGame({ resetTickets }){
   await advanceRound();
 }
 
-/* ✅ All toys beside wheel (always visible) */
+/* ✅ Vertical toy list beside wheel */
 function renderAllToys(){
   sortShopItems();
   els.allToysGrid.innerHTML = "";
@@ -1572,19 +1609,21 @@ function renderAllToys(){
     const c = document.createElement("div");
     c.className = "toyMini";
     c.innerHTML = `
-      <div class="toyMiniTop">
-        <div class="toyMiniEmoji">${item.emoji}</div>
-        <div class="toyMiniCost">${item.cost} 🎟️</div>
+      <div class="toyMiniEmoji">${item.emoji}</div>
+      <div class="toyMiniMid">
+        <div class="toyMiniName">${item.name}</div>
+        <div class="toyMiniDesc">${item.desc}</div>
       </div>
-      <div class="toyMiniName">${item.name}</div>
-      <div class="toyMiniDesc">${item.desc}</div>
-      ${owned ? `<span class="toyMiniOwned">Owned</span>` : ``}
+      <div class="toyMiniRight">
+        <div class="toyMiniCost">${item.cost} 🎟️</div>
+        ${owned ? `<span class="toyMiniOwned">Owned</span>` : ``}
+      </div>
     `;
     els.allToysGrid.appendChild(c);
   }
 }
 
-/* Shop (all items one screen) */
+/* Shop */
 function openShop(){
   els.shopTickets.textContent = String(tickets);
   els.prizeCount.textContent = String(prizesOwned.length);
@@ -1616,7 +1655,7 @@ async function continueFromShop(){
   await startNewGame({ resetTickets: false });
 }
 
-/* Prize fly animation (kept) */
+/* Prize fly animation */
 function animatePrizeFly({ fromRect, toRect, emoji }){
   const el = document.createElement("div");
   el.textContent = emoji;
@@ -1889,7 +1928,7 @@ function onCoinPointerDown(e){
   window.addEventListener("pointercancel", up, { passive: false });
 }
 
-/* ✅ Confetti engine */
+/* Confetti */
 const conf = { ctx: null, w: 0, h: 0, running: false, parts: [] };
 function resizeConfettiCanvas(){
   const dpr = window.devicePixelRatio || 1;
@@ -1927,10 +1966,7 @@ function runConfetti(){
   conf.running = true;
   const tick = () => {
     const ctx = conf.ctx;
-    if (!ctx){
-      conf.running = false;
-      return;
-    }
+    if (!ctx){ conf.running = false; return; }
     ctx.clearRect(0,0,conf.w,conf.h);
 
     for (let i=conf.parts.length-1; i>=0; i--){
@@ -1993,6 +2029,7 @@ els.wheelSvg.addEventListener("click", (e) => {
 /* Init */
 function init(){
   resizeConfettiCanvas();
+  buildBulbRow();
   spawnBackgroundBalloons();
   buildWheelLights();
   buildSegments();
