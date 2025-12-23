@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -19,8 +19,8 @@ html, body{ height: 100%; }
 
 body{
   margin: 0;
-  height: 100vh;
-  overflow: hidden;
+  height: 100dvh;
+  overflow: hidden; /* fits screen */
   color: var(--text);
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   background:
@@ -101,26 +101,28 @@ body::before{
   z-index: 1;
   width: min(1440px, 98vw);
   margin: 10px auto;
-  height: calc(100vh - 20px);
+  height: calc(100dvh - 20px);
   padding: 6px 0;
   display: grid;
   grid-template-rows: 1fr auto;
 }
 .stage{
   display: grid;
-  grid-template-columns: 300px 1fr 360px;
+  grid-template-columns: clamp(240px, 22vw, 320px) 1fr clamp(260px, 24vw, 360px);
   gap: 12px;
   align-items: start;
   height: 100%;
   overflow: hidden;
 }
+.leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
+
 @media (max-width: 1100px){
   body{ overflow: auto; }
   .app{ height: auto; overflow: visible; }
   .stage{ grid-template-columns: 1fr; height: auto; overflow: visible; }
 }
-.leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
 
+/* Titles + cards */
 .panelTitle{
   font-family: "Playfair Display", serif;
   font-weight: 700;
@@ -133,7 +135,6 @@ body::before{
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
 }
-
 .centerCol{ display: grid; gap: 10px; justify-items: center; min-height: 0; }
 .centerHeader{
   text-align: center;
@@ -146,7 +147,7 @@ body::before{
   width: min(860px, 100%);
 }
 .centerTitle{ font-family: "Playfair Display", serif; font-weight: 700; font-size: clamp(22px, 2.8vw, 38px); }
-.centerSubtitle{ margin-top: 4px; font-weight: 600; color: rgba(255,255,255,.86); letter-spacing: .4px; }
+.centerSubtitle{ margin-top: 4px; font-weight: 700; color: rgba(255,255,255,.86); letter-spacing: .4px; }
 .oneLine{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .hudGrid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -158,8 +159,8 @@ body::before{
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 24px rgba(0,0,0,.18);
 }
-.statLabel{ font-size: 12px; color: var(--muted); font-weight: 600; }
-.statValue{ font-size: 20px; font-weight: 700; }
+.statLabel{ font-size: 12px; color: var(--muted); font-weight: 800; }
+.statValue{ font-size: 20px; font-weight: 1000; }
 
 .panel{
   padding: 12px;
@@ -169,10 +170,10 @@ body::before{
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
 }
-.status{ font-weight: 600; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
+.status{ font-weight: 800; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
 .rows{ display: grid; gap: 10px; margin-bottom: 10px; }
 .row{ display: grid; gap: 7px; }
-.rowLabel{ font-size: 12px; color: var(--muted); font-weight: 600; }
+.rowLabel{ font-size: 12px; color: var(--muted); font-weight: 800; }
 
 .pips{ display: flex; flex-wrap: wrap; gap: 8px; min-height: 30px; }
 .pip{
@@ -188,7 +189,7 @@ body::before{
 
 /* Bonus balloon */
 .bonusWrap{ margin: 10px 0 8px; display: grid; gap: 8px; }
-.bonusLabel{ font-size: 12px; color: rgba(255,255,255,.86); font-weight: 800; }
+.bonusLabel{ font-size: 12px; color: rgba(255,255,255,.86); font-weight: 1000; }
 .bonusBalloons{ display: flex; gap: 10px; flex-wrap: wrap; min-height: 44px; }
 .bonusBalloon{
   pointer-events: auto;
@@ -196,7 +197,7 @@ body::before{
   border: 1px solid rgba(255,255,255,.22);
   background: hsla(var(--h), 85%, 60%, 0.96);
   color: rgba(255,255,255,.98);
-  font-weight: 900;
+  font-weight: 1000;
   border-radius: 999px;
   padding: 10px 12px;
   box-shadow: inset 0 -12px 16px rgba(0,0,0,.18), 0 12px 22px rgba(0,0,0,.22);
@@ -205,20 +206,27 @@ body::before{
 .bonusBalloon:hover{ filter: brightness(1.08); transform: translateY(-1px) scale(1.02); }
 .bonusBalloon.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* ✅ Wheel bigger */
+/* Wheel + “pull strength” control */
+.wheelArea{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+}
+
 .wheelWrap{
   position: relative;
-  width: min(980px, 78vh); /* was min(940px, 74vh) */
+  width: clamp(320px, 56vmin, 900px);
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
-  padding: 16px;
+  padding: clamp(12px, 1.6vmin, 16px);
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
 }
-
 .pointer{
   position: absolute;
   top: 8px;
@@ -241,6 +249,7 @@ body::before{
   transition: transform 3600ms cubic-bezier(.18,.88,.1,1);
 }
 #wheelSvg{ width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 22px rgba(0,0,0,.35)); }
+
 .slice{
   stroke: rgba(255,255,255,.18);
   stroke-width: 2;
@@ -280,6 +289,82 @@ body::before{
   50%{ transform: translate(-50%,-50%) scale(1.10); opacity: 1; filter: brightness(1.25); }
 }
 
+/* Pull strength UI */
+.pullCard{
+  width: clamp(150px, 16vmin, 190px);
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
+  display: grid;
+  gap: 10px;
+  align-self: stretch;
+  justify-items: center;
+}
+.pullTitle{
+  font-weight: 1000;
+  font-size: 12px;
+  letter-spacing: .5px;
+  color: rgba(255,255,255,.88);
+  text-transform: uppercase;
+}
+.pullHint{
+  font-size: 11px;
+  color: rgba(255,255,255,.74);
+  text-align: center;
+  line-height: 1.25;
+}
+.pullTrack{
+  position: relative;
+  width: 18px;
+  height: min(40vmin, 330px);
+  min-height: 220px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.10);
+  border: 1px dashed rgba(255,255,255,.18);
+  box-shadow: inset 0 8px 16px rgba(0,0,0,.18);
+  touch-action: none;
+}
+.pullFill{
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 40%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.55);
+  box-shadow: 0 0 14px rgba(255,255,255,.22);
+}
+.pullKnob{
+  position: absolute;
+  left: 50%;
+  bottom: 40%;
+  transform: translate(-50%, 50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 45%),
+    radial-gradient(circle at 50% 55%, rgba(255,225,120,.95), rgba(195,120,35,.92));
+  border: 2px solid rgba(255,255,255,.28);
+  box-shadow: 0 14px 22px rgba(0,0,0,.25), 0 0 18px rgba(255,220,140,.18);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.pullKnob:active{ cursor: grabbing; transform: translate(-50%, 50%) scale(.98); }
+.pullValue{
+  font-weight: 1000;
+  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  border: 1px dashed rgba(255,255,255,.18);
+}
+
 /* Center hourglass */
 .centerOverlay{
   position: absolute;
@@ -290,8 +375,8 @@ body::before{
   z-index: 9;
 }
 .centerGlass{
-  width: 150px;
-  height: 150px;
+  width: clamp(110px, 18vmin, 150px);
+  height: clamp(110px, 18vmin, 150px);
   border-radius: 999px;
   background: rgba(0,0,0,.22);
   border: 1px solid rgba(255,255,255,.14);
@@ -301,19 +386,19 @@ body::before{
   place-items: center;
   gap: 6px;
 }
-.hg{ width: 74px; height: 74px; }
+.hg{ width: clamp(54px, 8.5vmin, 74px); height: clamp(54px, 8.5vmin, 74px); }
 .hgGlass{ fill: rgba(255,255,255,.06); stroke: rgba(255,255,255,.82); stroke-width: 3; }
 .hgSand{ fill: rgba(255, 221, 120, .95); }
 .hgNeck{ stroke: rgba(255,255,255,.9); stroke-width: 4; stroke-linecap: round; }
-.timerText{ font-weight: 600; font-size: 14px; color: rgba(255,255,255,.95); }
+.timerText{ font-weight: 900; font-size: 14px; color: rgba(255,255,255,.95); }
 
-/* Toys */
+/* Right panel toys */
 .shopChip{
   padding: 8px 12px;
   border-radius: 999px;
   background: rgba(255,255,255,.08);
   border: 1px dashed rgba(255,255,255,.18);
-  font-weight: 600;
+  font-weight: 800;
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
@@ -322,8 +407,12 @@ body::before{
   grid-template-columns: 1fr;
   gap: 10px;
   min-height: 0;
-  overflow: hidden;
+  overflow: auto;
+  padding-right: 4px;
 }
+.toyList::-webkit-scrollbar{ width: 8px; }
+.toyList::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.16); border-radius: 999px; }
+
 .toyCard{
   border-radius: 16px;
   padding: 12px;
@@ -332,8 +421,15 @@ body::before{
   box-shadow: 0 10px 26px rgba(0,0,0,.18);
 }
 .toyTop{ display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.toyName{ font-weight: 900; display: flex; align-items: center; gap: 10px; font-size: 14px; }
-.toyEmoji{ font-size: 22px; line-height: 1; }
+.toyName{ font-weight: 1000; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.toyThumb{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 10px 18px rgba(0,0,0,.18);
+}
 .toyCost{
   font-weight: 1000;
   font-size: 12px;
@@ -366,7 +462,7 @@ body::before{
   box-shadow: 0 10px 25px rgba(0,0,0,.22);
   transition: transform .12s ease, filter .12s ease, opacity .12s ease;
   user-select: none;
-  font-weight: 700;
+  font-weight: 900;
 }
 .btn:hover{ filter: brightness(1.10); }
 .btn:active{ transform: translateY(1px) scale(.99); }
@@ -386,19 +482,27 @@ body::before{
   place-items: center;
   background: rgba(0,0,0,.60);
   backdrop-filter: blur(7px);
+  padding: 14px;
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
 
 .modalCard{
   width: min(560px, 92vw);
+  max-height: min(92dvh, 860px);
+  overflow: auto;
   border-radius: 20px;
   padding: 18px;
   background: rgba(0,0,0,.30);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
 }
-.modalCard.wide{ width: min(980px, 94vw); }
+.modalCard.wide{
+  width: min(980px, 94vw);
+  max-height: 92dvh;
+}
+.modalCard::-webkit-scrollbar{ width: 10px; }
+.modalCard::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.16); border-radius: 999px; }
 
 .modalTitle{
   margin: 0 0 4px 0;
@@ -409,7 +513,7 @@ body::before{
 .modalSub{
   margin: 0 0 14px 0;
   color: rgba(255,255,255,.82);
-  font-weight: 500;
+  font-weight: 700;
 }
 .modalSection{
   background: rgba(255,255,255,.06);
@@ -422,14 +526,66 @@ body::before{
   margin: 0 0 8px 0;
   font-size: 13px;
   color: rgba(255,255,255,.9);
-  font-weight: 700;
+  font-weight: 1000;
 }
 .modalList{
   margin: 0;
   padding-left: 18px;
   color: rgba(255,255,255,.82);
   line-height: 1.45;
-  font-weight: 500;
+  font-weight: 700;
+}
+
+/* Welcome intro effect */
+.introHero{
+  position: relative;
+  border-radius: 18px;
+  padding: 18px;
+  overflow: hidden;
+  background: radial-gradient(900px circle at 30% 20%, rgba(255,255,255,.14), transparent 60%),
+              radial-gradient(700px circle at 80% 30%, rgba(255,0,150,.12), transparent 62%),
+              rgba(0,0,0,.20);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+.introGlow{
+  position: absolute;
+  inset: -40%;
+  background:
+    conic-gradient(from 180deg, rgba(255,255,255,.0), rgba(255,255,255,.18), rgba(255,255,255,.0));
+  filter: blur(20px);
+  opacity: .9;
+  animation: introSpin 4.6s linear infinite;
+}
+@keyframes introSpin{ to{ transform: rotate(360deg); } }
+.introContent{ position: relative; z-index: 1; }
+.introBig{
+  font-family: "Playfair Display", serif;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 700;
+  margin: 6px 0 6px;
+}
+.introTag{
+  font-weight: 900;
+  color: rgba(255,255,255,.86);
+  letter-spacing: .5px;
+}
+.introPulseRow{
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 4px;
+  flex-wrap: wrap;
+}
+.pulseDot{
+  width: 12px; height: 12px; border-radius: 999px;
+  background: rgba(255,255,255,.90);
+  box-shadow: 0 0 16px rgba(255,255,255,.45);
+  animation: dotPulse 1.0s ease-in-out infinite;
+  animation-delay: var(--d);
+}
+@keyframes dotPulse{
+  0%,100%{ transform: scale(1); opacity: .65; filter: brightness(.95); }
+  50%{ transform: scale(1.35); opacity: 1; filter: brightness(1.25); }
 }
 
 /* Coin slot UI */
@@ -442,7 +598,7 @@ body::before{
   display: grid;
   gap: 10px;
 }
-.coinHint{ font-size: 12px; color: rgba(255,255,255,.82); font-weight: 800; }
+.coinHint{ font-size: 12px; color: rgba(255,255,255,.82); font-weight: 1000; }
 .coinRow{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -487,7 +643,7 @@ body::before{
   text-align: center;
   font-size: 11px;
   color: rgba(255,255,255,.78);
-  font-weight: 900;
+  font-weight: 1000;
   letter-spacing: .6px;
 }
 .coinSlotState{
@@ -497,7 +653,7 @@ body::before{
   text-align: center;
   font-size: 11px;
   color: rgba(255,255,255,.86);
-  font-weight: 900;
+  font-weight: 1000;
   letter-spacing: .5px;
 }
 .coinPad{
@@ -554,6 +710,7 @@ body::before{
   place-items: center;
   background: rgba(0,0,0,.50);
   backdrop-filter: blur(5px);
+  padding: 14px;
 }
 .bigMsg.hidden{ display: none; }
 .bigMsgInner{
@@ -567,7 +724,7 @@ body::before{
 }
 .bigTitle{
   font-family: "Playfair Display", serif;
-  font-size: clamp(38px, 5.4vw, 64px);
+  font-size: clamp(34px, 5.4vw, 64px);
   font-weight: 700;
   letter-spacing: .4px;
 }
@@ -575,13 +732,16 @@ body::before{
   margin-top: 8px;
   color: rgba(255,255,255,.85);
   font-size: clamp(13px, 2vw, 18px);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 /* Prize shop */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 14px; }
-.shopGrid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-@media (max-width: 900px){ .shopGrid{ grid-template-columns: 1fr; } }
+.shopGrid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
 .shopItem{
   border-radius: 18px;
   padding: 18px;
@@ -597,18 +757,36 @@ body::before{
   align-items: center;
   gap: 12px;
 }
-.shopEmoji{ font-size: 46px; line-height: 1; }
+.shopThumb{
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 14px 24px rgba(0,0,0,.22);
+}
 .shopDesc{ margin: 0 0 14px 0; color: rgba(255,255,255,.80); font-size: 14px; line-height: 1.4; }
 .shopBuyRow{ display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .shopCost{ font-weight: 1000; font-size: 14px; }
-.shopFooter{ margin-top: 14px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.shopFooter{
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  position: sticky;
+  bottom: 0;
+  padding-top: 10px;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
+  backdrop-filter: blur(6px);
+}
 
 /* Footer */
 .footer{
   opacity: .9;
   font-size: 12px;
   text-align: center;
-  font-weight: 500;
+  font-weight: 700;
   padding-bottom: 6px;
 }
   </style>
@@ -617,20 +795,54 @@ body::before{
 <body>
   <div id="balloons" aria-hidden="true"></div>
 
-  <!-- WELCOME MODAL -->
-  <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
+  <!-- INTRO -->
+  <div id="introModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
-      <h2 class="modalTitle oneLine">Welcome to 貴敏希's Carnival</h2>
+      <div class="introHero">
+        <div class="introGlow" aria-hidden="true"></div>
+        <div class="introContent">
+          <div class="introTag">🎡 NIGHT MARKET EDITION</div>
+          <div class="introBig">Color Memory Wheel</div>
+          <div class="introTag" style="opacity:.92">Spin • Watch • Remember</div>
+
+          <div class="introPulseRow" aria-hidden="true">
+            <div class="pulseDot" style="--d:-0.0s"></div>
+            <div class="pulseDot" style="--d:-0.1s"></div>
+            <div class="pulseDot" style="--d:-0.2s"></div>
+            <div class="pulseDot" style="--d:-0.3s"></div>
+            <div class="pulseDot" style="--d:-0.4s"></div>
+            <div class="pulseDot" style="--d:-0.5s"></div>
+            <div class="pulseDot" style="--d:-0.6s"></div>
+            <div class="pulseDot" style="--d:-0.7s"></div>
+          </div>
+
+          <p style="margin:10px 0 0;color:rgba(255,255,255,.82);font-weight:700;line-height:1.35">
+            Stretch the pull line to control spin strength, memorize the pattern, earn tickets, and collect prizes!
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap">
+        <button id="introSkipBtn" class="btn" type="button">Skip</button>
+        <button id="introNextBtn" class="btn primary" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTRUCTIONS + COIN -->
+  <div id="welcomeModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modalCard">
+      <h2 class="modalTitle oneLine">How to Play</h2>
       <p class="modalSub">Color Memory Wheel</p>
 
       <div class="modalSection">
         <h3 class="modalH">Instructions</h3>
         <ol class="modalList">
           <li>Drag the <b>NTD coin</b> into the coin slot.</li>
-          <li>Then press <b>Start Game</b>.</li>
+          <li>Press <b>Start Game</b>.</li>
           <li>Watch the wheel flash the pattern.</li>
-          <li>Click the colors in the same order.</li>
-          <li>You earn <b>1 ticket</b> after every successful round.</li>
+          <li>Tap the same colors in the same order.</li>
+          <li>Earn <b>+1 ticket</b> for every successful round.</li>
         </ol>
       </div>
 
@@ -664,7 +876,7 @@ body::before{
   <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modalCard wide">
       <h2 class="modalTitle">Prize Shop</h2>
-      <p class="modalSub">Choose a prize toy using your tickets — or continue playing.</p>
+      <p class="modalSub">Spend your tickets — or continue playing.</p>
 
       <div class="shopStats">
         <div class="shopChip"><span class="k">Tickets:</span> <span id="shopTickets">0</span></div>
@@ -706,7 +918,7 @@ body::before{
         </div>
 
         <div class="panel">
-          <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
+          <div class="status" id="statusEl">Insert coin on the instructions page to start.</div>
 
           <div class="bonusWrap">
             <div class="bonusLabel">Bonus Balloon (each round)</div>
@@ -725,7 +937,7 @@ body::before{
             </div>
           </div>
 
-          <div class="hint">Tip: Memorize the sequence as numbers (1–10) as it flashes, then tap in the same order.</div>
+          <div class="hint">Tip: Say the colors in your head as it flashes, then tap in that exact order.</div>
         </div>
       </aside>
 
@@ -735,34 +947,47 @@ body::before{
           <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
         </div>
 
-        <div class="wheelWrap">
-          <div class="pointer" aria-hidden="true"></div>
-          <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
+        <div class="wheelArea">
+          <div class="wheelWrap">
+            <div class="pointer" aria-hidden="true"></div>
+            <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
 
-          <div id="rotator" class="rotator">
-            <svg id="wheelSvg" viewBox="0 0 300 300" role="img" aria-label="Color memory wheel"></svg>
+            <div id="rotator" class="rotator">
+              <svg id="wheelSvg" viewBox="0 0 300 300" role="img" aria-label="Color memory wheel"></svg>
+            </div>
+
+            <div class="centerOverlay" aria-hidden="true">
+              <div class="centerGlass">
+                <svg class="hg" viewBox="0 0 100 100">
+                  <defs>
+                    <clipPath id="topClip"><rect id="topRect" x="25" y="10" width="50" height="40"></rect></clipPath>
+                    <clipPath id="bottomClip"><rect id="bottomRect" x="25" y="90" width="50" height="0"></rect></clipPath>
+                  </defs>
+                  <polygon class="hgSand" points="25,10 75,10 60,50 40,50" clip-path="url(#topClip)"></polygon>
+                  <polygon class="hgSand" points="40,50 60,50 75,90 25,90" clip-path="url(#bottomClip)"></polygon>
+                  <polygon class="hgGlass" points="25,10 75,10 60,50 75,90 25,90 40,50"></polygon>
+                  <line class="hgNeck" x1="50" y1="48" x2="50" y2="52"></line>
+                </svg>
+                <div class="timerText" id="timerText">--</div>
+              </div>
+            </div>
           </div>
 
-          <div class="centerOverlay" aria-hidden="true">
-            <div class="centerGlass">
-              <svg class="hg" viewBox="0 0 100 100">
-                <defs>
-                  <clipPath id="topClip"><rect id="topRect" x="25" y="10" width="50" height="40"></rect></clipPath>
-                  <clipPath id="bottomClip"><rect id="bottomRect" x="25" y="90" width="50" height="0"></rect></clipPath>
-                </defs>
-                <polygon class="hgSand" points="25,10 75,10 60,50 40,50" clip-path="url(#topClip)"></polygon>
-                <polygon class="hgSand" points="40,50 60,50 75,90 25,90" clip-path="url(#bottomClip)"></polygon>
-                <polygon class="hgGlass" points="25,10 75,10 60,50 75,90 25,90 40,50"></polygon>
-                <line class="hgNeck" x1="50" y1="48" x2="50" y2="52"></line>
-              </svg>
-              <div class="timerText" id="timerText">--</div>
+          <!-- NEW: Pull strength control -->
+          <div class="pullCard" aria-label="Spin strength control">
+            <div class="pullTitle">Spin Strength</div>
+            <div class="pullHint">Drag the knob up/down.<br>Higher = stronger spin.</div>
+            <div id="pullTrack" class="pullTrack">
+              <div id="pullFill" class="pullFill"></div>
+              <div id="pullKnob" class="pullKnob" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60" tabindex="0"></div>
             </div>
+            <div id="pullValue" class="pullValue">60%</div>
           </div>
         </div>
       </section>
 
       <aside class="rightPanel">
-        <div class="panelTitle">Prize Toys (Night Market)</div>
+        <div class="panelTitle">Prize Toys</div>
         <div class="shopChip"><span class="k">Owned:</span> <span id="shelfCount">0</span></div>
         <div id="toyList" class="toyList"></div>
         <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
@@ -782,21 +1007,30 @@ const SLICE_COLORS = [
   "#00E5FF","#00A3FF","#3F51B5","#8A2BE2","#FF4FD8"
 ];
 
+/* ✅ YOUR 8 IMAGE PRIZES
+   If your images are in the same folder as index.html, this works.
+   If you moved them into /prizes, change like: img:"prizes/dragon.png"
+*/
 let SHOP_ITEMS = [
-  { id:"ball",   emoji:"⚽", name:"Mini Bouncy Ball",       cost:2,  desc:"Small, bouncy, and impossible to not toss." },
-  { id:"bt",     emoji:"🧋", name:"Bubble Tea Keyring",     cost:4,  desc:"A boba keyring that screams night market." },
-  { id:"duck",   emoji:"🦆", name:"Rubber Duck",            cost:4,  desc:"Classic squeaky duck for pure joy." },
-  { id:"yoyo",   emoji:"🪀", name:"Classic Yo-Yo",          cost:6,  desc:"Smooth spin yo-yo for simple tricks." },
-  { id:"car",    emoji:"🚗", name:"Wind-Up Toy Car",        cost:6,  desc:"Wind it up and it zooms across the table." },
-  { id:"cube",   emoji:"🧩", name:"Mini Puzzle Cube",       cost:8,  desc:"A tiny cube puzzle to keep your hands busy." },
-  { id:"squish", emoji:"🐙", name:"Squishy Octopus",        cost:8,  desc:"Soft squishy toy—super popular at night markets." },
-  { id:"teddy",  emoji:"🧸", name:"Plush Teddy Bear",       cost:10, desc:"Big soft plush prize — top shelf reward!" },
+  { id:"keychain1", img:"keychain1.png", name:"Keychain Prize 1", cost:2,  desc:"Small prize keychain." },
+  { id:"keychain2", img:"keychain2.png", name:"Keychain Prize 2", cost:4,  desc:"Another cute keychain prize." },
+  { id:"pony",      img:"pony.png",      name:"Pony Plush",       cost:4,  desc:"A cute pony prize." },
+  { id:"pikachu",   img:"pikachu.png",   name:"Pikachu Toy",      cost:6,  desc:"A bright character prize." },
+  { id:"sanrio",    img:"sanrio.png",    name:"Sanrio Toy",       cost:6,  desc:"A sweet Sanrio prize." },
+  { id:"octopus",   img:"octopus.png",   name:"Octopus Toy",      cost:8,  desc:"A squishy octopus prize." },
+  { id:"dragon",    img:"dragon.png",    name:"Dragon Toy",       cost:8,  desc:"A cool dragon prize." },
+  { id:"stitch",    img:"stitch.png",    name:"Stitch Plush",     cost:10, desc:"Top prize plush!" },
 ];
 function sortShopItems(){ SHOP_ITEMS = [...SHOP_ITEMS].sort((a,b) => a.cost - b.cost || a.name.localeCompare(b.name)); }
 sortShopItems();
 
 const els = {
   balloons: document.getElementById("balloons"),
+
+  introModal: document.getElementById("introModal"),
+  introNextBtn: document.getElementById("introNextBtn"),
+  introSkipBtn: document.getElementById("introSkipBtn"),
+
   welcomeModal: document.getElementById("welcomeModal"),
   startBtn: document.getElementById("startBtn"),
   coin: document.getElementById("coin"),
@@ -823,6 +1057,7 @@ const els = {
   statusEl: document.getElementById("statusEl"),
   patternSlots: document.getElementById("patternSlots"),
   playerPips: document.getElementById("playerPips"),
+
   bonusBalloons: document.getElementById("bonusBalloons"),
 
   wheelSvg: document.getElementById("wheelSvg"),
@@ -835,6 +1070,12 @@ const els = {
 
   toyList: document.getElementById("toyList"),
   shelfCount: document.getElementById("shelfCount"),
+
+  // Pull strength
+  pullTrack: document.getElementById("pullTrack"),
+  pullFill: document.getElementById("pullFill"),
+  pullKnob: document.getElementById("pullKnob"),
+  pullValue: document.getElementById("pullValue"),
 };
 
 let best = Number(localStorage.getItem("mcw_best_carnival") || "0");
@@ -863,6 +1104,9 @@ let master = null;
 let coinInserted = false;
 let balloonInterval = null;
 
+/* ✅ Spin strength (0..1) controlled by the pull line */
+let spinStrength = 0.60;
+
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 function shuffle(arr){
   const a = [...arr];
@@ -882,15 +1126,24 @@ function updateHUD(){
   renderToyList();
 }
 
-function showWelcome(){
+/* Intro + Instructions pages */
+function showIntro(){
+  els.introModal.classList.add("show");
+  els.introModal.classList.remove("hidden");
+  els.welcomeModal.classList.add("hidden");
+}
+function hideIntro(){ els.introModal.classList.add("hidden"); }
+function showInstructions(){
   els.welcomeModal.classList.add("show");
   els.welcomeModal.classList.remove("hidden");
-  setStatus("Insert NTD coin on the welcome page to start.");
+  setStatus("Insert NTD coin on the instructions page to start.");
 }
-function hideWelcome(){
+function hideInstructions(){
   els.welcomeModal.classList.remove("show");
   els.welcomeModal.classList.add("hidden");
 }
+
+/* Overlay */
 async function showBigMessage({title, sub = "", ms = 900}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
@@ -918,12 +1171,12 @@ function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   setTimeout(() => { if (b.isConnected) b.remove(); }, (t * 1000) + 1200);
 }
 function spawnBackgroundBalloons(){
-  for (let i = 0; i < 28; i++) spawnOneBalloon({ durationS: 9 + Math.random() * 10 });
+  for (let i = 0; i < 22; i++) spawnOneBalloon({ durationS: 9 + Math.random() * 10 });
   if (balloonInterval) clearInterval(balloonInterval);
   balloonInterval = setInterval(() => {
     spawnOneBalloon();
-    if (Math.random() < 0.35) spawnOneBalloon();
-  }, 900);
+    if (Math.random() < 0.25) spawnOneBalloon();
+  }, 950);
 }
 
 /* Wheel lights */
@@ -999,12 +1252,20 @@ async function flashSlice(sliceIndex, ms = 520){
   node.classList.remove("flash");
 }
 
-/* Spin */
-function spinOnce(durationMs){
+/* ✅ Spin (now depends on spinStrength) */
+function spinOnce(baseDurationMs){
   return new Promise((resolve) => {
-    rotationDeg += 1800 + Math.random() * 2400;
+    // stronger pull => more rotation + slightly faster
+    const extraRot = 900 + spinStrength * 2400;             // adds strength
+    const randomRot = 900 + Math.random() * 1600;           // randomness
+    rotationDeg += (1200 + randomRot + extraRot);
+
+    const speedFactor = (1.15 - 0.45 * spinStrength);       // stronger = shorter duration
+    const durationMs = Math.max(1600, Math.min(7000, baseDurationMs * speedFactor));
+
     els.rotator.style.transition = `transform ${durationMs}ms cubic-bezier(.18,.88,.1,1)`;
     els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+
     const onEnd = (ev) => {
       if (ev.propertyName !== "transform") return;
       els.rotator.removeEventListener("transitionend", onEnd);
@@ -1029,11 +1290,20 @@ function stopTimer(){
   els.timerText.textContent = "--";
   setHourglass(1);
 }
+
+/* ✅ Timer now INCREASES with round/pattern length */
 function startTimer(){
   stopTimer();
-  const base = Math.max(2600, 9000 - round * 650);
-  timerTotal = base;
+
+  // Give more time as pattern grows (round = sequence length)
+  // Round 1 ~ 7.5s, Round 10 ~ ~16.5s, Round 20 ~ ~25s
+  const base = 6500;
+  const perStep = 1000;                      // +1s per color in the pattern
+  const softBonus = Math.max(0, round - 8) * 300; // little extra after round 8
+  timerTotal = Math.min(26000, base + (sequence.length * perStep) + softBonus);
+
   timerStart = performance.now();
+
   const tick = (now) => {
     const elapsed = now - timerStart;
     const remaining = Math.max(0, timerTotal - elapsed);
@@ -1088,6 +1358,7 @@ function spawnRoundBonusBalloon(){
     setTimeout(() => b.remove(), 180);
   });
 
+  // disappears after 5 seconds
   setTimeout(() => {
     if (!b.isConnected) return;
     b.classList.add("pop");
@@ -1111,9 +1382,13 @@ function randomColorIndex(){
 async function showSequence(){
   setSlicesDim(true);
   sfxBell();
+
+  // optional: tiny slow-down at higher rounds (helps readability)
+  const slow = Math.min(120, Math.max(0, (round - 8) * 10));
+
   for (const s of sequence){
-    await wait(120);
-    await flashSlice(s, 520);
+    await wait(130 + slow);
+    await flashSlice(s, 520 + slow);
   }
   setSlicesDim(false);
 }
@@ -1145,6 +1420,7 @@ async function advanceRound(){
   sequence.push(randomColorIndex());
   updateHUD();
   spawnRoundBonusBalloon();
+
   if (round >= 2){
     await showBigMessage({ title: `ROUND ${round}`, sub: "Proceeding...", ms: 1200 });
   }
@@ -1255,7 +1531,7 @@ function hardResetAllProgress(){
 function goHomeEnd(){
   closeShop();
   hardResetAllProgress();
-  showWelcome();
+  showIntro();
   resetCoinUI();
 }
 
@@ -1276,7 +1552,10 @@ function renderShopItems(){
 
     const name = document.createElement("div");
     name.className = "shopName";
-    name.innerHTML = `<span class="shopEmoji">${item.emoji}</span> <span>${item.name}</span>`;
+    name.innerHTML = `
+      <img class="shopThumb" src="${item.img}" alt="${item.name}">
+      <span>${item.name}</span>
+    `;
 
     const desc = document.createElement("div");
     desc.className = "shopDesc";
@@ -1298,9 +1577,11 @@ function renderShopItems(){
     btn.addEventListener("click", () => {
       ensureAudio();
       if (owned || tickets < item.cost) return;
+
       tickets -= item.cost;
       prizesOwned.push(item.id);
       localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
+
       sfxBell();
       updateHUD();
       openShop();
@@ -1330,7 +1611,10 @@ function renderToyList(){
     c.className = "toyCard";
     c.innerHTML = `
       <div class="toyTop">
-        <div class="toyName"><span class="toyEmoji">${item.emoji}</span> <span>${item.name}</span></div>
+        <div class="toyName">
+          <img class="toyThumb" src="${item.img}" alt="${item.name}">
+          <span>${item.name}</span>
+        </div>
         <div class="toyCost">${item.cost} 🎟️</div>
       </div>
       <div class="toyDesc">${item.desc}</div>
@@ -1483,10 +1767,53 @@ function onCoinPointerDown(e){
   window.addEventListener("pointercancel", up, { passive: false });
 }
 
+/* ✅ Pull strength control logic */
+function setSpinStrength01(v){
+  spinStrength = Math.max(0, Math.min(1, v));
+  const pct = Math.round(spinStrength * 100);
+  els.pullValue.textContent = `${pct}%`;
+  els.pullKnob.setAttribute("aria-valuenow", String(pct));
+
+  // knob position: bottom = 0, top = 1
+  const trackH = els.pullTrack.clientHeight;
+  const y = spinStrength * trackH;
+  els.pullFill.style.height = `${pct}%`;
+  els.pullKnob.style.bottom = `${pct}%`;
+}
+function pointerToStrength(clientY){
+  const r = els.pullTrack.getBoundingClientRect();
+  const y = clientY - r.top;             // 0 at top
+  const clamped = Math.max(0, Math.min(r.height, y));
+  const strength = 1 - (clamped / r.height); // top = 1, bottom = 0
+  return strength;
+}
+let pulling = false;
+function onPullDown(e){
+  e.preventDefault();
+  pulling = true;
+  setSpinStrength01(pointerToStrength(e.clientY));
+  const move = (ev) => {
+    if (!pulling) return;
+    setSpinStrength01(pointerToStrength(ev.clientY));
+  };
+  const up = () => {
+    pulling = false;
+    window.removeEventListener("pointermove", move);
+    window.removeEventListener("pointerup", up);
+    window.removeEventListener("pointercancel", up);
+  };
+  window.addEventListener("pointermove", move, { passive: false });
+  window.addEventListener("pointerup", up, { passive: false });
+  window.addEventListener("pointercancel", up, { passive: false });
+}
+
 /* Events */
+els.introNextBtn.addEventListener("click", () => { hideIntro(); showInstructions(); });
+els.introSkipBtn.addEventListener("click", () => { hideIntro(); showInstructions(); });
+
 els.startBtn.addEventListener("click", async () => {
   if (!coinInserted) return;
-  hideWelcome();
+  hideInstructions();
   await startNewGame({ resetTickets: true });
 });
 els.backToHomeBtn.addEventListener("click", () => goHomeEnd());
@@ -1500,6 +1827,10 @@ els.wheelSvg.addEventListener("click", (e) => {
   onPlayerPick(Number(target.dataset.slice));
 });
 
+/* Pull control listeners */
+els.pullTrack.addEventListener("pointerdown", onPullDown, { passive: false });
+els.pullKnob.addEventListener("pointerdown", onPullDown, { passive: false });
+
 /* Init */
 function init(){
   spawnBackgroundBalloons();
@@ -1510,7 +1841,8 @@ function init(){
   updateHUD();
   resetCoinUI();
   clearBonusBalloons();
-  showWelcome();
+  setSpinStrength01(0.60);
+  showIntro();
 }
 init();
   </script>
