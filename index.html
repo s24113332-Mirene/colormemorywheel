@@ -12,8 +12,6 @@
   --text: rgba(255,255,255,.95);
   --muted: rgba(255,255,255,.78);
   --shadow: 0 18px 50px rgba(0,0,0,.45);
-
-  /* ✅ Game auto-scale */
   --appScale: 1;
 }
 
@@ -23,10 +21,7 @@ html, body{ height: 100%; }
 body{
   margin: 0;
   height: 100vh;
-
-  /* ✅ NO PAGE SCROLL */
   overflow: hidden;
-
   color: var(--text);
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   background:
@@ -101,7 +96,7 @@ body::before{
   100%{ transform: translateY(-140vh) rotate(2deg); opacity: 0; }
 }
 
-/* ✅ SCALE ROOT (entire game fits on ONE screen) */
+/* ✅ SCALE ROOT */
 #scaleRoot{
   position: fixed;
   left: 50%;
@@ -115,13 +110,10 @@ body::before{
 /* App */
 .app{
   width: 100%;
-  height: auto;
   padding: 6px 0;
   display: grid;
   grid-template-rows: 1fr auto;
 }
-
-/* ✅ Keep 3 columns always (do NOT stack into tall layout) */
 .stage{
   display: grid;
   grid-template-columns:
@@ -130,12 +122,9 @@ body::before{
     clamp(280px, 26vw, 360px);
   gap: 12px;
   align-items: start;
-
-  /* “one screen” sizing */
   height: calc(100vh - 20px);
   min-height: 0;
 }
-
 .leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
 
 .panelTitle{
@@ -185,8 +174,6 @@ body::before{
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
-
-  /* ✅ prevent panel from pushing page taller */
   min-height: 0;
 }
 .status{ font-weight: 600; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
@@ -325,7 +312,16 @@ body::before{
 .hgNeck{ stroke: rgba(255,255,255,.9); stroke-width: 4; stroke-linecap: round; }
 .timerText{ font-weight: 600; font-size: 14px; color: rgba(255,255,255,.95); }
 
-/* Toy list: scroll inside panel if needed */
+/* Toy list scroll inside panel */
+.shopChip{
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  border: 1px dashed rgba(255,255,255,.18);
+  font-weight: 600;
+}
+.shopChip .k{ color: rgba(255,255,255,.78); }
+
 .toyList{
   display: grid;
   grid-template-columns: 1fr;
@@ -387,7 +383,7 @@ body::before{
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
 
-/* Modals (they fit screen; if needed, they scroll INSIDE) */
+/* Modals */
 .modal{
   position: fixed;
   inset: 0;
@@ -400,6 +396,7 @@ body::before{
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
+
 .modalCard{
   width: min(560px, 92vw);
   border-radius: 20px;
@@ -415,6 +412,7 @@ body::before{
   max-height: calc(100vh - 36px);
   overflow: auto;
 }
+
 .modalTitle{
   margin: 0 0 4px 0;
   font-family: "Playfair Display", serif;
@@ -446,6 +444,79 @@ body::before{
   line-height: 1.45;
   font-weight: 500;
 }
+
+/* ✅ Welcome page styling (night market/carnival vibe) */
+.welcomeHero{
+  border-radius: 18px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  background:
+    radial-gradient(800px circle at 20% 20%, rgba(255,255,255,.14), transparent 55%),
+    radial-gradient(700px circle at 80% 20%, rgba(255,0,150,.14), transparent 55%),
+    radial-gradient(700px circle at 50% 90%, rgba(0,255,200,.10), transparent 55%),
+    rgba(0,0,0,.18);
+  box-shadow: 0 18px 50px rgba(0,0,0,.35);
+  position: relative;
+  overflow: hidden;
+}
+.neonTag{
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: .6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.06) inset, 0 12px 28px rgba(0,0,0,.25);
+}
+.neonDot{
+  width: 12px; height: 12px; border-radius: 999px;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 0 14px rgba(255,255,255,.8), 0 0 26px rgba(255,255,255,.35);
+  animation: neonPulse 1.6s ease-in-out infinite;
+}
+@keyframes neonPulse{
+  0%,100%{ transform: scale(1); opacity: .85; }
+  50%{ transform: scale(1.18); opacity: 1; }
+}
+.welcomeBig{
+  margin: 12px 0 6px;
+  font-family: "Playfair Display", serif;
+  font-weight: 800;
+  font-size: clamp(26px, 3.2vw, 40px);
+  letter-spacing: .2px;
+}
+.welcomeLine{
+  margin: 0;
+  color: rgba(255,255,255,.86);
+  font-weight: 600;
+  line-height: 1.45;
+}
+.welcomeIcons{
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.wi{
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+}
+
+/* Nav buttons inside welcome modal */
+.modalNav{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.hiddenPage{ display: none; }
 
 /* Coin slot UI */
 .coinArea{
@@ -594,16 +665,7 @@ body::before{
   font-weight: 500;
 }
 
-/* Prize shop UI */
-.shopChip{
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  border: 1px dashed rgba(255,255,255,.18);
-  font-weight: 600;
-}
-.shopChip .k{ color: rgba(255,255,255,.78); }
-
+/* Prize shop */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 14px; }
 .shopGrid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 @media (max-width: 900px){ .shopGrid{ grid-template-columns: 1fr; } }
@@ -642,38 +704,67 @@ body::before{
 <body>
   <div id="balloons" aria-hidden="true"></div>
 
-  <!-- WELCOME MODAL -->
+  <!-- ✅ WELCOME MODAL (NOW 2 PAGES) -->
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
-      <h2 class="modalTitle oneLine">Welcome to 貴敏希's Carnival</h2>
-      <p class="modalSub">Color Memory Wheel</p>
 
-      <div class="modalSection">
-        <h3 class="modalH">Instructions</h3>
-        <ol class="modalList">
-          <li>Drag the <b>NTD coin</b> into the coin slot.</li>
-          <li>Then press <b>Start Game</b>.</li>
-          <li>Watch the wheel flash the pattern.</li>
-          <li>Click the colors in the same order.</li>
-          <li>You earn <b>1 ticket</b> after every successful round.</li>
-        </ol>
-      </div>
+      <!-- PAGE 1: Carnival welcome -->
+      <div id="welcomePage">
+        <div class="welcomeHero">
+          <div class="neonTag"><span class="neonDot"></span> NIGHT MARKET CARNIVAL</div>
+          <div class="welcomeBig">Welcome to 貴敏希's Carnival 🎡</div>
+          <p class="welcomeLine">Step right up! Spin the wheel, remember the colors, and win tickets for prizes.</p>
+          <div class="welcomeIcons">
+            <div class="wi">🎟️ Tickets</div>
+            <div class="wi">🎡 Wheel</div>
+            <div class="wi">🎈 Bonus</div>
+            <div class="wi">🧸 Prizes</div>
+          </div>
+        </div>
 
-      <div class="coinArea">
-        <div class="coinHint">Insert Coin (drag into the slot)</div>
-        <div class="coinRow">
-          <div id="coinSlot" class="coinSlot" aria-hidden="true">
-            <div class="coinMouth" aria-hidden="true"></div>
-            <div id="coinSlotState" class="coinSlotState">NO COIN</div>
-            <div class="coinSlotLabel">COIN SLOT</div>
-          </div>
-          <div class="coinPad">
-            <div id="coin" class="coin" role="button" aria-label="NTD coin">NTD</div>
-          </div>
+        <div class="modalNav">
+          <button id="welcomeNextBtn" class="btn primary" type="button">Continue</button>
         </div>
       </div>
 
-      <button id="startBtn" class="btn primary bigBtn" type="button" disabled>Start Game</button>
+      <!-- PAGE 2: Instructions + Coin -->
+      <div id="instructionsPage" class="hiddenPage">
+        <h2 class="modalTitle oneLine">How to Play</h2>
+        <p class="modalSub">Color Memory Wheel</p>
+
+        <div class="modalSection">
+          <h3 class="modalH">Instructions</h3>
+          <ol class="modalList">
+            <li>Drag the <b>NTD coin</b> into the coin slot.</li>
+            <li>Then press <b>Start Game</b>.</li>
+            <li>Watch the wheel flash the pattern.</li>
+            <li>Click the colors in the same order.</li>
+            <li>You earn <b>1 ticket</b> after every successful round.</li>
+          </ol>
+        </div>
+
+        <div class="coinArea">
+          <div class="coinHint">Insert Coin (drag into the slot)</div>
+          <div class="coinRow">
+            <div id="coinSlot" class="coinSlot" aria-hidden="true">
+              <div class="coinMouth" aria-hidden="true"></div>
+              <div id="coinSlotState" class="coinSlotState">NO COIN</div>
+              <div class="coinSlotLabel">COIN SLOT</div>
+            </div>
+            <div class="coinPad">
+              <div id="coin" class="coin" role="button" aria-label="NTD coin">NTD</div>
+            </div>
+          </div>
+        </div>
+
+        <button id="startBtn" class="btn primary bigBtn" type="button" disabled>Start Game</button>
+
+        <div class="modalNav" style="justify-content: space-between;">
+          <button id="welcomeBackBtn" class="btn" type="button">Back</button>
+          <button id="welcomeNextBtn2" class="btn primary" type="button">Continue</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -706,7 +797,7 @@ body::before{
     </div>
   </div>
 
-  <!-- ✅ SCALE ROOT WRAPPER -->
+  <!-- SCALE ROOT -->
   <div id="scaleRoot">
     <main class="app">
       <section class="stage">
@@ -828,6 +919,12 @@ const els = {
   scaleRoot: document.getElementById("scaleRoot"),
 
   welcomeModal: document.getElementById("welcomeModal"),
+  welcomePage: document.getElementById("welcomePage"),
+  instructionsPage: document.getElementById("instructionsPage"),
+  welcomeNextBtn: document.getElementById("welcomeNextBtn"),
+  welcomeNextBtn2: document.getElementById("welcomeNextBtn2"),
+  welcomeBackBtn: document.getElementById("welcomeBackBtn"),
+
   startBtn: document.getElementById("startBtn"),
   coin: document.getElementById("coin"),
   coinSlot: document.getElementById("coinSlot"),
@@ -902,21 +999,18 @@ function shuffle(arr){
   }
   return a;
 }
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 function setStatus(msg){ els.statusEl.textContent = msg; }
 
-/* ✅ Auto-scale the WHOLE GAME so it fits one screen */
+/* ✅ Auto-scale: fit to screen */
 function applyAppScale(){
-  // Temporarily set to 1 to measure true size at current layout
   document.documentElement.style.setProperty("--appScale", "1");
   const rect = els.scaleRoot.getBoundingClientRect();
-
-  const pad = 18; // breathing room
+  const pad = 18;
   const vw = window.innerWidth - pad * 2;
   const vh = window.innerHeight - pad * 2;
-
   const sx = vw / rect.width;
   const sy = vh / rect.height;
-
   const s = Math.min(1, sx, sy);
   document.documentElement.style.setProperty("--appScale", String(s));
 }
@@ -930,14 +1024,24 @@ function updateHUD(){
   renderToyList();
 }
 
+/* ✅ Welcome pages */
 function showWelcome(){
   els.welcomeModal.classList.add("show");
   els.welcomeModal.classList.remove("hidden");
-  setStatus("Insert NTD coin on the welcome page to start.");
+  showWelcomePage();
+  setStatus("Welcome! Open instructions to insert coin.");
 }
 function hideWelcome(){
   els.welcomeModal.classList.remove("show");
   els.welcomeModal.classList.add("hidden");
+}
+function showWelcomePage(){
+  els.welcomePage.classList.remove("hiddenPage");
+  els.instructionsPage.classList.add("hiddenPage");
+}
+function showInstructionsPage(){
+  els.welcomePage.classList.add("hiddenPage");
+  els.instructionsPage.classList.remove("hiddenPage");
 }
 async function showBigMessage({title, sub = "", ms = 900}){
   els.bigTitle.textContent = title;
@@ -1038,7 +1142,7 @@ function renderWheel(){
 function setSlicesDim(dim){
   els.wheelSvg.querySelectorAll(".slice").forEach(n => n.classList.toggle("sliceDim", dim));
 }
-async function flashSlice(sliceIndex, ms = 520){
+async function flashSlice(sliceIndex, ms){
   const node = els.wheelSvg.querySelector(`.slice[data-slice="${sliceIndex}"]`);
   if (!node) return wait(ms);
   node.style.setProperty("--glow", segments[sliceIndex].color);
@@ -1158,15 +1262,28 @@ function randomColorIndex(){
   }
   return idx;
 }
+
+/* ✅ Faster flashes as rounds increase */
+function getFlashTiming(){
+  // Round 1 slow-ish, then gradually faster, with safe minimums
+  const flashMs = clamp(520 - round * 28, 190, 520);
+  const gapMs   = clamp(120 - round * 5, 55, 120);
+  return { flashMs, gapMs };
+}
+
 async function showSequence(){
   setSlicesDim(true);
   sfxBell();
+
+  const { flashMs, gapMs } = getFlashTiming();
+
   for (const s of sequence){
-    await wait(120);
-    await flashSlice(s, 520);
+    await wait(gapMs);
+    await flashSlice(s, flashMs);
   }
   setSlicesDim(false);
 }
+
 async function playRound(){
   busy = true;
   isPlayerTurn = false;
@@ -1190,6 +1307,7 @@ async function playRound(){
 
   startTimer();
 }
+
 async function advanceRound(){
   round += 1;
   sequence.push(randomColorIndex());
@@ -1225,7 +1343,9 @@ function onPlayerPick(colorIndex){
   if (!gameActive || !isPlayerTurn || busy) return;
 
   ensureAudio();
-  flashSlice(colorIndex, 240);
+
+  // keep feedback quick
+  flashSlice(colorIndex, 220);
 
   player.push(colorIndex);
   renderPlayerPips();
@@ -1534,6 +1654,10 @@ function onCoinPointerDown(e){
 }
 
 /* Events */
+els.welcomeNextBtn.addEventListener("click", () => showInstructionsPage());
+els.welcomeBackBtn.addEventListener("click", () => showWelcomePage());
+els.welcomeNextBtn2.addEventListener("click", () => showInstructionsPage());
+
 els.startBtn.addEventListener("click", async () => {
   if (!coinInserted) return;
   hideWelcome();
@@ -1562,7 +1686,6 @@ function init(){
   clearBonusBalloons();
   showWelcome();
 
-  // ✅ scale after first layout paint
   requestAnimationFrame(() => {
     applyAppScale();
     requestAnimationFrame(applyAppScale);
