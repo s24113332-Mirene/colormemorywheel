@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -19,8 +19,8 @@ html, body{ height: 100%; }
 
 body{
   margin: 0;
-  height: 100dvh;
-  overflow: hidden; /* main game fits screen */
+  height: 100vh;
+  overflow: hidden;
   color: var(--text);
   font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
   background:
@@ -101,28 +101,26 @@ body::before{
   z-index: 1;
   width: min(1440px, 98vw);
   margin: 10px auto;
-  height: calc(100dvh - 20px);
+  height: calc(100vh - 20px);
   padding: 6px 0;
   display: grid;
   grid-template-rows: 1fr auto;
 }
 .stage{
   display: grid;
-  grid-template-columns: clamp(240px, 22vw, 320px) 1fr clamp(260px, 24vw, 360px);
+  grid-template-columns: 300px 1fr 360px;
   gap: 12px;
   align-items: start;
   height: 100%;
   overflow: hidden;
 }
-.leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
-
 @media (max-width: 1100px){
   body{ overflow: auto; }
   .app{ height: auto; overflow: visible; }
   .stage{ grid-template-columns: 1fr; height: auto; overflow: visible; }
 }
+.leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
 
-/* Titles + cards */
 .panelTitle{
   font-family: "Playfair Display", serif;
   font-weight: 700;
@@ -135,6 +133,7 @@ body::before{
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
 }
+
 .centerCol{ display: grid; gap: 10px; justify-items: center; min-height: 0; }
 .centerHeader{
   text-align: center;
@@ -159,8 +158,8 @@ body::before{
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 24px rgba(0,0,0,.18);
 }
-.statLabel{ font-size: 12px; color: var(--muted); font-weight: 700; }
-.statValue{ font-size: 20px; font-weight: 900; }
+.statLabel{ font-size: 12px; color: var(--muted); font-weight: 600; }
+.statValue{ font-size: 20px; font-weight: 700; }
 
 .panel{
   padding: 12px;
@@ -170,10 +169,10 @@ body::before{
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
 }
-.status{ font-weight: 700; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
+.status{ font-weight: 600; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
 .rows{ display: grid; gap: 10px; margin-bottom: 10px; }
 .row{ display: grid; gap: 7px; }
-.rowLabel{ font-size: 12px; color: var(--muted); font-weight: 700; }
+.rowLabel{ font-size: 12px; color: var(--muted); font-weight: 600; }
 
 .pips{ display: flex; flex-wrap: wrap; gap: 8px; min-height: 30px; }
 .pip{
@@ -189,7 +188,7 @@ body::before{
 
 /* Bonus balloon */
 .bonusWrap{ margin: 10px 0 8px; display: grid; gap: 8px; }
-.bonusLabel{ font-size: 12px; color: rgba(255,255,255,.86); font-weight: 900; }
+.bonusLabel{ font-size: 12px; color: rgba(255,255,255,.86); font-weight: 800; }
 .bonusBalloons{ display: flex; gap: 10px; flex-wrap: wrap; min-height: 44px; }
 .bonusBalloon{
   pointer-events: auto;
@@ -197,7 +196,7 @@ body::before{
   border: 1px solid rgba(255,255,255,.22);
   background: hsla(var(--h), 85%, 60%, 0.96);
   color: rgba(255,255,255,.98);
-  font-weight: 1000;
+  font-weight: 900;
   border-radius: 999px;
   padding: 10px 12px;
   box-shadow: inset 0 -12px 16px rgba(0,0,0,.18), 0 12px 22px rgba(0,0,0,.22);
@@ -206,19 +205,20 @@ body::before{
 .bonusBalloon:hover{ filter: brightness(1.08); transform: translateY(-1px) scale(1.02); }
 .bonusBalloon.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* Wheel (responsive and consistent on all screens) */
+/* ✅ Wheel bigger */
 .wheelWrap{
   position: relative;
-  width: clamp(320px, 56vmin, 900px); /* key: responsive across laptops */
+  width: min(980px, 78vh); /* was min(940px, 74vh) */
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
-  padding: clamp(12px, 1.6vmin, 16px);
+  padding: 16px;
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
 }
+
 .pointer{
   position: absolute;
   top: 8px;
@@ -290,8 +290,8 @@ body::before{
   z-index: 9;
 }
 .centerGlass{
-  width: clamp(110px, 18vmin, 150px);
-  height: clamp(110px, 18vmin, 150px);
+  width: 150px;
+  height: 150px;
   border-radius: 999px;
   background: rgba(0,0,0,.22);
   border: 1px solid rgba(255,255,255,.14);
@@ -301,19 +301,19 @@ body::before{
   place-items: center;
   gap: 6px;
 }
-.hg{ width: clamp(54px, 8.5vmin, 74px); height: clamp(54px, 8.5vmin, 74px); }
+.hg{ width: 74px; height: 74px; }
 .hgGlass{ fill: rgba(255,255,255,.06); stroke: rgba(255,255,255,.82); stroke-width: 3; }
 .hgSand{ fill: rgba(255, 221, 120, .95); }
 .hgNeck{ stroke: rgba(255,255,255,.9); stroke-width: 4; stroke-linecap: round; }
-.timerText{ font-weight: 800; font-size: 14px; color: rgba(255,255,255,.95); }
+.timerText{ font-weight: 600; font-size: 14px; color: rgba(255,255,255,.95); }
 
-/* Right panel toys */
+/* Toys */
 .shopChip{
   padding: 8px 12px;
   border-radius: 999px;
   background: rgba(255,255,255,.08);
   border: 1px dashed rgba(255,255,255,.18);
-  font-weight: 700;
+  font-weight: 600;
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
@@ -322,11 +322,8 @@ body::before{
   grid-template-columns: 1fr;
   gap: 10px;
   min-height: 0;
-  overflow: auto; /* so right side never forces page scroll */
-  padding-right: 4px;
+  overflow: hidden;
 }
-.toyList::-webkit-scrollbar{ width: 8px; }
-.toyList::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.16); border-radius: 999px; }
 .toyCard{
   border-radius: 16px;
   padding: 12px;
@@ -369,7 +366,7 @@ body::before{
   box-shadow: 0 10px 25px rgba(0,0,0,.22);
   transition: transform .12s ease, filter .12s ease, opacity .12s ease;
   user-select: none;
-  font-weight: 800;
+  font-weight: 700;
 }
 .btn:hover{ filter: brightness(1.10); }
 .btn:active{ transform: translateY(1px) scale(.99); }
@@ -380,7 +377,7 @@ body::before{
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
 
-/* Modals (IMPORTANT: always scrollable inside) */
+/* Modals */
 .modal{
   position: fixed;
   inset: 0;
@@ -389,27 +386,19 @@ body::before{
   place-items: center;
   background: rgba(0,0,0,.60);
   backdrop-filter: blur(7px);
-  padding: 14px;
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
 
 .modalCard{
   width: min(560px, 92vw);
-  max-height: min(92dvh, 860px);
-  overflow: auto; /* <— fixes “too big, can’t scroll” */
   border-radius: 20px;
   padding: 18px;
   background: rgba(0,0,0,.30);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
 }
-.modalCard.wide{
-  width: min(980px, 94vw);
-  max-height: 92dvh;
-}
-.modalCard::-webkit-scrollbar{ width: 10px; }
-.modalCard::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.16); border-radius: 999px; }
+.modalCard.wide{ width: min(980px, 94vw); }
 
 .modalTitle{
   margin: 0 0 4px 0;
@@ -420,7 +409,7 @@ body::before{
 .modalSub{
   margin: 0 0 14px 0;
   color: rgba(255,255,255,.82);
-  font-weight: 600;
+  font-weight: 500;
 }
 .modalSection{
   background: rgba(255,255,255,.06);
@@ -433,66 +422,14 @@ body::before{
   margin: 0 0 8px 0;
   font-size: 13px;
   color: rgba(255,255,255,.9);
-  font-weight: 900;
+  font-weight: 700;
 }
 .modalList{
   margin: 0;
   padding-left: 18px;
   color: rgba(255,255,255,.82);
   line-height: 1.45;
-  font-weight: 600;
-}
-
-/* Welcome intro effect */
-.introHero{
-  position: relative;
-  border-radius: 18px;
-  padding: 18px;
-  overflow: hidden;
-  background: radial-gradient(900px circle at 30% 20%, rgba(255,255,255,.14), transparent 60%),
-              radial-gradient(700px circle at 80% 30%, rgba(255,0,150,.12), transparent 62%),
-              rgba(0,0,0,.20);
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 18px 40px rgba(0,0,0,.35);
-}
-.introGlow{
-  position: absolute;
-  inset: -40%;
-  background:
-    conic-gradient(from 180deg, rgba(255,255,255,.0), rgba(255,255,255,.18), rgba(255,255,255,.0));
-  filter: blur(20px);
-  opacity: .9;
-  animation: introSpin 4.6s linear infinite;
-}
-@keyframes introSpin{ to{ transform: rotate(360deg); } }
-.introContent{ position: relative; z-index: 1; }
-.introBig{
-  font-family: "Playfair Display", serif;
-  font-size: clamp(34px, 5vw, 52px);
-  font-weight: 700;
-  margin: 6px 0 6px;
-}
-.introTag{
-  font-weight: 800;
-  color: rgba(255,255,255,.86);
-  letter-spacing: .5px;
-}
-.introPulseRow{
-  display: flex;
-  gap: 8px;
-  margin: 14px 0 4px;
-  flex-wrap: wrap;
-}
-.pulseDot{
-  width: 12px; height: 12px; border-radius: 999px;
-  background: rgba(255,255,255,.90);
-  box-shadow: 0 0 16px rgba(255,255,255,.45);
-  animation: dotPulse 1.0s ease-in-out infinite;
-  animation-delay: var(--d);
-}
-@keyframes dotPulse{
-  0%,100%{ transform: scale(1); opacity: .65; filter: brightness(.95); }
-  50%{ transform: scale(1.35); opacity: 1; filter: brightness(1.25); }
+  font-weight: 500;
 }
 
 /* Coin slot UI */
@@ -505,7 +442,7 @@ body::before{
   display: grid;
   gap: 10px;
 }
-.coinHint{ font-size: 12px; color: rgba(255,255,255,.82); font-weight: 900; }
+.coinHint{ font-size: 12px; color: rgba(255,255,255,.82); font-weight: 800; }
 .coinRow{
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -550,7 +487,7 @@ body::before{
   text-align: center;
   font-size: 11px;
   color: rgba(255,255,255,.78);
-  font-weight: 1000;
+  font-weight: 900;
   letter-spacing: .6px;
 }
 .coinSlotState{
@@ -560,7 +497,7 @@ body::before{
   text-align: center;
   font-size: 11px;
   color: rgba(255,255,255,.86);
-  font-weight: 1000;
+  font-weight: 900;
   letter-spacing: .5px;
 }
 .coinPad{
@@ -617,7 +554,6 @@ body::before{
   place-items: center;
   background: rgba(0,0,0,.50);
   backdrop-filter: blur(5px);
-  padding: 14px;
 }
 .bigMsg.hidden{ display: none; }
 .bigMsgInner{
@@ -631,7 +567,7 @@ body::before{
 }
 .bigTitle{
   font-family: "Playfair Display", serif;
-  font-size: clamp(34px, 5.4vw, 64px);
+  font-size: clamp(38px, 5.4vw, 64px);
   font-weight: 700;
   letter-spacing: .4px;
 }
@@ -639,16 +575,13 @@ body::before{
   margin-top: 8px;
   color: rgba(255,255,255,.85);
   font-size: clamp(13px, 2vw, 18px);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* Prize shop */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 14px; }
-.shopGrid{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* responsive */
-  gap: 14px;
-}
+.shopGrid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 900px){ .shopGrid{ grid-template-columns: 1fr; } }
 .shopItem{
   border-radius: 18px;
   padding: 18px;
@@ -668,25 +601,14 @@ body::before{
 .shopDesc{ margin: 0 0 14px 0; color: rgba(255,255,255,.80); font-size: 14px; line-height: 1.4; }
 .shopBuyRow{ display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .shopCost{ font-weight: 1000; font-size: 14px; }
-.shopFooter{
-  margin-top: 14px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  flex-wrap: wrap;
-  position: sticky; /* stays visible even when shop scrolls */
-  bottom: 0;
-  padding-top: 10px;
-  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.28));
-  backdrop-filter: blur(6px);
-}
+.shopFooter{ margin-top: 14px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
 
 /* Footer */
 .footer{
   opacity: .9;
   font-size: 12px;
   text-align: center;
-  font-weight: 600;
+  font-weight: 500;
   padding-bottom: 6px;
 }
   </style>
@@ -695,54 +617,20 @@ body::before{
 <body>
   <div id="balloons" aria-hidden="true"></div>
 
-  <!-- INTRO (WELCOME EFFECT) -->
-  <div id="introModal" class="modal show" role="dialog" aria-modal="true">
+  <!-- WELCOME MODAL -->
+  <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
-      <div class="introHero">
-        <div class="introGlow" aria-hidden="true"></div>
-        <div class="introContent">
-          <div class="introTag">🎡 NIGHT MARKET EDITION</div>
-          <div class="introBig">Color Memory Wheel</div>
-          <div class="introTag" style="opacity:.92">Spin • Watch • Remember</div>
-
-          <div class="introPulseRow" aria-hidden="true">
-            <div class="pulseDot" style="--d:-0.0s"></div>
-            <div class="pulseDot" style="--d:-0.1s"></div>
-            <div class="pulseDot" style="--d:-0.2s"></div>
-            <div class="pulseDot" style="--d:-0.3s"></div>
-            <div class="pulseDot" style="--d:-0.4s"></div>
-            <div class="pulseDot" style="--d:-0.5s"></div>
-            <div class="pulseDot" style="--d:-0.6s"></div>
-            <div class="pulseDot" style="--d:-0.7s"></div>
-          </div>
-
-          <p style="margin:10px 0 0;color:rgba(255,255,255,.82);font-weight:600;line-height:1.35">
-            Test your memory, earn tickets, and collect night market toys!
-          </p>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap">
-        <button id="introSkipBtn" class="btn" type="button">Skip</button>
-        <button id="introNextBtn" class="btn primary" type="button">Next</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- INSTRUCTIONS + COIN (separate from intro) -->
-  <div id="welcomeModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modalCard">
-      <h2 class="modalTitle oneLine">How to Play</h2>
+      <h2 class="modalTitle oneLine">Welcome to 貴敏希's Carnival</h2>
       <p class="modalSub">Color Memory Wheel</p>
 
       <div class="modalSection">
         <h3 class="modalH">Instructions</h3>
         <ol class="modalList">
           <li>Drag the <b>NTD coin</b> into the coin slot.</li>
-          <li>Press <b>Start Game</b>.</li>
+          <li>Then press <b>Start Game</b>.</li>
           <li>Watch the wheel flash the pattern.</li>
-          <li>Tap the same colors in the same order.</li>
-          <li>Earn <b>+1 ticket</b> for every successful round.</li>
+          <li>Click the colors in the same order.</li>
+          <li>You earn <b>1 ticket</b> after every successful round.</li>
         </ol>
       </div>
 
@@ -776,7 +664,7 @@ body::before{
   <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modalCard wide">
       <h2 class="modalTitle">Prize Shop</h2>
-      <p class="modalSub">Spend your tickets — or continue playing.</p>
+      <p class="modalSub">Choose a prize toy using your tickets — or continue playing.</p>
 
       <div class="shopStats">
         <div class="shopChip"><span class="k">Tickets:</span> <span id="shopTickets">0</span></div>
@@ -818,7 +706,7 @@ body::before{
         </div>
 
         <div class="panel">
-          <div class="status" id="statusEl">Insert coin on the instructions page to start.</div>
+          <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
 
           <div class="bonusWrap">
             <div class="bonusLabel">Bonus Balloon (each round)</div>
@@ -837,7 +725,7 @@ body::before{
             </div>
           </div>
 
-          <div class="hint">Tip: Say the colors in your head as it flashes, then tap in that exact order.</div>
+          <div class="hint">Tip: Memorize the sequence as numbers (1–10) as it flashes, then tap in the same order.</div>
         </div>
       </aside>
 
@@ -909,11 +797,6 @@ sortShopItems();
 
 const els = {
   balloons: document.getElementById("balloons"),
-
-  introModal: document.getElementById("introModal"),
-  introNextBtn: document.getElementById("introNextBtn"),
-  introSkipBtn: document.getElementById("introSkipBtn"),
-
   welcomeModal: document.getElementById("welcomeModal"),
   startBtn: document.getElementById("startBtn"),
   coin: document.getElementById("coin"),
@@ -940,7 +823,6 @@ const els = {
   statusEl: document.getElementById("statusEl"),
   patternSlots: document.getElementById("patternSlots"),
   playerPips: document.getElementById("playerPips"),
-
   bonusBalloons: document.getElementById("bonusBalloons"),
 
   wheelSvg: document.getElementById("wheelSvg"),
@@ -1000,25 +882,15 @@ function updateHUD(){
   renderToyList();
 }
 
-/* Intro + Instructions pages */
-function showIntro(){
-  els.introModal.classList.add("show");
-  els.introModal.classList.remove("hidden");
-  els.welcomeModal.classList.add("hidden");
-}
-function hideIntro(){ els.introModal.classList.add("hidden"); }
-
-function showInstructions(){
+function showWelcome(){
   els.welcomeModal.classList.add("show");
   els.welcomeModal.classList.remove("hidden");
-  setStatus("Insert NTD coin on the instructions page to start.");
+  setStatus("Insert NTD coin on the welcome page to start.");
 }
-function hideInstructions(){
+function hideWelcome(){
   els.welcomeModal.classList.remove("show");
   els.welcomeModal.classList.add("hidden");
 }
-
-/* Overlay */
 async function showBigMessage({title, sub = "", ms = 900}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
@@ -1046,12 +918,12 @@ function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   setTimeout(() => { if (b.isConnected) b.remove(); }, (t * 1000) + 1200);
 }
 function spawnBackgroundBalloons(){
-  for (let i = 0; i < 22; i++) spawnOneBalloon({ durationS: 9 + Math.random() * 10 });
+  for (let i = 0; i < 28; i++) spawnOneBalloon({ durationS: 9 + Math.random() * 10 });
   if (balloonInterval) clearInterval(balloonInterval);
   balloonInterval = setInterval(() => {
     spawnOneBalloon();
-    if (Math.random() < 0.25) spawnOneBalloon();
-  }, 950);
+    if (Math.random() < 0.35) spawnOneBalloon();
+  }, 900);
 }
 
 /* Wheel lights */
@@ -1383,7 +1255,7 @@ function hardResetAllProgress(){
 function goHomeEnd(){
   closeShop();
   hardResetAllProgress();
-  showIntro();
+  showWelcome();
   resetCoinUI();
 }
 
@@ -1612,18 +1484,9 @@ function onCoinPointerDown(e){
 }
 
 /* Events */
-els.introNextBtn.addEventListener("click", () => {
-  hideIntro();
-  showInstructions();
-});
-els.introSkipBtn.addEventListener("click", () => {
-  hideIntro();
-  showInstructions();
-});
-
 els.startBtn.addEventListener("click", async () => {
   if (!coinInserted) return;
-  hideInstructions();
+  hideWelcome();
   await startNewGame({ resetTickets: true });
 });
 els.backToHomeBtn.addEventListener("click", () => goHomeEnd());
@@ -1647,7 +1510,7 @@ function init(){
   updateHUD();
   resetCoinUI();
   clearBonusBalloons();
-  showIntro(); // start with welcome effect page
+  showWelcome();
 }
 init();
   </script>
