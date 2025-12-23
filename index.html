@@ -133,7 +133,7 @@ body::before{
   grid-template-columns:
     clamp(240px, 22vw, 300px)
     1fr
-    clamp(280px, 26vw, 360px);
+    clamp(360px, 30vw, 520px); /* ✅ more space for all-toys beside wheel */
   gap: 12px;
   align-items: start;
   height: calc(100vh - 20px);
@@ -226,10 +226,10 @@ body::before{
 .bonusBalloon:hover{ filter: brightness(1.08); transform: translateY(-1px) scale(1.02); }
 .bonusBalloon.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* Wheel */
+/* ✅ Wheel bigger (scaleRoot still guarantees it fits the screen) */
 .wheelWrap{
   position: relative;
-  width: min(860px, 52vw, 66vh);
+  width: min(1040px, 74vh, 56vw);
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
@@ -274,23 +274,6 @@ body::before{
   100%{ opacity:1; stroke: rgba(255,255,255,.65); stroke-width:2; filter:none; }
 }
 .slice.flash{ animation: whiteBorderFlash 520ms ease-in-out both; }
-
-/* ✅ Wheel shake + pop */
-@keyframes wheelShake{
-  0%{ transform: translate3d(0,0,0) rotate(0deg); }
-  18%{ transform: translate3d(-2px,1px,0) rotate(-0.7deg); }
-  36%{ transform: translate3d(3px,-1px,0) rotate(0.9deg); }
-  54%{ transform: translate3d(-3px,-1px,0) rotate(-0.9deg); }
-  72%{ transform: translate3d(2px,1px,0) rotate(0.6deg); }
-  100%{ transform: translate3d(0,0,0) rotate(0deg); }
-}
-@keyframes wheelPop{
-  0%{ transform: scale(1); filter: brightness(1); }
-  40%{ transform: scale(1.02); filter: brightness(1.12); }
-  100%{ transform: scale(1); filter: brightness(1); }
-}
-.wheelWrap.shake{ animation: wheelShake 420ms ease-in-out; }
-.rotator.pop{ animation: wheelPop 320ms ease-out; }
 
 /* Lights around wheel */
 .wheelLights{
@@ -343,7 +326,7 @@ body::before{
 .hgNeck{ stroke: rgba(255,255,255,.9); stroke-width: 4; stroke-linecap: round; }
 .timerText{ font-weight: 800; font-size: 14px; color: rgba(255,255,255,.95); }
 
-/* Chips + pager */
+/* Chips */
 .shopChip{
   padding: 8px 12px;
   border-radius: 999px;
@@ -353,66 +336,58 @@ body::before{
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
-.pager{
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(0,0,0,.18);
-  border: 1px solid rgba(255,255,255,.14);
-}
-.pagerLeft{ display: flex; gap: 8px; align-items: center; }
-.pagerInfo{ font-size: 12px; color: rgba(255,255,255,.85); font-weight: 800; }
-.pagerBtns{ display: flex; gap: 8px; }
-.iconBtn{
-  pointer-events: auto;
-  width: 38px;
-  height: 34px;
-  border-radius: 12px;
-  border: 1px dashed rgba(255,255,255,.28);
-  background: rgba(255,255,255,.10);
-  color: rgba(255,255,255,.95);
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 10px 22px rgba(0,0,0,.18);
-  transition: transform .12s ease, filter .12s ease, opacity .12s ease;
-}
-.iconBtn:hover{ filter: brightness(1.10); }
-.iconBtn:active{ transform: translateY(1px) scale(.99); }
-.iconBtn:disabled{ opacity: .35; cursor: not-allowed; filter: none; }
-
-/* ✅ Right panel shelf (NO SCROLL) */
-.shelfGrid{
+/* ✅ All toys beside the wheel (all visible, no shelf paging) */
+.allToysGrid{
   display: grid;
-  grid-template-columns: repeat(2, minmax(0,1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr)); /* 8 toys = 2 rows */
   gap: 10px;
 }
-.shelfCard{
+.toyMini{
   border-radius: 16px;
-  padding: 12px;
+  padding: 12px 10px;
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: 0 10px 26px rgba(0,0,0,.18);
-  min-height: 92px;
   display: grid;
-  grid-template-columns: 42px 1fr;
-  gap: 10px;
-  align-items: center;
+  gap: 6px;
+  align-content: start;
 }
-.shelfEmoji{ font-size: 30px; line-height: 1; }
-.shelfName{ font-weight: 900; font-size: 13px; line-height: 1.1; }
-.shelfMeta{ margin-top: 4px; font-size: 11px; font-weight: 800; color: rgba(255,255,255,.78); }
-.shelfEmpty{
-  border-radius: 16px;
-  padding: 14px;
-  background: rgba(255,255,255,.05);
+.toyMiniTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.toyMiniEmoji{ font-size: 28px; line-height: 1; }
+.toyMiniCost{
+  font-weight: 1000;
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
   border: 1px dashed rgba(255,255,255,.16);
-  color: rgba(255,255,255,.80);
-  font-weight: 800;
-  text-align: center;
-  grid-column: 1 / -1;
+  white-space: nowrap;
+}
+.toyMiniName{
+  font-weight: 1000;
+  font-size: 12px;
+  line-height: 1.15;
+}
+.toyMiniDesc{
+  font-size: 11px;
+  line-height: 1.25;
+  color: rgba(255,255,255,.78);
+}
+.toyMiniOwned{
+  display: inline-flex;
+  justify-self: start;
+  font-size: 10px;
+  font-weight: 1000;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(120,255,190,.12);
+  border: 1px solid rgba(120,255,190,.22);
+  color: rgba(210,255,235,.95);
 }
 
 /* Buttons */
@@ -437,7 +412,7 @@ body::before{
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
 
-/* Modals (NO INTERNAL SCROLL; we paginate instead) */
+/* Modals (no scroll; scaleRoot keeps screen fit) */
 .modal{
   position: fixed;
   inset: 0;
@@ -458,11 +433,11 @@ body::before{
   background: rgba(0,0,0,.30);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
-  overflow: hidden; /* ✅ no scroll */
+  overflow: hidden;
 }
 .modalCard.wide{
   width: min(980px, 94vw);
-  overflow: hidden; /* ✅ no scroll */
+  overflow: hidden;
 }
 
 .modalTitle{
@@ -499,7 +474,7 @@ body::before{
   font-weight: 600;
 }
 
-/* ✅ Prettier animated carnival welcome */
+/* ✅ Prettier animated carnival welcome (replace dots with night-market lantern) */
 .welcomeWrap{
   text-align: center;
   display: grid;
@@ -553,17 +528,17 @@ body::before{
   position: absolute;
   inset: -10px;
   border-radius: 24px;
+  /* lantern-ish warm bulbs instead of white dots */
   background:
-    radial-gradient(circle, rgba(255,255,255,.85) 0 5px, transparent 6px) 0 0 / 26px 26px;
-  opacity: .9;
-  filter: drop-shadow(0 0 14px rgba(255,255,255,.25));
+    radial-gradient(circle, rgba(255,210,140,.95) 0 5px, transparent 6px) 0 0 / 26px 26px;
+  opacity: .95;
+  filter: drop-shadow(0 0 14px rgba(255,190,120,.25));
   animation: lightsChase 1.4s linear infinite;
-  mask: linear-gradient(#000, #000);
 }
 @keyframes lightsChase{
-  0%{ transform: translateX(0); filter: brightness(.95); }
-  50%{ filter: brightness(1.2); }
-  100%{ transform: translateX(26px); filter: brightness(.95); }
+  0%{ transform: translateX(0); filter: brightness(.98); }
+  50%{ filter: brightness(1.18); }
+  100%{ transform: translateX(26px); filter: brightness(.98); }
 }
 .neonTopTag{
   display: inline-flex;
@@ -577,15 +552,17 @@ body::before{
   border: 1px solid rgba(255,255,255,.18);
   box-shadow: 0 0 0 2px rgba(255,255,255,.06) inset, 0 12px 28px rgba(0,0,0,.25);
 }
-.neonDot{
-  width: 12px; height: 12px; border-radius: 999px;
-  background: rgba(255,255,255,.95);
-  box-shadow: 0 0 14px rgba(255,255,255,.8), 0 0 26px rgba(255,255,255,.35);
-  animation: neonPulse 1.6s ease-in-out infinite;
+.lanternIcon{
+  display: inline-grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  font-size: 18px;
+  filter: drop-shadow(0 0 10px rgba(255,180,110,.55));
+  animation: lanternFloat 1.8s ease-in-out infinite;
 }
-@keyframes neonPulse{
-  0%,100%{ transform: scale(1); opacity: .85; }
-  50%{ transform: scale(1.18); opacity: 1; }
+@keyframes lanternFloat{
+  0%,100%{ transform: translateY(0) rotate(-2deg); opacity: .92; }
+  50%{ transform: translateY(-3px) rotate(2deg); opacity: 1; }
 }
 .welcomeBig{
   margin: 0;
@@ -805,16 +782,16 @@ body::before{
   font-weight: 700;
 }
 
-/* Prize shop (PAGED, no scroll) */
+/* ✅ Prize shop (ALL ITEMS ON ONE SCREEN, no paging) */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 12px; justify-content: center; }
 .shopGrid{
   display: grid;
   gap: 14px;
-  grid-template-columns: repeat(2, minmax(0,1fr));
+  grid-template-columns: repeat(4, minmax(0,1fr)); /* 8 items fits as 2 rows */
 }
 .shopItem{
   border-radius: 18px;
-  padding: 16px;
+  padding: 14px;
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: 0 12px 30px rgba(0,0,0,.22);
@@ -825,21 +802,25 @@ body::before{
 .shopItem:nth-child(2){ animation-delay: .05s; }
 .shopItem:nth-child(3){ animation-delay: .10s; }
 .shopItem:nth-child(4){ animation-delay: .15s; }
+.shopItem:nth-child(5){ animation-delay: .20s; }
+.shopItem:nth-child(6){ animation-delay: .25s; }
+.shopItem:nth-child(7){ animation-delay: .30s; }
+.shopItem:nth-child(8){ animation-delay: .35s; }
 @keyframes shopIn{
   to{ transform: translateY(0); opacity: 1; }
 }
 .shopName{
   font-weight: 1000;
-  margin: 0 0 10px 0;
-  font-size: 18px;
+  margin: 0 0 8px 0;
+  font-size: 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
-.shopEmoji{ font-size: 46px; line-height: 1; }
-.shopDesc{ margin: 0 0 12px 0; color: rgba(255,255,255,.80); font-size: 14px; line-height: 1.4; }
+.shopEmoji{ font-size: 42px; line-height: 1; }
+.shopDesc{ margin: 0 0 10px 0; color: rgba(255,255,255,.80); font-size: 13px; line-height: 1.35; }
 .shopBuyRow{ display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.shopCost{ font-weight: 1000; font-size: 14px; }
+.shopCost{ font-weight: 1000; font-size: 13px; }
 .shopFooter{ margin-top: 12px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
 /* Footer */
@@ -864,12 +845,12 @@ body::before{
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
 
-      <!-- PAGE 1: Carnival welcome -->
+      <!-- PAGE 1: Night market welcome -->
       <div id="welcomePage">
         <div class="welcomeWrap">
           <div class="carnivalSign">
             <div class="carnivalSignInner">
-              <div class="neonTopTag"><span class="neonDot"></span> NIGHT MARKET CARNIVAL</div>
+              <div class="neonTopTag"><span class="lanternIcon" aria-hidden="true">🏮</span> NIGHT MARKET CARNIVAL</div>
 
               <div class="marquee">
                 <h2 class="welcomeBig">Welcome to 貴敏希's Carnival 🎡</h2>
@@ -886,7 +867,7 @@ body::before{
           </div>
 
           <div class="welcomeCTA">
-            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter the Carnival ✨</button>
+            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter the Night Market ✨</button>
           </div>
         </div>
       </div>
@@ -939,7 +920,7 @@ body::before{
     </div>
   </div>
 
-  <!-- PRIZE SHOP MODAL (PAGED, NO SCROLL) -->
+  <!-- PRIZE SHOP MODAL (ALL TOYS ONE SCREEN) -->
   <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modalCard wide">
       <h2 class="modalTitle">Prize Shop</h2>
@@ -949,16 +930,6 @@ body::before{
         <div class="shopChip"><span class="k">Tickets:</span> <span id="shopTickets">0</span></div>
         <div class="shopChip"><span class="k">Toy Prizes:</span> <span id="prizeCount">0</span></div>
         <div class="shopChip"><span class="k">Best:</span> <span id="shopBest">0</span></div>
-      </div>
-
-      <div class="pager" style="margin-bottom:12px;">
-        <div class="pagerLeft">
-          <div class="shopChip"><span class="k">Page:</span> <span id="shopPageInfo">1/1</span></div>
-        </div>
-        <div class="pagerBtns">
-          <button id="shopPrevBtn" class="iconBtn" type="button" aria-label="Previous page">◀</button>
-          <button id="shopNextBtn" class="iconBtn" type="button" aria-label="Next page">▶</button>
-        </div>
       </div>
 
       <div id="shopItems" class="shopGrid"></div>
@@ -1053,25 +1024,15 @@ body::before{
         </section>
 
         <aside class="rightPanel">
-          <div class="panelTitle">Prize Toys (Night Market)</div>
+          <div class="panelTitle">All Prize Toys (Night Market)</div>
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
-            <div class="shopChip"><span class="k">Owned:</span> <span id="shelfCount">0</span></div>
+            <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
             <div class="shopChip"><span class="k">Tickets:</span> <span id="ticketsChip">0</span></div>
           </div>
 
-          <!-- ✅ NO SCROLL: paged shelf -->
-          <div class="pager">
-            <div class="pagerLeft">
-              <div class="pagerInfo">Shelf Page: <span id="shelfPageInfo">1/1</span></div>
-            </div>
-            <div class="pagerBtns">
-              <button id="shelfPrevBtn" class="iconBtn" type="button" aria-label="Previous shelf page">◀</button>
-              <button id="shelfNextBtn" class="iconBtn" type="button" aria-label="Next shelf page">▶</button>
-            </div>
-          </div>
-
-          <div id="shelfGrid" class="shelfGrid"></div>
+          <!-- ✅ show ALL toys beside the wheel (no shelf mode, all visible) -->
+          <div id="allToysGrid" class="allToysGrid"></div>
 
           <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
             Lose a run to open the Prize Shop.
@@ -1130,9 +1091,6 @@ const els = {
   shopTickets: document.getElementById("shopTickets"),
   prizeCount: document.getElementById("prizeCount"),
   shopBest: document.getElementById("shopBest"),
-  shopPageInfo: document.getElementById("shopPageInfo"),
-  shopPrevBtn: document.getElementById("shopPrevBtn"),
-  shopNextBtn: document.getElementById("shopNextBtn"),
   backToHomeBtn: document.getElementById("backToHomeBtn"),
   shopContinueBtn: document.getElementById("shopContinueBtn"),
 
@@ -1142,6 +1100,9 @@ const els = {
   ticketsChip: document.getElementById("ticketsChip"),
   prizesEl: document.getElementById("prizesEl"),
 
+  ownedCount: document.getElementById("ownedCount"),
+  allToysGrid: document.getElementById("allToysGrid"),
+
   statusEl: document.getElementById("statusEl"),
   patternSlots: document.getElementById("patternSlots"),
   playerPips: document.getElementById("playerPips"),
@@ -1150,17 +1111,10 @@ const els = {
   wheelSvg: document.getElementById("wheelSvg"),
   rotator: document.getElementById("rotator"),
   wheelLights: document.getElementById("wheelLights"),
-  wheelWrap: document.getElementById("wheelWrap"),
 
   timerText: document.getElementById("timerText"),
   topRect: document.getElementById("topRect"),
   bottomRect: document.getElementById("bottomRect"),
-
-  shelfGrid: document.getElementById("shelfGrid"),
-  shelfCount: document.getElementById("shelfCount"),
-  shelfPageInfo: document.getElementById("shelfPageInfo"),
-  shelfPrevBtn: document.getElementById("shelfPrevBtn"),
-  shelfNextBtn: document.getElementById("shelfNextBtn"),
 };
 
 let best = Number(localStorage.getItem("mcw_best_carnival") || "0");
@@ -1189,10 +1143,6 @@ let master = null;
 let coinInserted = false;
 let balloonInterval = null;
 
-/* Pagination (no scroll) */
-let shelfPage = 0;
-let shopPage = 0;
-
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 function shuffle(arr){
@@ -1220,17 +1170,16 @@ function applyAppScale(){
 }
 window.addEventListener("resize", () => {
   applyAppScale();
-  renderShelf();
+  renderAllToys();
   renderShopItems();
 });
 
-/* ✅ Welcome pages */
+/* Welcome pages */
 function showWelcome(){
   els.welcomeModal.classList.add("show");
   els.welcomeModal.classList.remove("hidden");
   showWelcomePage();
-  setStatus("Welcome! Enter the carnival to see instructions and insert coin.");
-  // tiny confetti sparkle on open
+  setStatus("Welcome! Enter the night market to see instructions and insert coin.");
   confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 90, 4.2);
 }
 function hideWelcome(){
@@ -1353,20 +1302,6 @@ async function flashSlice(sliceIndex, ms){
   node.classList.remove("flash");
 }
 
-/* Wheel shake + pop */
-function shakeWheel(){
-  els.wheelWrap.classList.remove("shake");
-  void els.wheelWrap.offsetWidth;
-  els.wheelWrap.classList.add("shake");
-  setTimeout(() => els.wheelWrap.classList.remove("shake"), 460);
-}
-function popWheel(){
-  els.rotator.classList.remove("pop");
-  void els.rotator.offsetWidth;
-  els.rotator.classList.add("pop");
-  setTimeout(() => els.rotator.classList.remove("pop"), 360);
-}
-
 /* Spin */
 function spinOnce(durationMs){
   return new Promise((resolve) => {
@@ -1399,9 +1334,9 @@ function stopTimer(){
 }
 function startTimer(){
   stopTimer();
-  // ✅ Time scales with the amount of picks needed (feels fair at high rounds)
-  const base = 2400;        // always get at least ~2.4s
-  const perPick = 980;      // ~1s per color
+  // Time scales with how many picks the player must input
+  const base = 2400;
+  const perPick = 980;
   const want = base + (expected.length * perPick);
   timerTotal = Math.min(32000, want);
   timerStart = performance.now();
@@ -1483,7 +1418,7 @@ function randomColorIndex(){
   return idx;
 }
 
-/* ✅ Faster flashes as rounds increase */
+/* Faster flashes as rounds increase */
 function getFlashTiming(){
   const flashMs = clamp(520 - round * 28, 170, 520);
   const gapMs   = clamp(120 - round * 5,  50, 120);
@@ -1492,7 +1427,6 @@ function getFlashTiming(){
 async function showSequence(){
   setSlicesDim(true);
   sfxBell();
-
   const { flashMs, gapMs } = getFlashTiming();
   for (const s of sequence){
     await wait(gapMs);
@@ -1587,11 +1521,9 @@ function onPlayerPick(colorIndex){
     setStatus("Correct! +1 ticket. Next round...");
     updateHUD();
 
-    // ✅ Celebration each round
-    shakeWheel();
-    popWheel();
-    const w = els.wheelWrap.getBoundingClientRect();
-    confettiBurst(w.left + w.width/2, w.top + w.height/2, 120, 4.2);
+    // ✅ confetti only (no wheel shake)
+    const w = els.wheelSvg.getBoundingClientRect();
+    confettiBurst(w.left + w.width/2, w.top + w.height/2, 140, 4.4);
 
     busy = true;
     setTimeout(() => { busy = false; advanceRound(); }, 650);
@@ -1629,16 +1561,34 @@ async function startNewGame({ resetTickets }){
   await advanceRound();
 }
 
-/* Shop (paged) */
-function getShopPageSize(){
-  // keep it fitting in the modal without scroll
-  return (window.innerWidth >= 1200) ? 6 : 4; // 3x2 or 2x2
+/* ✅ All toys beside wheel (always visible) */
+function renderAllToys(){
+  sortShopItems();
+  els.allToysGrid.innerHTML = "";
+
+  for (const item of SHOP_ITEMS){
+    const owned = prizesOwned.includes(item.id);
+
+    const c = document.createElement("div");
+    c.className = "toyMini";
+    c.innerHTML = `
+      <div class="toyMiniTop">
+        <div class="toyMiniEmoji">${item.emoji}</div>
+        <div class="toyMiniCost">${item.cost} 🎟️</div>
+      </div>
+      <div class="toyMiniName">${item.name}</div>
+      <div class="toyMiniDesc">${item.desc}</div>
+      ${owned ? `<span class="toyMiniOwned">Owned</span>` : ``}
+    `;
+    els.allToysGrid.appendChild(c);
+  }
 }
+
+/* Shop (all items one screen) */
 function openShop(){
   els.shopTickets.textContent = String(tickets);
   els.prizeCount.textContent = String(prizesOwned.length);
   els.shopBest.textContent = String(best);
-  shopPage = 0;
   renderShopItems();
   els.shopModal.classList.remove("hidden");
 }
@@ -1666,7 +1616,7 @@ async function continueFromShop(){
   await startNewGame({ resetTickets: false });
 }
 
-/* ✅ Prize animations: fly emoji to shelf + sparkle */
+/* Prize fly animation (kept) */
 function animatePrizeFly({ fromRect, toRect, emoji }){
   const el = document.createElement("div");
   el.textContent = emoji;
@@ -1722,22 +1672,9 @@ function animatePrizeFly({ fromRect, toRect, emoji }){
 
 function renderShopItems(){
   sortShopItems();
-
-  const perPage = getShopPageSize();
-  const totalPages = Math.max(1, Math.ceil(SHOP_ITEMS.length / perPage));
-  shopPage = clamp(shopPage, 0, totalPages - 1);
-
-  els.shopPageInfo.textContent = `${shopPage + 1}/${totalPages}`;
-  els.shopPrevBtn.disabled = shopPage <= 0;
-  els.shopNextBtn.disabled = shopPage >= totalPages - 1;
-
-  els.shopItems.style.gridTemplateColumns = (perPage === 6) ? "repeat(3, minmax(0,1fr))" : "repeat(2, minmax(0,1fr))";
-
-  const start = shopPage * perPage;
-  const pageItems = SHOP_ITEMS.slice(start, start + perPage);
-
   els.shopItems.innerHTML = "";
-  for (const item of pageItems){
+
+  for (const item of SHOP_ITEMS){
     const owned = prizesOwned.includes(item.id);
 
     const card = document.createElement("div");
@@ -1768,20 +1705,17 @@ function renderShopItems(){
       ensureAudio();
       if (owned || tickets < item.cost) return;
 
-      // purchase
       tickets -= item.cost;
       prizesOwned.push(item.id);
       localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
       sfxBell();
 
-      // animate prize to shelf
-      updateHUD(); // updates shelf count + rerenders shelf
-      const fromRect = btn.getBoundingClientRect();
-      const toEl = els.shelfCount; // fly toward owned counter
-      const toRect = toEl.getBoundingClientRect();
-      animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
-
+      updateHUD();
       renderShopItems();
+
+      const fromRect = btn.getBoundingClientRect();
+      const toRect = els.ownedCount.getBoundingClientRect();
+      animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
     });
 
     row.appendChild(cost);
@@ -1799,65 +1733,15 @@ function renderShopItems(){
   els.shopBest.textContent = String(best);
 }
 
-/* ✅ Shelf (paged, no scroll) */
-function getShelfPageSize(){ return 4; } // 2x2
-function renderShelf(){
-  sortShopItems();
-
-  const ownedItems = SHOP_ITEMS.filter(it => prizesOwned.includes(it.id));
-  const perPage = getShelfPageSize();
-  const totalPages = Math.max(1, Math.ceil(ownedItems.length / perPage));
-  shelfPage = clamp(shelfPage, 0, totalPages - 1);
-
-  els.shelfPageInfo.textContent = `${shelfPage + 1}/${totalPages}`;
-  els.shelfPrevBtn.disabled = shelfPage <= 0;
-  els.shelfNextBtn.disabled = shelfPage >= totalPages - 1;
-
-  els.shelfGrid.innerHTML = "";
-
-  if (ownedItems.length === 0){
-    const empty = document.createElement("div");
-    empty.className = "shelfEmpty";
-    empty.textContent = "No prizes yet — win tickets and buy toys in the shop!";
-    els.shelfGrid.appendChild(empty);
-    return;
-  }
-
-  const start = shelfPage * perPage;
-  const pageItems = ownedItems.slice(start, start + perPage);
-
-  for (const item of pageItems){
-    const c = document.createElement("div");
-    c.className = "shelfCard";
-    c.innerHTML = `
-      <div class="shelfEmoji">${item.emoji}</div>
-      <div>
-        <div class="shelfName">${item.name}</div>
-        <div class="shelfMeta">${item.cost} 🎟️</div>
-      </div>
-    `;
-    els.shelfGrid.appendChild(c);
-  }
-
-  // fill remaining slots so layout stays stable
-  const missing = perPage - pageItems.length;
-  for (let i=0; i<missing; i++){
-    const filler = document.createElement("div");
-    filler.className = "shelfCard";
-    filler.style.opacity = "0.55";
-    filler.innerHTML = `<div class="shelfEmoji">✨</div><div><div class="shelfName">Empty slot</div><div class="shelfMeta">Win more prizes</div></div>`;
-    els.shelfGrid.appendChild(filler);
-  }
-}
-
+/* HUD */
 function updateHUD(){
   els.roundEl.textContent = String(round);
   els.bestEl.textContent = String(best);
   els.ticketsEl.textContent = String(tickets);
   els.ticketsChip.textContent = String(tickets);
   els.prizesEl.textContent = String(prizesOwned.length);
-  els.shelfCount.textContent = String(prizesOwned.length);
-  renderShelf();
+  els.ownedCount.textContent = String(prizesOwned.length);
+  renderAllToys();
 }
 
 /* Sounds */
@@ -2006,13 +1890,7 @@ function onCoinPointerDown(e){
 }
 
 /* ✅ Confetti engine */
-const conf = {
-  ctx: null,
-  w: 0,
-  h: 0,
-  running: false,
-  parts: []
-};
+const conf = { ctx: null, w: 0, h: 0, running: false, parts: [] };
 function resizeConfettiCanvas(){
   const dpr = window.devicePixelRatio || 1;
   conf.w = window.innerWidth;
@@ -2101,12 +1979,6 @@ els.startBtn.addEventListener("click", async () => {
   await startNewGame({ resetTickets: true });
 });
 
-els.shopPrevBtn.addEventListener("click", () => { shopPage--; renderShopItems(); });
-els.shopNextBtn.addEventListener("click", () => { shopPage++; renderShopItems(); });
-
-els.shelfPrevBtn.addEventListener("click", () => { shelfPage--; renderShelf(); });
-els.shelfNextBtn.addEventListener("click", () => { shelfPage++; renderShelf(); });
-
 els.backToHomeBtn.addEventListener("click", () => goHomeEnd());
 els.shopContinueBtn.addEventListener("click", () => continueFromShop());
 els.coin.addEventListener("pointerdown", onCoinPointerDown, { passive: false });
@@ -2131,7 +2003,6 @@ function init(){
   clearBonusBalloons();
   showWelcome();
 
-  // measure + scale after layout
   requestAnimationFrame(() => {
     applyAppScale();
     requestAnimationFrame(applyAppScale);
