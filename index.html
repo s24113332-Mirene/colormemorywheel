@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Sedgwick+Ave+Display&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -45,6 +45,50 @@ body::before{
     );
   mix-blend-mode: overlay;
   opacity: .52;
+}
+
+/* ✅ Sparkling star lights (global background) */
+#stars{
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.star{
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  height: var(--s);
+  transform: translate(-50%,-50%) rotate(0deg);
+  opacity: .0;
+  filter: drop-shadow(0 0 10px rgba(255,240,190,.25));
+  animation: starTwinkle var(--t) ease-in-out infinite;
+  animation-delay: var(--d);
+  background: rgba(255,240,200,.95);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  box-shadow:
+    0 0 12px rgba(255,235,175,.30),
+    0 0 22px rgba(255,235,175,.18);
+}
+@keyframes starTwinkle{
+  0%{ opacity: 0; transform: translate(-50%,-50%) scale(.75) rotate(-6deg); }
+  18%{ opacity: .95; }
+  50%{ opacity: .55; transform: translate(-50%,-50%) scale(1.05) rotate(6deg); }
+  82%{ opacity: 1; }
+  100%{ opacity: 0; transform: translate(-50%,-50%) scale(.80) rotate(-6deg); }
 }
 
 /* Background balloons */
@@ -121,7 +165,43 @@ body::before{
   width: min(1440px, 98vw);
 }
 
-/* App */
+/* ✅ Marquee lights border (welcome / instructions / shop / congrats) */
+.marqueeFrame{
+  position: relative;
+  isolation: isolate;
+}
+.marqueeFrame::before{
+  content:"";
+  position:absolute;
+  inset: -2px;
+  border-radius: inherit;
+  pointer-events:none;
+  z-index: -1;
+  background: radial-gradient(900px circle at 50% 0%, rgba(255,255,255,.16), transparent 60%);
+  opacity: .9;
+}
+.marqueeFrame::after{
+  content:"";
+  position:absolute;
+  inset: 8px;
+  border-radius: inherit;
+  pointer-events:none;
+  z-index: 5;
+  background:
+    radial-gradient(circle, rgba(255,245,210,.95) 0 3px, transparent 4px) 0 0 / 22px 22px repeat-x,
+    radial-gradient(circle, rgba(255,245,210,.95) 0 3px, transparent 4px) 0 100% / 22px 22px repeat-x,
+    radial-gradient(circle, rgba(255,245,210,.95) 0 3px, transparent 4px) 0 0 / 22px 22px repeat-y,
+    radial-gradient(circle, rgba(255,245,210,.95) 0 3px, transparent 4px) 100% 0 / 22px 22px repeat-y;
+  opacity: .55;
+  filter: drop-shadow(0 0 12px rgba(255,220,140,.18));
+  animation: marqueeTwinkle 1.8s ease-in-out infinite;
+}
+@keyframes marqueeTwinkle{
+  0%,100%{ opacity:.42; filter: drop-shadow(0 0 10px rgba(255,220,140,.16)); }
+  50%{ opacity:.82; filter: drop-shadow(0 0 18px rgba(255,220,140,.26)); }
+}
+
+/* App layout */
 .app{
   width: 100%;
   padding: 6px 0;
@@ -170,6 +250,10 @@ body::before{
   font-weight: 400;
   font-size: clamp(26px, 3.0vw, 44px);
   letter-spacing: .6px;
+  color: #ffe06a; /* ✅ yellow wheel text */
+  text-shadow:
+    0 0 12px rgba(255,220,120,.18),
+    0 18px 30px rgba(0,0,0,.35);
 }
 .centerSubtitle{ margin-top: 4px; font-weight: 800; color: rgba(255,255,255,.86); letter-spacing: .4px; }
 .oneLine{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -314,7 +398,7 @@ body::before{
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
 }
 
-/* ✅ Wheel */
+/* Wheel */
 .wheelWrap{
   position: relative;
   width: min(1120px, 78vh, 60vw);
@@ -519,7 +603,6 @@ body::before{
   border-color: rgba(255,255,255,.34);
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
-
 .glowBtn{ position: relative; overflow: hidden; }
 .glowBtn::after{
   content:"";
@@ -549,6 +632,7 @@ body::before{
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
+
 .modalCard{
   width: min(560px, 92vw);
   border-radius: 20px;
@@ -583,7 +667,7 @@ body::before{
 }
 .hiddenPage{ display: none; }
 
-/* ✅ WELCOME: Night Market Neon + Fiesta flags + twinkling lights */
+/* ✅ WELCOME: flags single line + twinkles like stars + box border lights */
 .welcomeWrap{ text-align: center; display: grid; gap: 14px; }
 
 .nmHero{
@@ -600,79 +684,38 @@ body::before{
   overflow: hidden;
 }
 
-/* subtle moving glow */
-.nmHero::before{
-  content:"";
-  position:absolute; inset:-60px;
-  background:
-    radial-gradient(circle at 20% 30%, rgba(0,255,220,.18), transparent 45%),
-    radial-gradient(circle at 80% 35%, rgba(255,70,200,.18), transparent 48%),
-    radial-gradient(circle at 55% 10%, rgba(255,220,120,.16), transparent 45%);
-  opacity: .9;
-  animation: nmGlow 6.5s ease-in-out infinite;
-  pointer-events:none;
-}
-@keyframes nmGlow{
-  0%,100%{ transform: translate3d(-18px,-6px,0) scale(1.02); opacity:.75; }
-  50%{ transform: translate3d(18px,10px,0) scale(1.05); opacity:1; }
-}
-
-/* twinkling lights layer */
-.twinkleLayer{
-  position: absolute;
+.welcomeStars{
+  position:absolute;
   inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-.twDot{
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(255,235,200,.95);
-  box-shadow:
-    0 0 10px rgba(255,220,140,.40),
-    0 0 22px rgba(255,220,140,.22);
-  opacity: .15;
-  transform: scale(.85);
-  animation: twinkle var(--t) ease-in-out infinite;
-  animation-delay: var(--d);
-}
-@keyframes twinkle{
-  0%,100%{ opacity:.18; transform: scale(.78); filter: brightness(.9); }
-  50%{ opacity:1; transform: scale(1.12); filter: brightness(1.25); }
-}
-
-/* sparkles (cool sparkles) */
-.sparkles{
-  position:absolute;
-  inset:0;
   pointer-events:none;
   z-index: 1;
 }
-.sparkle{
+.wStar{
   position:absolute;
   left: var(--x);
   top: var(--y);
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.85);
-  box-shadow: 0 0 12px rgba(255,255,255,.35);
+  width: var(--s);
+  height: var(--s);
+  transform: translate(-50%,-50%);
   opacity: .0;
-  animation: sparklePop var(--t) ease-in-out infinite;
+  background: rgba(255,240,200,.95);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  box-shadow: 0 0 12px rgba(255,235,175,.25), 0 0 22px rgba(255,235,175,.16);
+  animation: starTwinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
-@keyframes sparklePop{
-  0%{ transform: scale(.4); opacity:0; }
-  20%{ opacity:.95; }
-  50%{ transform: scale(1.1); opacity:.7; }
-  100%{ transform: scale(.6); opacity:0; }
-}
 
-/* flags */
 .flagRow{
   position: relative;
   z-index: 2;
@@ -680,23 +723,17 @@ body::before{
   gap: 8px;
   margin-bottom: 10px;
 }
-.flagString{
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.14);
-  box-shadow: 0 10px 18px rgba(0,0,0,.18);
-  opacity: .9;
-}
 .flags{
   display:flex;
   justify-content:center;
-  flex-wrap:wrap;
-  gap: 8px;
+  gap: 10px;
+  flex-wrap: nowrap;      /* ✅ one line only */
+  overflow: hidden;
 }
 .flag{
-  width: 30px;          /* ✅ bigger */
-  height: 28px;         /* ✅ bigger */
+  width: 36px;            /* ✅ bigger */
+  height: 32px;           /* ✅ bigger */
+  flex: 0 0 auto;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   background:
     radial-gradient(circle at 30% 20%, rgba(255,255,255,.40), rgba(255,255,255,0) 44%),
@@ -712,7 +749,6 @@ body::before{
   50%{ transform: rotate(3deg) translateY(1px); }
 }
 
-/* neon sign */
 .neonSign{
   position: relative;
   z-index: 2;
@@ -726,19 +762,6 @@ body::before{
     0 18px 55px rgba(0,0,0,.45),
     0 0 0 2px rgba(255,255,255,.06) inset;
   overflow: hidden;
-}
-.neonSign::before{
-  content:"";
-  position:absolute; inset:-120px;
-  background: radial-gradient(circle at 30% 35%, rgba(255,120,40,.16), transparent 52%),
-              radial-gradient(circle at 75% 35%, rgba(255,0,200,.14), transparent 54%),
-              radial-gradient(circle at 50% 10%, rgba(0,255,220,.12), transparent 52%);
-  animation: neonWash 5.4s ease-in-out infinite;
-  pointer-events:none;
-}
-@keyframes neonWash{
-  0%,100%{ transform: translateX(-18px) translateY(-8px); opacity:.8; }
-  50%{ transform: translateX(18px) translateY(8px); opacity:1; }
 }
 .neonKicker{
   font-weight: 900;
@@ -758,18 +781,12 @@ body::before{
 }
 .neonTitle .pink{
   color: rgba(255,110,220,.95);
-  text-shadow:
-    0 0 10px rgba(255,100,210,.45),
-    0 0 22px rgba(255,100,210,.25),
-    0 18px 35px rgba(0,0,0,.55);
+  text-shadow: 0 0 10px rgba(255,100,210,.45), 0 0 22px rgba(255,100,210,.25), 0 18px 35px rgba(0,0,0,.55);
   animation: neonFlicker 3.2s ease-in-out infinite;
 }
 .neonTitle .cyan{
   color: rgba(120,255,240,.95);
-  text-shadow:
-    0 0 10px rgba(110,255,240,.35),
-    0 0 22px rgba(110,255,240,.22),
-    0 18px 35px rgba(0,0,0,.55);
+  text-shadow: 0 0 10px rgba(110,255,240,.35), 0 0 22px rgba(110,255,240,.22), 0 18px 35px rgba(0,0,0,.55);
 }
 @keyframes neonFlicker{
   0%,100%{ filter: brightness(1); }
@@ -784,9 +801,14 @@ body::before{
 .neonSub{
   margin: 8px auto 0;
   color: rgba(255,255,255,.86);
-  font-weight: 900;
-  max-width: 60ch;
-  line-height: 1.45;
+  font-family: "Sedgwick Ave Display", cursive; /* ✅ requested */
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: .4px;
+  line-height: 1.2;
+  white-space: nowrap;    /* ✅ keep subtitle one line */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .nmIcons{
   position: relative;
@@ -807,12 +829,10 @@ body::before{
 }
 .nmChip:nth-child(2){ animation-delay: .2s; }
 .nmChip:nth-child(3){ animation-delay: .4s; }
-.nmChip:nth-child(4){ animation-delay: .6s; }
 @keyframes floatIcon{
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-4px); }
 }
-
 .welcomeCTA{
   display: flex;
   justify-content: center;
@@ -897,7 +917,7 @@ body::before{
   place-items: center;
 }
 
-/* ✅ Realistic 10 NTD coin */
+/* Realistic 10 NTD coin */
 .coin{
   width: 62px;
   height: 62px;
@@ -920,7 +940,6 @@ body::before{
   letter-spacing: .2px;
 }
 .coin::before{
-  /* ridged edge */
   content:"";
   position:absolute;
   inset: -3px;
@@ -943,7 +962,6 @@ body::before{
   box-shadow: inset 0 12px 18px rgba(255,255,255,.12), inset 0 -12px 18px rgba(0,0,0,.18);
   display:grid;
   place-items:center;
-  gap: 0px;
 }
 .coin .coin10{
   font-weight: 1000;
@@ -1002,7 +1020,6 @@ body::before{
   box-shadow: var(--shadow);
   width: min(760px, 92vw);
   overflow: hidden;
-  position: relative;
 }
 .bigTitle{
   font-family: "Protest Revolution", "Inter", system-ui;
@@ -1047,15 +1064,15 @@ body::before{
   100%{ transform: translateX(-50%); }
 }
 
-/* Purchase Congrats modal (kept from previous) */
-.purchaseCard{
-  width: min(720px, 92vw);
+/* ✅ End-game Congrats Summary (shows purchased toys) */
+.summaryCard{
+  width: min(860px, 94vw);
   border-radius: 26px;
   padding: 16px;
   background:
     radial-gradient(1000px circle at 50% 0%, rgba(255,255,255,.18), transparent 55%),
-    radial-gradient(900px circle at 20% 40%, rgba(255,120,40,.16), transparent 55%),
-    radial-gradient(900px circle at 80% 40%, rgba(255,0,200,.14), transparent 55%),
+    radial-gradient(900px circle at 20% 40%, rgba(255,120,40,.14), transparent 55%),
+    radial-gradient(900px circle at 80% 40%, rgba(255,0,200,.12), transparent 55%),
     rgba(0,0,0,.34);
   border: 1px solid rgba(255,255,255,.18);
   box-shadow: 0 22px 80px rgba(0,0,0,.55);
@@ -1063,105 +1080,67 @@ body::before{
   position: relative;
   overflow: hidden;
 }
-.purchaseCard::before{
-  content:"";
-  position:absolute; inset:-90px;
-  background:
-    radial-gradient(circle at 25% 30%, rgba(120,255,240,.18), transparent 55%),
-    radial-gradient(circle at 75% 30%, rgba(255,110,220,.18), transparent 58%),
-    radial-gradient(circle at 50% 10%, rgba(255,230,140,.16), transparent 55%);
-  animation: nmGlow 6.2s ease-in-out infinite;
-  pointer-events:none;
-  opacity: .9;
-}
-.purchaseTop{
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 10px;
-  justify-items: center;
-}
-.purchaseBurst{
-  width: min(540px, 100%);
-  border-radius: 18px;
-  padding: 12px 12px 14px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.06);
-  box-shadow: 0 16px 40px rgba(0,0,0,.25);
-}
-.purchaseTitle{
+.sumTitle{
   margin: 0;
   font-family: "Protest Revolution", "Inter", system-ui;
-  font-size: clamp(30px, 4.2vw, 50px);
+  font-size: clamp(30px, 4.0vw, 50px);
   font-weight: 400;
   letter-spacing: .8px;
 }
-.purchaseTitle .pink{ color: rgba(255,120,220,.95); text-shadow: 0 0 16px rgba(255,120,220,.28); }
-.purchaseTitle .gold{ color: rgba(255,220,150,.95); text-shadow: 0 0 16px rgba(255,220,150,.22); }
-.purchaseSub{
+.sumSub{
   margin: 8px 0 0;
-  color: rgba(255,255,255,.88);
+  color: rgba(255,255,255,.86);
   font-weight: 900;
-  white-space: pre-line;
-  line-height: 1.4;
+  line-height: 1.35;
 }
-.toyShow{
-  position: relative;
-  z-index: 2;
-  margin-top: 12px;
+.sumGrid{
+  margin: 14px auto 12px;
+  width: min(780px, 100%);
   display: grid;
+  grid-template-columns: repeat(6, minmax(0,1fr));
   gap: 10px;
-  justify-items: center;
 }
-.toyHalo{
-  width: 160px;
-  height: 160px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.22);
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,.55), rgba(255,255,255,0) 48%),
-    radial-gradient(circle at 50% 80%, rgba(0,0,0,.35), rgba(0,0,0,0) 58%),
-    rgba(0,0,0,.18);
-  box-shadow:
-    0 22px 70px rgba(0,0,0,.45),
-    0 0 26px rgba(255,140,60,.18);
+.sumToy{
+  border-radius: 18px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 12px 28px rgba(0,0,0,.22);
+  padding: 10px 8px;
   display:grid;
+  gap: 6px;
   place-items:center;
-  animation: haloPulse 1.8s ease-in-out infinite;
+  min-height: 92px;
 }
-@keyframes haloPulse{
-  0%,100%{ transform: scale(1); filter: brightness(1); }
-  50%{ transform: scale(1.03); filter: brightness(1.12); }
+.sumEmoji{
+  font-size: 38px;
+  filter: drop-shadow(0 14px 18px rgba(0,0,0,.35));
 }
-.purchaseEmoji{
-  font-size: 92px;
-  line-height: 1;
-  filter: drop-shadow(0 18px 22px rgba(0,0,0,.45));
+.sumName{
+  font-size: 11px;
+  font-weight: 1000;
+  color: rgba(255,255,255,.92);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
 }
-.purchaseChips{
+.sumChips{
   display:flex;
   gap: 10px;
-  flex-wrap: wrap;
   justify-content:center;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
-.pChip{
-  border-radius: 999px;
-  padding: 8px 12px;
-  font-weight: 1000;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(255,255,255,.06);
-}
-.purchaseBtns{
-  position: relative;
-  z-index: 2;
-  display: flex;
+.sumBtns{
+  display:flex;
   gap: 10px;
-  justify-content: center;
+  justify-content:center;
   flex-wrap: wrap;
   margin-top: 14px;
 }
 
-/* Prize shop */
+/* Shop */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 12px; justify-content: center; }
 .shopGrid{
   display: grid;
@@ -1212,6 +1191,9 @@ body::before{
 </head>
 
 <body>
+  <!-- ✅ global sparkles -->
+  <div id="stars" aria-hidden="true"></div>
+
   <div id="balloons" aria-hidden="true"></div>
 
   <!-- FX -->
@@ -1220,17 +1202,15 @@ body::before{
 
   <!-- WELCOME MODAL (2 pages) -->
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
-    <div class="modalCard">
+    <div class="modalCard marqueeFrame">
 
-      <!-- PAGE 1: Night Market Welcome -->
+      <!-- PAGE 1: Welcome -->
       <div id="welcomePage">
         <div class="welcomeWrap">
-          <div class="nmHero">
-            <div class="twinkleLayer" id="twinkles" aria-hidden="true"></div>
-            <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+          <div class="nmHero marqueeFrame">
+            <div class="welcomeStars" id="welcomeStars" aria-hidden="true"></div>
 
             <div class="flagRow" aria-hidden="true">
-              <div class="flagString"></div>
               <div class="flags" id="flags"></div>
             </div>
 
@@ -1239,10 +1219,9 @@ body::before{
               <h2 class="neonTitle">
                 <span class="pink">Color</span> <span class="cyan">Memory Wheel</span>
               </h2>
-              <p class="neonSub">Spin the wheel, watch the flashing colors, repeat the sequence, and collect tickets for prizes 🎟️</p>
+              <p class="neonSub">Spin • Watch • Remember • Win Tickets</p>
 
               <div class="nmIcons" aria-hidden="true">
-                <div class="nmChip">🏮 Night Market Lights</div>
                 <div class="nmChip">🧸 Prizes</div>
                 <div class="nmChip">🎈 Bonus</div>
                 <div class="nmChip">🎡 Spin</div>
@@ -1251,7 +1230,7 @@ body::before{
           </div>
 
           <div class="welcomeCTA">
-            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter the Night Market ✨</button>
+            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter ✨</button>
           </div>
         </div>
       </div>
@@ -1261,19 +1240,7 @@ body::before{
         <h2 class="modalTitle oneLine">How to Play</h2>
         <p class="modalSub oneLine">Color Memory Wheel</p>
 
-        <div class="modalSection" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
-          <h3 class="modalH" style="text-align:center; margin:0 0 8px 0; font-size:13px; color:rgba(255,255,255,.9); font-weight:900;">Instructions</h3>
-          <ol class="modalList" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82); line-height:1.45; font-weight:600;">
-            <li>Drag the <b>10 NTD coin</b> into the coin slot.</li>
-            <li>Press <b>Start Game</b>.</li>
-            <li>Watch the wheel flash the pattern (each color has its own sound).</li>
-            <li>Tap the colors in the same order.</li>
-            <li>Earn <b>+1 ticket</b> after every successful round.</li>
-            <li><b>Bonus each round:</b> a <b>ticket</b> gives <b>+1 ticket</b>, or a <b>balloon</b> gives <b>+seconds</b>.</li>
-          </ol>
-        </div>
-
-        <div class="coinArea">
+        <div class="coinArea marqueeFrame">
           <div class="coinHint">Insert Coin (drag into the slot)</div>
           <div class="coinRow">
             <div id="coinSlot" class="coinSlot" aria-hidden="true">
@@ -1292,6 +1259,18 @@ body::before{
           </div>
         </div>
 
+        <div style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 12px; margin-bottom: 14px;" class="marqueeFrame">
+          <div style="font-size:13px; color:rgba(255,255,255,.9); font-weight:900; text-align:center; margin:0 0 8px 0;">Instructions</div>
+          <ol style="margin:0; padding-left:18px; color:rgba(255,255,255,.82); line-height:1.45; font-weight:600;">
+            <li>Drag the <b>10 NTD coin</b> into the coin slot.</li>
+            <li>Press <b>Start Game</b>.</li>
+            <li>Watch the wheel flash the pattern (each color has its own sound).</li>
+            <li>Tap the colors in the same order.</li>
+            <li>Earn <b>+1 ticket</b> after every successful round.</li>
+            <li><b>Bonus each round:</b> a <b>ticket</b> gives <b>+1 ticket</b>, or a <b>balloon</b> gives <b>+seconds</b>.</li>
+          </ol>
+        </div>
+
         <button id="startBtn" class="btn primary bigBtn glowBtn" type="button" disabled>Start Game</button>
 
         <div class="modalNav">
@@ -1304,7 +1283,7 @@ body::before{
 
   <!-- BIG MESSAGE OVERLAY -->
   <div id="bigMsg" class="bigMsg hidden" aria-hidden="true">
-    <div class="bigMsgInner">
+    <div class="bigMsgInner marqueeFrame">
       <div id="bigTitle" class="bigTitle">...</div>
       <div id="bigSub" class="bigSub">...</div>
 
@@ -1317,39 +1296,29 @@ body::before{
     </div>
   </div>
 
-  <!-- PURCHASE CONGRATS MODAL -->
-  <div id="purchaseModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="purchaseCard">
-      <div class="purchaseTop">
-        <div class="purchaseBurst">
-          <h2 id="purchaseTitle" class="purchaseTitle">
-            <span class="pink">CONGRATS</span> <span class="gold">WINNER!</span>
-          </h2>
-          <div id="purchaseSub" class="purchaseSub">You purchased a toy.</div>
-        </div>
+  <!-- ✅ END-GAME CONGRATS SUMMARY (only shows when user ends) -->
+  <div id="summaryModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="summaryCard marqueeFrame">
+      <h2 class="sumTitle">Congrats! 🎉</h2>
+      <div id="sumSub" class="sumSub">You collected these toys:</div>
 
-        <div class="toyShow">
-          <div class="toyHalo" aria-hidden="true">
-            <div id="purchaseEmoji" class="purchaseEmoji">🧸</div>
-          </div>
+      <div class="sumChips">
+        <div class="shopChip"><span class="k">Toys:</span> <span id="sumToyCount">0</span></div>
+        <div class="shopChip"><span class="k">Tickets left:</span> <span id="sumTicketsLeft">0</span></div>
+        <div class="shopChip"><span class="k">Best:</span> <span id="sumBest">0</span></div>
+      </div>
 
-          <div class="purchaseChips">
-            <div class="pChip">🧸 <span id="purchaseToyName">Toy</span></div>
-            <div class="pChip">🎟️ Tickets: <span id="purchaseTicketAfter">0</span></div>
-          </div>
-        </div>
+      <div id="sumGrid" class="sumGrid"></div>
 
-        <div class="purchaseBtns">
-          <button id="purchaseContinueBtn" class="btn primary glowBtn" type="button">Continue Game</button>
-          <button id="purchaseEndBtn" class="btn" type="button">End Game</button>
-        </div>
+      <div class="sumBtns">
+        <button id="sumBackBtn" class="btn primary glowBtn" type="button">Back to Welcome</button>
       </div>
     </div>
   </div>
 
   <!-- PRIZE SHOP MODAL -->
   <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modalCard wide">
+    <div class="modalCard wide marqueeFrame">
       <h2 class="modalTitle">Prize Shop</h2>
       <p class="modalSub oneLine">Spend tickets on toys — or continue playing.</p>
 
@@ -1363,7 +1332,7 @@ body::before{
 
       <div class="shopFooter">
         <button id="shopContinueBtn" class="btn primary" type="button">Continue Game</button>
-        <button id="backToHomeBtn" class="btn" type="button">End</button>
+        <button id="endFromShopBtn" class="btn" type="button">End Game</button>
       </div>
     </div>
   </div>
@@ -1492,13 +1461,13 @@ function sortShopItems(){ SHOP_ITEMS = [...SHOP_ITEMS].sort((a,b) => a.cost - b.
 sortShopItems();
 
 const els = {
+  stars: document.getElementById("stars"),
   balloons: document.getElementById("balloons"),
   confetti: document.getElementById("confetti"),
   fxLayer: document.getElementById("fxLayer"),
   scaleRoot: document.getElementById("scaleRoot"),
 
-  twinkles: document.getElementById("twinkles"),
-  sparkles: document.getElementById("sparkles"),
+  welcomeStars: document.getElementById("welcomeStars"),
   flags: document.getElementById("flags"),
 
   welcomeModal: document.getElementById("welcomeModal"),
@@ -1520,21 +1489,21 @@ const els = {
   bigTickerTextB: document.getElementById("bigTickerTextB"),
   bigTickerTrack: document.getElementById("bigTickerTrack"),
 
-  purchaseModal: document.getElementById("purchaseModal"),
-  purchaseEmoji: document.getElementById("purchaseEmoji"),
-  purchaseSub: document.getElementById("purchaseSub"),
-  purchaseToyName: document.getElementById("purchaseToyName"),
-  purchaseTicketAfter: document.getElementById("purchaseTicketAfter"),
-  purchaseContinueBtn: document.getElementById("purchaseContinueBtn"),
-  purchaseEndBtn: document.getElementById("purchaseEndBtn"),
+  summaryModal: document.getElementById("summaryModal"),
+  sumSub: document.getElementById("sumSub"),
+  sumToyCount: document.getElementById("sumToyCount"),
+  sumTicketsLeft: document.getElementById("sumTicketsLeft"),
+  sumBest: document.getElementById("sumBest"),
+  sumGrid: document.getElementById("sumGrid"),
+  sumBackBtn: document.getElementById("sumBackBtn"),
 
   shopModal: document.getElementById("shopModal"),
   shopItems: document.getElementById("shopItems"),
   shopTickets: document.getElementById("shopTickets"),
   prizeCount: document.getElementById("prizeCount"),
   shopBest: document.getElementById("shopBest"),
-  backToHomeBtn: document.getElementById("backToHomeBtn"),
   shopContinueBtn: document.getElementById("shopContinueBtn"),
+  endFromShopBtn: document.getElementById("endFromShopBtn"),
 
   roundEl: document.getElementById("roundEl"),
   bestEl: document.getElementById("bestEl"),
@@ -1598,42 +1567,48 @@ function shuffle(arr){
 }
 function setStatus(msg){ els.statusEl.textContent = msg; }
 
-/* Welcome decor: bigger flags + twinkle lights + sparkles */
+/* ✅ Global stars */
+function buildStars(){
+  els.stars.innerHTML = "";
+  const n = 70;
+  for (let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className = "star";
+    s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--s", `${(4 + Math.random()*6).toFixed(2)}px`);
+    s.style.setProperty("--t", `${(1.6 + Math.random()*2.4).toFixed(2)}s`);
+    s.style.setProperty("--d", `${(-Math.random()*2.8).toFixed(2)}s`);
+    els.stars.appendChild(s);
+  }
+}
+
+/* ✅ Welcome stars */
+function buildWelcomeStars(){
+  els.welcomeStars.innerHTML = "";
+  const n = 26;
+  for (let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className = "wStar";
+    s.style.setProperty("--x", `${(6 + Math.random()*88).toFixed(2)}%`);
+    s.style.setProperty("--y", `${(10 + Math.random()*76).toFixed(2)}%`);
+    s.style.setProperty("--s", `${(5 + Math.random()*7).toFixed(2)}px`);
+    s.style.setProperty("--t", `${(1.5 + Math.random()*2.3).toFixed(2)}s`);
+    s.style.setProperty("--d", `${(-Math.random()*2.8).toFixed(2)}s`);
+    els.welcomeStars.appendChild(s);
+  }
+}
+
+/* ✅ Flags: one line, big */
 function buildFlags(){
   els.flags.innerHTML = "";
-  const n = 34;
+  const n = 18; // fewer so it fits one line
   for (let i=0;i<n;i++){
     const f = document.createElement("div");
     f.className = "flag";
     f.style.setProperty("--h", String(Math.floor(Math.random()*360)));
     f.style.setProperty("--d", `${(-Math.random()*1.7).toFixed(2)}s`);
     els.flags.appendChild(f);
-  }
-}
-function buildSparkles(){
-  els.sparkles.innerHTML = "";
-  const n = 18;
-  for (let i=0;i<n;i++){
-    const s = document.createElement("div");
-    s.className = "sparkle";
-    s.style.setProperty("--x", `${(8 + Math.random()*84).toFixed(2)}%`);
-    s.style.setProperty("--y", `${(10 + Math.random()*72).toFixed(2)}%`);
-    s.style.setProperty("--t", `${(1.8 + Math.random()*2.2).toFixed(2)}s`);
-    s.style.setProperty("--d", `${(-Math.random()*2.5).toFixed(2)}s`);
-    els.sparkles.appendChild(s);
-  }
-}
-function buildTwinkles(){
-  els.twinkles.innerHTML = "";
-  const n = 28;
-  for (let i=0;i<n;i++){
-    const d = document.createElement("div");
-    d.className = "twDot";
-    d.style.setProperty("--x", `${(6 + Math.random()*88).toFixed(2)}%`);
-    d.style.setProperty("--y", `${(8 + Math.random()*72).toFixed(2)}%`);
-    d.style.setProperty("--t", `${(1.6 + Math.random()*1.8).toFixed(2)}s`);
-    d.style.setProperty("--d", `${(-Math.random()*2.6).toFixed(2)}s`);
-    els.twinkles.appendChild(d);
   }
 }
 
@@ -1652,6 +1627,7 @@ function applyAppScale(){
 }
 window.addEventListener("resize", () => {
   applyAppScale();
+  buildStars();
   renderAllToys();
   renderShopItems();
 });
@@ -1697,21 +1673,6 @@ async function showBigMessage({title, sub = "", ms = 900, tickerText = ""}){
   await wait(ms);
   els.bigMsg.classList.add("hidden");
   els.bigTicker.classList.remove("show");
-}
-
-/* Purchase congrats modal */
-function openPurchaseCongrats({ item, beforeTickets, afterTickets }){
-  els.purchaseEmoji.textContent = item.emoji;
-  els.purchaseToyName.textContent = item.name;
-  els.purchaseTicketAfter.textContent = String(afterTickets);
-  els.purchaseSub.textContent =
-    `You purchased:\n${item.name}\n\nTickets: ${beforeTickets} → ${afterTickets}`;
-
-  els.purchaseModal.classList.remove("hidden");
-  confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
-}
-function closePurchaseCongrats(){
-  els.purchaseModal.classList.add("hidden");
 }
 
 /* Balloons */
@@ -2045,11 +2006,10 @@ async function advanceRound(){
     await showBigMessage({
       title: `ROUND ${round}`,
       sub: "Proceeding...",
-      ms: 1800,              // ✅ longer
+      ms: 1800,
       tickerText: ticker
     });
   }
-
   await playRound();
 }
 
@@ -2181,7 +2141,40 @@ function openShop(){
 }
 function closeShop(){ els.shopModal.classList.add("hidden"); }
 
-/* End = wipe */
+/* ✅ End-game summary (only when user ends) */
+function openSummary(){
+  closeShop();
+
+  const ownedItems = SHOP_ITEMS.filter(it => prizesOwned.includes(it.id));
+  els.sumToyCount.textContent = String(ownedItems.length);
+  els.sumTicketsLeft.textContent = String(tickets);
+  els.sumBest.textContent = String(best);
+
+  if (ownedItems.length === 0){
+    els.sumSub.textContent = "You ended the game with no toys purchased yet — try again for prizes! ✨";
+  } else {
+    els.sumSub.textContent = "You collected these toys:";
+  }
+
+  els.sumGrid.innerHTML = "";
+  for (const it of ownedItems){
+    const cell = document.createElement("div");
+    cell.className = "sumToy";
+    cell.innerHTML = `
+      <div class="sumEmoji">${it.emoji}</div>
+      <div class="sumName" title="${it.name}">${it.name}</div>
+    `;
+    els.sumGrid.appendChild(cell);
+  }
+
+  els.summaryModal.classList.remove("hidden");
+  confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 240, 5.6);
+}
+function closeSummary(){
+  els.summaryModal.classList.add("hidden");
+}
+
+/* End = wipe progress AFTER summary */
 function hardResetAllProgress(){
   prizesOwned = [];
   best = 0;
@@ -2190,8 +2183,8 @@ function hardResetAllProgress(){
   localStorage.removeItem("mcw_best_carnival");
   updateHUD();
 }
-function goHomeEnd(){
-  closeShop();
+function finalizeEndToWelcome(){
+  closeSummary();
   hardResetAllProgress();
   showWelcome();
   resetCoinUI();
@@ -2292,8 +2285,6 @@ function renderShopItems(){
       ensureAudio();
       if (owned || tickets < item.cost) return;
 
-      const beforeTickets = tickets;
-
       tickets -= item.cost;
       prizesOwned.push(item.id);
       localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
@@ -2305,9 +2296,9 @@ function renderShopItems(){
       const fromRect = btn.getBoundingClientRect();
       const toRect = els.ownedCount.getBoundingClientRect();
       animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
-      confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 140, 4.6);
 
-      openPurchaseCongrats({ item, beforeTickets, afterTickets: tickets });
+      confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 140, 4.6);
+      setStatus(`Purchased: ${item.name} ✅`);
     });
 
     row.appendChild(cost);
@@ -2568,8 +2559,10 @@ els.startBtn.addEventListener("click", async () => {
   await startNewGame({ resetTickets: true });
 });
 
-els.backToHomeBtn.addEventListener("click", () => goHomeEnd());
 els.shopContinueBtn.addEventListener("click", () => continueFromShop());
+els.endFromShopBtn.addEventListener("click", () => openSummary());
+els.sumBackBtn.addEventListener("click", () => finalizeEndToWelcome());
+
 els.coin.addEventListener("pointerdown", onCoinPointerDown, { passive: false });
 
 els.wheelSvg.addEventListener("click", (e) => {
@@ -2579,22 +2572,13 @@ els.wheelSvg.addEventListener("click", (e) => {
   onPlayerPick(Number(target.dataset.slice));
 });
 
-els.purchaseContinueBtn.addEventListener("click", async () => {
-  closePurchaseCongrats();
-  await continueFromShop();
-});
-els.purchaseEndBtn.addEventListener("click", () => {
-  closePurchaseCongrats();
-  goHomeEnd();
-});
-
 /* Init */
 function init(){
   resizeConfettiCanvas();
 
+  buildStars();
+  buildWelcomeStars();
   buildFlags();
-  buildTwinkles();
-  buildSparkles();
 
   spawnBackgroundBalloons();
   buildWheelLights();
