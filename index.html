@@ -207,26 +207,117 @@ body::before{
 .pip.slot{ background: rgba(255,255,255,.06); border-style: dashed; box-shadow: none; }
 .hint{ font-size: 13px; color: rgba(255,255,255,.80); }
 
-/* Bonus balloon */
+/* Bonus */
 .bonusWrap{ margin: 10px 0 8px; display: grid; gap: 8px; }
 .bonusLabel{ font-size: 12px; color: rgba(255,255,255,.86); font-weight: 900; }
-.bonusBalloons{ display: flex; gap: 10px; flex-wrap: wrap; min-height: 44px; }
-.bonusBalloon{
+.bonusBalloons{ display: flex; gap: 12px; flex-wrap: wrap; min-height: 62px; align-items: flex-end; }
+.bonusBtn{
   pointer-events: auto;
   cursor: pointer;
-  border: 1px solid rgba(255,255,255,.22);
-  background: hsla(var(--h), 85%, 60%, 0.96);
+  user-select: none;
+  border: none;
   color: rgba(255,255,255,.98);
-  font-weight: 900;
-  border-radius: 999px;
-  padding: 10px 12px;
-  box-shadow: inset 0 -12px 16px rgba(0,0,0,.18), 0 12px 22px rgba(0,0,0,.22);
+  font-weight: 1000;
+  box-shadow: 0 14px 26px rgba(0,0,0,.24);
   transition: transform .12s ease, filter .12s ease, opacity .18s ease;
 }
-.bonusBalloon:hover{ filter: brightness(1.08); transform: translateY(-1px) scale(1.02); }
-.bonusBalloon.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
+.bonusBtn:hover{ filter: brightness(1.10); transform: translateY(-2px) scale(1.02); }
+.bonusBtn:active{ transform: translateY(-1px) scale(1.00); }
+.bonusBtn.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* ✅ Wheel a little bigger (scaleRoot still guarantees it fits the screen) */
+/* ✅ Circle balloon = +SECONDS */
+.bonusBalloonCircle{
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;              /* <- circle */
+  border: 1px solid rgba(255,255,255,.26);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.58), rgba(255,255,255,0) 44%),
+    hsla(var(--h), 85%, 60%, 0.96);
+  box-shadow: inset 0 -16px 18px rgba(0,0,0,.18), 0 14px 26px rgba(0,0,0,.24);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  text-shadow: 0 10px 20px rgba(0,0,0,.35);
+}
+.bonusBalloonCircle::after{
+  content:"";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-top: 12px solid rgba(255,255,255,.28);
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.22));
+}
+.bonusBalloonCircle .string{
+  position: absolute;
+  left: 50%;
+  bottom: -34px;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 40px;
+  background: rgba(255,255,255,.30);
+  border-radius: 2px;
+}
+.bonusBalloonCircle .big{
+  font-size: 18px;
+  letter-spacing: .2px;
+}
+.bonusBalloonCircle .small{
+  margin-top: 2px;
+  font-size: 10px;
+  letter-spacing: .9px;
+  opacity: .92;
+}
+
+/* ✅ Ticket shape = +TICKET */
+.bonusTicket{
+  position: relative;
+  width: 118px;
+  height: 54px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.26);
+  background:
+    radial-gradient(circle at 20% 25%, rgba(255,255,255,.40), rgba(255,255,255,0) 44%),
+    linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+  box-shadow: inset 0 -14px 18px rgba(0,0,0,.18), 0 14px 26px rgba(0,0,0,.24);
+  display: grid;
+  place-items: center;
+  padding: 0 10px;
+  overflow: hidden;
+}
+.bonusTicket::before,
+.bonusTicket::after{
+  content:"";
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.24); /* looks like ticket notch */
+  border: 1px solid rgba(255,255,255,.10);
+  transform: translateY(-50%);
+}
+.bonusTicket::before{ left: -12px; }
+.bonusTicket::after{ right: -12px; }
+.bonusTicket .ticketInner{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  letter-spacing: .5px;
+  text-shadow: 0 10px 20px rgba(0,0,0,.35);
+}
+.bonusTicket .ticketIcon{
+  font-size: 18px;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
+}
+
+/* ✅ Wheel size */
 .wheelWrap{
   position: relative;
   width: min(1120px, 78vh, 60vw);
@@ -275,7 +366,7 @@ body::before{
 }
 .slice.flash{ animation: whiteBorderFlash 520ms ease-in-out both; }
 
-/* Lights around wheel */
+/* Lights */
 .wheelLights{
   position: absolute;
   inset: 8px;
@@ -336,7 +427,7 @@ body::before{
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
-/* ✅ Toy prizes beside the game arranged VERTICALLY */
+/* Toys list */
 .allToysGrid{
   display: flex;
   flex-direction: column;
@@ -426,23 +517,6 @@ body::before{
 }
 .bigBtn{ width: 100%; padding: 14px 16px; font-size: 15px; }
 
-.spinArea{
-  width: min(860px, 100%);
-  display: grid;
-  gap: 8px;
-  justify-items: center;
-}
-.spinHint{
-  font-size: 12px;
-  font-weight: 800;
-  color: rgba(255,255,255,.82);
-  text-align: center;
-  padding: 8px 10px;
-  border-radius: 14px;
-  background: rgba(0,0,0,.16);
-  border: 1px solid rgba(255,255,255,.12);
-}
-
 /* Modals */
 .modal{
   position: fixed;
@@ -481,151 +555,82 @@ body::before{
 .modalSub{
   margin: 0 0 14px 0;
   color: rgba(255,255,255,.82);
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
 }
-.modalSection{
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 16px;
-  padding: 12px;
-  margin-bottom: 14px;
-}
-.modalH{
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  color: rgba(255,255,255,.9);
-  font-weight: 900;
-}
-.modalList{
-  margin: 0;
-  padding-left: 18px;
-  color: rgba(255,255,255,.82);
-  line-height: 1.45;
-  font-weight: 600;
-}
 
-/* ✅ Carnival Rush inspired welcome (NO DOTS) */
+/* ✅ Fiesta flaglets welcome */
 .welcomeWrap{
   text-align: center;
   display: grid;
   gap: 14px;
 }
-.rushBanner{
+.fiestaBanner{
   position: relative;
   border-radius: 22px;
-  padding: 16px 14px 14px;
+  padding: 16px 14px 18px;
   border: 1px solid rgba(255,255,255,.16);
   background:
     radial-gradient(1000px circle at 50% 10%, rgba(255,255,255,.18), transparent 55%),
-    radial-gradient(900px circle at 15% 35%, rgba(255,150,40,.16), transparent 58%),
-    radial-gradient(900px circle at 85% 35%, rgba(255,0,150,.14), transparent 58%),
-    linear-gradient(180deg, rgba(12,14,30,.55), rgba(0,0,0,.18));
+    radial-gradient(900px circle at 15% 35%, rgba(255,150,40,.14), transparent 60%),
+    radial-gradient(900px circle at 85% 35%, rgba(255,0,150,.12), transparent 60%),
+    linear-gradient(180deg, rgba(12,14,30,.52), rgba(0,0,0,.16));
   box-shadow: 0 18px 60px rgba(0,0,0,.42);
   overflow: hidden;
 }
-.rushBanner::before{
-  content:"";
+.flagRow{
   position: absolute;
-  left: -20px;
-  right: -20px;
-  top: -26px;
-  height: 86px;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgba(255,60,60,.95) 0 34px,
-      rgba(255,255,255,.95) 34px 68px
-    );
-  transform: rotate(-2deg);
-  filter: drop-shadow(0 14px 20px rgba(0,0,0,.25));
-  opacity: .92;
-}
-.bulbRow{
-  position: relative;
-  z-index: 1;
+  left: -24px;
+  right: -24px;
+  top: 10px;
+  height: 54px;
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 6px;
-  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+  transform: rotate(-2deg);
+  filter: drop-shadow(0 12px 18px rgba(0,0,0,.25));
+  opacity: .95;
 }
-.bulb{
-  width: 10px;
-  height: 16px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255,245,210,.98), rgba(255,185,80,.92));
+.flag{
+  width: 28px;
+  height: 34px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: var(--c);
   border: 1px solid rgba(255,255,255,.22);
-  box-shadow: 0 0 14px rgba(255,210,120,.28);
-  opacity: .88;
-  animation: bulbTwinkle 1.6s ease-in-out infinite;
-  animation-delay: var(--d);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
 }
-@keyframes bulbTwinkle{
-  0%,100%{ transform: translateY(0); opacity: .70; filter: brightness(.95); }
-  50%{ transform: translateY(-1px); opacity: 1; filter: brightness(1.25); }
-}
-.rushInner{
+.fiestaInner{
   position: relative;
   z-index: 1;
   display: grid;
   gap: 10px;
   justify-items: center;
-  padding-top: 28px;
+  padding-top: 44px; /* gives space below flaglets */
 }
-.rushTopTag{
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-  padding: 9px 12px;
-  border-radius: 999px;
+.fiestaTitle{
+  margin: 0;
+  font-size: clamp(28px, 3.8vw, 44px);
   font-weight: 1000;
   letter-spacing: .7px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.18);
-  box-shadow: 0 0 0 2px rgba(255,255,255,.06) inset, 0 12px 28px rgba(0,0,0,.25);
-}
-.lanternIcon{
-  display: inline-grid;
-  place-items: center;
-  width: 22px; height: 22px;
-  font-size: 18px;
-  filter: drop-shadow(0 0 12px rgba(255,180,110,.55));
-  animation: lanternFloat 1.8s ease-in-out infinite;
-}
-@keyframes lanternFloat{
-  0%,100%{ transform: translateY(0) rotate(-2deg); opacity: .92; }
-  50%{ transform: translateY(-3px) rotate(2deg); opacity: 1; }
-}
-.rushTitle{
-  margin: 0;
-  font-size: clamp(30px, 3.8vw, 46px);
-  font-weight: 1000;
-  letter-spacing: .6px;
   text-transform: uppercase;
   text-shadow: 0 14px 28px rgba(0,0,0,.38);
   line-height: 1.02;
 }
-.rushTitle .gold{
+.fiestaTitle .accent{
   background: linear-gradient(180deg, #fff1a8, #ffb12d 45%, #b35b00);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   filter: drop-shadow(0 6px 0 rgba(70,25,0,.45));
 }
-.rushTitle .pink{
-  background: linear-gradient(180deg, #ffd4ff, #ff77d6 45%, #7a1a8b);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 6px 0 rgba(40,0,55,.45));
-}
 .welcomeLine{
   margin: 0;
   color: rgba(255,255,255,.88);
-  font-weight: 700;
-  line-height: 1.45;
-  max-width: 52ch;
+  font-weight: 800;
+  line-height: 1.35;
+  max-width: 58ch;
 }
 .welcomeIcons{
   margin-top: 2px;
@@ -815,9 +820,15 @@ body::before{
   box-shadow: var(--shadow);
   width: min(760px, 92vw);
 }
+.bigEmoji{
+  font-size: 96px;           /* ✅ big "image" of toy */
+  line-height: 1;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 16px 22px rgba(0,0,0,.35));
+}
 .bigTitle{
   font-family: "Playfair Display", serif;
-  font-size: clamp(38px, 5.4vw, 64px);
+  font-size: clamp(34px, 5.0vw, 60px);
   font-weight: 800;
   letter-spacing: .4px;
 }
@@ -825,10 +836,11 @@ body::before{
   margin-top: 8px;
   color: rgba(255,255,255,.85);
   font-size: clamp(13px, 2vw, 18px);
-  font-weight: 700;
+  font-weight: 800;
+  white-space: pre-line;
 }
 
-/* Prize shop (all items one screen) */
+/* Prize shop */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 12px; justify-content: center; }
 .shopGrid{
   display: grid;
@@ -889,24 +901,19 @@ body::before{
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
 
-      <!-- PAGE 1: Carnival Rush inspired welcome -->
+      <!-- PAGE 1: Fiesta flaglets welcome -->
       <div id="welcomePage">
         <div class="welcomeWrap">
-          <div class="rushBanner">
-            <div class="bulbRow" aria-hidden="true" id="bulbRow"></div>
+          <div class="fiestaBanner">
+            <div id="flagRow" class="flagRow" aria-hidden="true"></div>
 
-            <div class="rushInner">
-              <div class="rushTopTag"><span class="lanternIcon" aria-hidden="true">🎪</span> NIGHT MARKET CARNIVAL</div>
-
-              <h2 class="rushTitle">
-                <span class="gold">CARNIVAL</span> <span class="pink">RUSH</span>
-              </h2>
-
-              <p class="welcomeLine">Spin the wheel, remember the colors, and win tickets for night market prizes!</p>
+            <div class="fiestaInner">
+              <h2 class="fiestaTitle"><span class="accent">COLOR</span> MEMORY WHEEL</h2>
+              <p class="welcomeLine oneLine">Spin • Watch • Remember • Win tickets</p>
 
               <div class="welcomeIcons" aria-hidden="true">
                 <div class="wi">🎟️ Tickets</div>
-                <div class="wi">🎡 Wheel</div>
+                <div class="wi">⏱️ Bonus Time</div>
                 <div class="wi">🎈 Bonus</div>
                 <div class="wi">🧸 Prizes</div>
               </div>
@@ -914,7 +921,7 @@ body::before{
           </div>
 
           <div class="welcomeCTA">
-            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter the Night Market ✨</button>
+            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter ✨</button>
           </div>
         </div>
       </div>
@@ -922,17 +929,17 @@ body::before{
       <!-- PAGE 2: Instructions + Coin -->
       <div id="instructionsPage" class="hiddenPage">
         <h2 class="modalTitle oneLine">How to Play</h2>
-        <p class="modalSub">Color Memory Wheel</p>
+        <p class="modalSub oneLine">Color Memory Wheel</p>
 
         <div class="modalSection">
           <h3 class="modalH" style="text-align:center;">Instructions</h3>
           <ol class="modalList">
             <li>Drag the <b>NTD coin</b> into the coin slot.</li>
             <li>Press <b>Start Game</b>.</li>
-            <li>Each round: press <b>Spin the Wheel</b>, then watch the wheel flash the pattern.</li>
-            <li>Tap the colors in the same order (each color has a <b>different sound</b>).</li>
+            <li>Watch the wheel flash the pattern (each color has its own sound).</li>
+            <li>Tap the colors in the same order.</li>
             <li>Earn <b>+1 ticket</b> after every successful round.</li>
-            <li>Pop the <b>Bonus Balloon</b> each round for <b>extra tickets</b> or <b>extra time</b> 🎈</li>
+            <li><b>Bonus each round:</b> a <b>ticket</b> gives <b>+1 ticket</b>, or a <b>balloon</b> gives <b>+seconds</b>.</li>
           </ol>
         </div>
 
@@ -963,16 +970,17 @@ body::before{
   <!-- BIG MESSAGE OVERLAY -->
   <div id="bigMsg" class="bigMsg hidden" aria-hidden="true">
     <div class="bigMsgInner">
+      <div id="bigEmoji" class="bigEmoji" aria-hidden="true" style="display:none;"></div>
       <div id="bigTitle" class="bigTitle">...</div>
       <div id="bigSub" class="bigSub">...</div>
     </div>
   </div>
 
-  <!-- PRIZE SHOP MODAL (ALL TOYS ONE SCREEN) -->
+  <!-- PRIZE SHOP MODAL -->
   <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modalCard wide">
       <h2 class="modalTitle">Prize Shop</h2>
-      <p class="modalSub">Spend tickets on toys — or continue playing.</p>
+      <p class="modalSub oneLine">Spend tickets on toys — or continue playing.</p>
 
       <div class="shopStats">
         <div class="shopChip"><span class="k">Tickets:</span> <span id="shopTickets">0</span></div>
@@ -1019,7 +1027,7 @@ body::before{
             <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
 
             <div class="bonusWrap">
-              <div class="bonusLabel">Bonus Balloon (each round)</div>
+              <div class="bonusLabel">Bonus (each round)</div>
               <div id="bonusBalloons" class="bonusBalloons"></div>
             </div>
 
@@ -1069,23 +1077,16 @@ body::before{
               </div>
             </div>
           </div>
-
-          <!-- ✅ Spin button BELOW the wheel -->
-          <div class="spinArea">
-            <button id="spinBtn" class="btn primary bigBtn glowBtn" type="button" disabled>Spin the Wheel 🎡</button>
-            <div class="spinHint" id="spinHint">Press Spin when the round starts.</div>
-          </div>
         </section>
 
         <aside class="rightPanel">
-          <div class="panelTitle">Prize Toys (Night Market)</div>
+          <div class="panelTitle">Prize Toys</div>
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
             <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
             <div class="shopChip"><span class="k">Tickets:</span> <span id="ticketsChip">0</span></div>
           </div>
 
-          <!-- ✅ vertical list -->
           <div id="allToysGrid" class="allToysGrid"></div>
 
           <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
@@ -1106,10 +1107,6 @@ const SLICE_COLORS = [
   "#00E5FF","#00A3FF","#3F51B5","#8A2BE2","#FF4FD8"
 ];
 
-/* ✅ Different sound for each color (10 tones) */
-const COLOR_TONES = [262, 294, 330, 349, 392, 440, 494, 523, 587, 659]; // C4..E5-ish
-const COLOR_WAVES = ["sine","triangle","sine","triangle","sine","triangle","sawtooth","sine","triangle","sawtooth"];
-
 let SHOP_ITEMS = [
   { id:"ball",   emoji:"⚽", name:"Mini Bouncy Ball",       cost:2,  desc:"Small, bouncy, and impossible to not toss." },
   { id:"bt",     emoji:"🧋", name:"Bubble Tea Keyring",     cost:4,  desc:"A boba keyring that screams night market." },
@@ -1129,7 +1126,7 @@ const els = {
   fxLayer: document.getElementById("fxLayer"),
   scaleRoot: document.getElementById("scaleRoot"),
 
-  bulbRow: document.getElementById("bulbRow"),
+  flagRow: document.getElementById("flagRow"),
 
   welcomeModal: document.getElementById("welcomeModal"),
   welcomePage: document.getElementById("welcomePage"),
@@ -1143,6 +1140,7 @@ const els = {
   coinSlotState: document.getElementById("coinSlotState"),
 
   bigMsg: document.getElementById("bigMsg"),
+  bigEmoji: document.getElementById("bigEmoji"),
   bigTitle: document.getElementById("bigTitle"),
   bigSub: document.getElementById("bigSub"),
 
@@ -1175,10 +1173,6 @@ const els = {
   timerText: document.getElementById("timerText"),
   topRect: document.getElementById("topRect"),
   bottomRect: document.getElementById("bottomRect"),
-
-  /* ✅ Spin button */
-  spinBtn: document.getElementById("spinBtn"),
-  spinHint: document.getElementById("spinHint"),
 };
 
 let best = Number(localStorage.getItem("mcw_best_carnival") || "0");
@@ -1200,18 +1194,13 @@ let player = [];
 let rafId = null;
 let timerStart = 0;
 let timerTotal = 0;
-
-/* ✅ bonus time can be applied before timer starts */
-let pendingTimeBonusMs = 0;
+let pendingTimeBonusMs = 0;   // ✅ seconds bonus can be banked before timer starts
 
 let audioCtx = null;
 let master = null;
 
 let coinInserted = false;
 let balloonInterval = null;
-
-/* ✅ spin gating per round */
-let spinResolver = null;
 
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -1225,18 +1214,19 @@ function shuffle(arr){
 }
 function setStatus(msg){ els.statusEl.textContent = msg; }
 
-/* ✅ build bulbs (no dots) */
-function buildBulbRow(){
-  els.bulbRow.innerHTML = "";
-  for (let i=0;i<26;i++){
-    const s = document.createElement("span");
-    s.className = "bulb";
-    s.style.setProperty("--d", `${(-Math.random()*1.6).toFixed(2)}s`);
-    els.bulbRow.appendChild(s);
+/* ✅ Build fiesta flaglets */
+function buildFlaglets(){
+  els.flagRow.innerHTML = "";
+  const palette = ["#ff4d4d","#ffd84d","#4dff8a","#4de3ff","#6d7bff","#c84dff","#ff4dd0","#ff9b4d"];
+  for (let i=0;i<22;i++){
+    const f = document.createElement("span");
+    f.className = "flag";
+    f.style.setProperty("--c", palette[i % palette.length]);
+    els.flagRow.appendChild(f);
   }
 }
 
-/* ✅ Auto-scale: fit everything on screen (no page scrolling) */
+/* ✅ Auto-scale */
 function applyAppScale(){
   document.documentElement.style.setProperty("--appScale", "1");
   const rect = els.scaleRoot.getBoundingClientRect();
@@ -1255,12 +1245,12 @@ window.addEventListener("resize", () => {
   renderShopItems();
 });
 
-/* Welcome pages */
+/* Welcome */
 function showWelcome(){
   els.welcomeModal.classList.add("show");
   els.welcomeModal.classList.remove("hidden");
   showWelcomePage();
-  setStatus("Welcome! Enter the night market to see instructions and insert coin.");
+  setStatus("Welcome! Enter to see instructions and insert coin.");
   confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 90, 4.2);
 }
 function hideWelcome(){
@@ -1275,15 +1265,24 @@ function showInstructionsPage(){
   els.welcomePage.classList.add("hiddenPage");
   els.instructionsPage.classList.remove("hiddenPage");
 }
-async function showBigMessage({title, sub = "", ms = 900}){
+async function showBigMessage({title, sub = "", emoji = "", ms = 900}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
+
+  if (emoji){
+    els.bigEmoji.style.display = "";
+    els.bigEmoji.textContent = emoji;
+  } else {
+    els.bigEmoji.style.display = "none";
+    els.bigEmoji.textContent = "";
+  }
+
   els.bigMsg.classList.remove("hidden");
   await wait(ms);
   els.bigMsg.classList.add("hidden");
 }
 
-/* Balloons */
+/* Background balloons */
 function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   const b = document.createElement("div");
   b.className = "balloon";
@@ -1375,25 +1374,27 @@ function setSlicesDim(dim){
   els.wheelSvg.querySelectorAll(".slice").forEach(n => n.classList.toggle("sliceDim", dim));
 }
 
-/* ✅ Different sound per color */
-function sfxColor(i){
-  ensureAudio();
-  const freq = COLOR_TONES[i % COLOR_TONES.length];
-  const wave = COLOR_WAVES[i % COLOR_WAVES.length];
+/* Sounds: each color different */
+const COLOR_TONES = [262, 294, 330, 349, 392, 440, 494, 523, 587, 659];
+const COLOR_WAVES = ["sine","triangle","sine","triangle","sine","triangle","sine","triangle","sine","triangle"];
+function sfxColor(index, kind="tap"){
+  if (!audioCtx || !master) return;
+  const i = clamp(index|0, 0, 9);
   const t = audioCtx.currentTime;
-  tone(freq, t, 0.11, wave, 0.12);
-  tone(freq * 2, t + 0.01, 0.07, "sine", 0.06);
+  const base = COLOR_TONES[i];
+  const type = COLOR_WAVES[i];
+  const g = (kind === "flash") ? 0.06 : 0.10;
+  const dur = (kind === "flash") ? 0.07 : 0.10;
+  tone(base, t, dur, type, g);
+  tone(base * 2, t + 0.015, dur * 0.7, "sine", g * 0.55);
 }
 
 async function flashSlice(sliceIndex, ms){
   const node = els.wheelSvg.querySelector(`.slice[data-slice="${sliceIndex}"]`);
   if (!node) return wait(ms);
   node.style.setProperty("--glow", segments[sliceIndex].color);
-
-  /* ✅ play the color's unique sound */
-  sfxColor(sliceIndex);
-
   node.classList.add("flash");
+  sfxColor(sliceIndex, "flash");
   await wait(ms);
   node.classList.remove("flash");
 }
@@ -1413,30 +1414,6 @@ function spinOnce(durationMs){
   });
 }
 
-/* ✅ Require pressing the spin button each round */
-function waitForSpinClick(){
-  if (spinResolver) return Promise.resolve();
-  els.spinHint.textContent = "Press Spin when the round starts.";
-  els.spinBtn.disabled = false;
-  els.spinBtn.textContent = "Spin the Wheel 🎡";
-  return new Promise((resolve) => { spinResolver = resolve; });
-}
-function lockSpinButton(label="Spin the Wheel 🎡"){
-  els.spinBtn.disabled = true;
-  els.spinBtn.textContent = label;
-}
-els.spinBtn.addEventListener("click", () => {
-  if (!gameActive || busy) return;
-  ensureAudio();
-  if (!spinResolver) return;
-  const r = els.spinBtn.getBoundingClientRect();
-  confettiBurst(r.left + r.width/2, r.top + r.height/2, 70, 3.6);
-  const resolve = spinResolver;
-  spinResolver = null;
-  lockSpinButton("Spinning...");
-  resolve();
-});
-
 /* Hourglass */
 function setHourglass(fraction){
   const clamped = Math.max(0, Math.min(1, fraction));
@@ -1452,17 +1429,20 @@ function stopTimer(){
   els.timerText.textContent = "--";
   setHourglass(1);
 }
+function addTimeBonus(ms){
+  // ✅ If timer is running, extend it now. Otherwise bank it.
+  if (rafId){
+    timerTotal = Math.min(45000, timerTotal + ms);
+  } else {
+    pendingTimeBonusMs = Math.min(45000, pendingTimeBonusMs + ms);
+  }
+}
 function startTimer(){
   stopTimer();
   const base = 2400;
   const perPick = 980;
-  timerTotal = Math.min(32000, base + (expected.length * perPick));
-
-  /* ✅ apply any pending bonus time */
-  if (pendingTimeBonusMs > 0){
-    timerTotal = Math.min(38000, timerTotal + pendingTimeBonusMs);
-    pendingTimeBonusMs = 0;
-  }
+  timerTotal = Math.min(32000, base + (expected.length * perPick) + pendingTimeBonusMs);
+  pendingTimeBonusMs = 0;
 
   timerStart = performance.now();
   const tick = (now) => {
@@ -1496,59 +1476,69 @@ function renderPlayerPips(){
   }
 }
 
-/* ✅ Bonus balloon: tickets OR time */
+/* ✅ Bonus: either ticket (+1 ticket) OR balloon (+seconds) */
 function clearBonusBalloons(){ els.bonusBalloons.innerHTML = ""; }
-function makeRoundBonus(){
-  const roll = Math.random();
-  if (roll < 0.50) return { kind: "ticket", amount: 1, label: "+1 Ticket 🎟️" };
-  if (roll < 0.78) return { kind: "time", seconds: 3, label: "+3s Time ⏳" };
-  return { kind: "ticket", amount: 2, label: "+2 Tickets 🎟️" };
+
+function spawnTicketBonus(){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bonusBtn bonusTicket";
+  btn.innerHTML = `<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>`;
+  btn.addEventListener("click", () => {
+    ensureAudio();
+    if (!gameActive) return;
+    tickets += 1;
+    updateHUD();
+    setStatus("Bonus ticket! +1 ticket 🎟️");
+    sfxBell();
+    const r = btn.getBoundingClientRect();
+    confettiBurst(r.left + r.width/2, r.top + r.height/2, 70, 3.6);
+    btn.classList.add("pop");
+    setTimeout(() => btn.remove(), 180);
+  });
+  return btn;
 }
-function spawnRoundBonusBalloon(){
+
+function spawnSecondsBalloon(){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bonusBtn bonusBalloonCircle";
+  btn.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
+  const bonusMs = 2500; // +2.5 seconds
+  btn.innerHTML = `
+    <div>
+      <div class="big">+2.5s</div>
+      <div class="small">TIME</div>
+    </div>
+    <div class="string" aria-hidden="true"></div>
+  `;
+  btn.addEventListener("click", () => {
+    ensureAudio();
+    if (!gameActive) return;
+    addTimeBonus(bonusMs);
+    setStatus("Bonus time! +2.5 seconds ⏱️");
+    sfxBell();
+    const r = btn.getBoundingClientRect();
+    confettiBurst(r.left + r.width/2, r.top + r.height/2, 70, 3.6);
+    btn.classList.add("pop");
+    setTimeout(() => btn.remove(), 180);
+  });
+  return btn;
+}
+
+function spawnRoundBonus(){
   clearBonusBalloons();
   if (!gameActive) return;
 
-  const bonus = makeRoundBonus();
-
-  const b = document.createElement("button");
-  b.type = "button";
-  b.className = "bonusBalloon";
-  b.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
-  b.textContent = bonus.label;
-
-  b.addEventListener("click", () => {
-    ensureAudio();
-    if (!gameActive) return;
-
-    if (bonus.kind === "ticket"){
-      tickets += bonus.amount;
-      updateHUD();
-      setStatus(`Bonus popped! +${bonus.amount} ticket${bonus.amount>1?"s":""} 🎟️`);
-      sfxBell();
-    } else {
-      const addMs = bonus.seconds * 1000;
-
-      /* if timer running, extend it now; otherwise store it for when timer starts */
-      if (rafId) timerTotal = Math.min(42000, timerTotal + addMs);
-      else pendingTimeBonusMs += addMs;
-
-      setStatus(`Bonus popped! +${bonus.seconds}s time ⏳`);
-      sfxBell();
-    }
-
-    const r = b.getBoundingClientRect();
-    confettiBurst(r.left + r.width/2, r.top + r.height/2, 70, 3.6);
-    b.classList.add("pop");
-    setTimeout(() => b.remove(), 180);
-  });
+  // one bonus per round: 50/50 ticket or time
+  const node = (Math.random() < 0.5) ? spawnTicketBonus() : spawnSecondsBalloon();
+  els.bonusBalloons.appendChild(node);
 
   setTimeout(() => {
-    if (!b.isConnected) return;
-    b.classList.add("pop");
-    setTimeout(() => b.remove(), 220);
+    if (!node.isConnected) return;
+    node.classList.add("pop");
+    setTimeout(() => node.remove(), 220);
   }, 5000);
-
-  els.bonusBalloons.appendChild(b);
 }
 
 /* Pattern */
@@ -1563,21 +1553,25 @@ function randomColorIndex(){
   return idx;
 }
 
-/* ✅ Faster flashes once round 5 is reached */
+/* Flash speed up at round 5+ */
 function getFlashTiming(){
+  let flashMs = clamp(520 - round * 28, 160, 520);
+  let gapMs   = clamp(120 - round * 5,  42, 120);
+
   if (round >= 5){
-    const r = round - 5;
-    const flashMs = clamp(300 - r * 26, 110, 300);
-    const gapMs   = clamp(80  - r * 8,  30, 80);
-    return { flashMs, gapMs };
+    flashMs = Math.max(120, Math.floor(flashMs * 0.72));
+    gapMs   = Math.max(30,  Math.floor(gapMs   * 0.72));
   }
-  const flashMs = clamp(520 - round * 28, 170, 520);
-  const gapMs   = clamp(120 - round * 5,  50, 120);
+  if (round >= 8){
+    flashMs = Math.max(95, Math.floor(flashMs * 0.82));
+    gapMs   = Math.max(24, Math.floor(gapMs   * 0.82));
+  }
   return { flashMs, gapMs };
 }
 
 async function showSequence(){
   setSlicesDim(true);
+  sfxBell();
   const { flashMs, gapMs } = getFlashTiming();
   for (const s of sequence){
     await wait(gapMs);
@@ -1594,11 +1588,6 @@ async function playRound(){
   renderSlots(sequence.length);
   expected = [...sequence];
 
-  /* ✅ Require player to press spin button */
-  setStatus(`Round ${round}: press Spin the Wheel!`);
-  els.spinHint.textContent = "Tap Spin to start this round.";
-  await waitForSpinClick();
-
   setStatus(`Round ${round}: spinning...`);
   await spinOnce(Math.min(6500, 3300 + round * 180));
 
@@ -1612,16 +1601,13 @@ async function playRound(){
   isPlayerTurn = true;
   busy = false;
 
-  /* after round starts, spin button stays locked until next round */
-  lockSpinButton("Wait for next round");
-
   startTimer();
 }
 async function advanceRound(){
   round += 1;
   sequence.push(randomColorIndex());
   updateHUD();
-  spawnRoundBonusBalloon();
+  spawnRoundBonus();
   if (round >= 2){
     await showBigMessage({ title: `ROUND ${round}`, sub: "Proceeding...", ms: 1100 });
   }
@@ -1644,8 +1630,6 @@ async function loseGame(reason){
   gameActive = false;
   updateHUD();
 
-  lockSpinButton("Spin the Wheel 🎡");
-
   sfxBuzzer();
   await showBigMessage({ title: "GAME OVER!", sub: `Reason: ${reason}`, ms: 1000 });
 
@@ -1660,8 +1644,7 @@ function onPlayerPick(colorIndex){
   if (!gameActive || !isPlayerTurn || busy) return;
 
   ensureAudio();
-
-  /* flashSlice already plays the color sound */
+  sfxColor(colorIndex, "tap");
   flashSlice(colorIndex, 210);
 
   player.push(colorIndex);
@@ -1709,8 +1692,8 @@ async function startNewGame({ resetTickets }){
   sequence = [];
   expected = [];
   player = [];
-  pendingTimeBonusMs = 0;
 
+  pendingTimeBonusMs = 0;
   if (resetTickets) tickets = 0;
 
   gameActive = true;
@@ -1719,15 +1702,12 @@ async function startNewGame({ resetTickets }){
   stopTimer();
   updateHUD();
 
-  lockSpinButton("Spin the Wheel 🎡");
-  els.spinHint.textContent = "Spin starts each round.";
-
   setStatus("Get ready...");
   await wait(300);
   await advanceRound();
 }
 
-/* ✅ Vertical toy list beside wheel */
+/* Toys list */
 function renderAllToys(){
   sortShopItems();
   els.allToysGrid.innerHTML = "";
@@ -1762,7 +1742,7 @@ function openShop(){
 }
 function closeShop(){ els.shopModal.classList.add("hidden"); }
 
-/* End = wipe progress */
+/* End */
 function hardResetAllProgress(){
   prizesOwned = [];
   best = 0;
@@ -1778,13 +1758,13 @@ function goHomeEnd(){
   resetCoinUI();
 }
 
-/* Continue from shop */
+/* Continue */
 async function continueFromShop(){
   closeShop();
   await startNewGame({ resetTickets: false });
 }
 
-/* Prize fly animation */
+/* Prize fly */
 function animatePrizeFly({ fromRect, toRect, emoji }){
   const el = document.createElement("div");
   el.textContent = emoji;
@@ -1873,7 +1853,7 @@ function renderShopItems(){
       ensureAudio();
       if (owned || tickets < item.cost) return;
 
-      const before = tickets; /* ✅ tickets before purchasing */
+      const before = tickets;
       tickets -= item.cost;
       prizesOwned.push(item.id);
       localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
@@ -1886,12 +1866,14 @@ function renderShopItems(){
       const toRect = els.ownedCount.getBoundingClientRect();
       animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
 
-      /* ✅ Congrats after purchasing */
-      confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 160, 4.8);
+      confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 140, 4.6);
+
+      // ✅ Congrats + big toy "image" (emoji)
       await showBigMessage({
         title: "CONGRATS! 🎉",
-        sub: `You purchased: ${item.name} (${before} → ${tickets} tickets)`,
-        ms: 1200
+        emoji: item.emoji,
+        sub: `You have purchased this toy:\n${item.name}\n\nTickets: ${before} → ${tickets}`,
+        ms: 1700
       });
     });
 
@@ -1921,7 +1903,7 @@ function updateHUD(){
   renderAllToys();
 }
 
-/* Sounds */
+/* Sounds base */
 function ensureAudio(){
   if (!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2167,7 +2149,7 @@ els.wheelSvg.addEventListener("click", (e) => {
 /* Init */
 function init(){
   resizeConfettiCanvas();
-  buildBulbRow();
+  buildFlaglets();
   spawnBackgroundBalloons();
   buildWheelLights();
   buildSegments();
@@ -2176,7 +2158,6 @@ function init(){
   updateHUD();
   resetCoinUI();
   clearBonusBalloons();
-  lockSpinButton("Spin the Wheel 🎡");
   showWelcome();
 
   requestAnimationFrame(() => {
