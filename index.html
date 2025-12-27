@@ -18,6 +18,8 @@
 *{ box-sizing: border-box; }
 html, body{ height: 100%; }
 
+/* helps remove mobile “click delay” / double-tap behaviors */
+html { touch-action: manipulation; }
 body{
   margin: 0;
   height: 100vh;
@@ -47,7 +49,7 @@ body::before{
   opacity: .52;
 }
 
-/* ✅ GAME background stars: slightly smaller + glowing */
+/* ✅ GAME background starbursts (match the uploaded image style) */
 #stars{
   position: fixed;
   inset: 0;
@@ -61,38 +63,53 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,255,255,.94);
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-  box-shadow:
-    0 0 10px rgba(255,255,255,.38),
-    0 0 22px rgba(160,220,255,.22),
-    0 0 34px rgba(255,220,160,.12);
-  opacity: .20;
+  border-radius: 999px;
   transform: translate(-50%,-50%) scale(.92);
+  opacity: .14;
+
+  background:
+    /* bright core */
+    radial-gradient(circle, rgba(255,255,255,.98) 0%,
+                            rgba(255,244,210,.96) 10%,
+                            rgba(255,220,140,.75) 24%,
+                            rgba(255,200,90,.35) 42%,
+                            transparent 68%),
+    /* many thin rays */
+    repeating-conic-gradient(from 0deg,
+      rgba(255,235,180,.55) 0 1.1deg,
+      transparent 1.1deg 8.5deg),
+    /* strong long cross rays (horizontal/vertical) */
+    linear-gradient(90deg,
+      transparent 0 46%,
+      rgba(255,230,170,.55) 49%,
+      rgba(255,230,170,.55) 51%,
+      transparent 54%),
+    linear-gradient(0deg,
+      transparent 0 46%,
+      rgba(255,230,170,.55) 49%,
+      rgba(255,230,170,.55) 51%,
+      transparent 54%),
+    /* softer diagonal rays */
+    linear-gradient(45deg,
+      transparent 0 47%,
+      rgba(255,230,170,.32) 50%,
+      transparent 53%),
+    linear-gradient(-45deg,
+      transparent 0 47%,
+      rgba(255,230,170,.32) 50%,
+      transparent 53%);
+
+  box-shadow:
+    0 0 10px rgba(255,220,140,.28),
+    0 0 22px rgba(255,200,90,.18),
+    0 0 40px rgba(255,220,140,.10);
+  filter: blur(.10px);
   animation: starTwinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
-.star::after{
-  content:"";
-  position:absolute;
-  inset:-12px;
-  background: radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
-  border-radius: 999px;
-}
 @keyframes starTwinkle{
-  0%,100%{ opacity:.20; transform: translate(-50%,-50%) scale(.90); filter: brightness(.95); }
-  50%{ opacity:.96; transform: translate(-50%,-50%) scale(1.14); filter: brightness(1.28); }
+  0%,100%{ opacity:.12; transform: translate(-50%,-50%) scale(.88); filter: brightness(.95) blur(.10px); }
+  50%{ opacity:.90; transform: translate(-50%,-50%) scale(1.10); filter: brightness(1.25) blur(.10px); }
 }
 
 /* Background balloons */
@@ -158,7 +175,7 @@ body::before{
   pointer-events: none;
 }
 
-/* ✅ Auto-fit scale root */
+/* Auto-fit scale root */
 #scaleRoot{
   position: fixed;
   left: 50%;
@@ -177,7 +194,7 @@ body::before{
   grid-template-rows: 1fr auto;
 }
 
-/* ✅ Make side panels more balanced so wheel stays centered */
+/* Stage */
 .stage{
   display: grid;
   grid-template-columns:
@@ -190,16 +207,15 @@ body::before{
   min-height: 0;
 }
 
-/* ✅ Side panels scroll if needed (keeps center stable) */
+/* Side panels scroll internally (no page scroll) */
 .leftPanel, .rightPanel{
   display: grid;
   gap: 10px;
   min-height: 0;
   max-height: calc(100vh - 44px);
-  overflow: auto;
+  overflow: hidden; /* ✅ avoid scrollbar on the whole side panel */
   padding-right: 4px;
 }
-
 .panelTitle{
   font-family: "Protest Revolution", "Inter", system-ui;
   font-weight: 400;
@@ -213,7 +229,15 @@ body::before{
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
   text-align: center;
 }
+.leftPanelInner, .rightPanelInner{
+  display: grid;
+  gap: 10px;
+  min-height: 0;
+  overflow: auto; /* ✅ internal scroll if ever needed */
+  padding-right: 2px;
+}
 
+/* Center */
 .centerCol{ display: grid; gap: 10px; justify-items: center; min-height: 0; }
 .centerHeader{
   text-align: center;
@@ -226,7 +250,7 @@ body::before{
   width: min(900px, 100%);
 }
 
-/* ✅ Cinzel Decorative for “COLOR MEMORY WHEEL”, all caps, one line */
+/* Cinzel Decorative for title */
 .centerTitle{
   font-family: "Cinzel Decorative", serif;
   font-weight: 700;
@@ -306,10 +330,11 @@ body::before{
   color: rgba(255,255,255,.98);
   font-weight: 1000;
   box-shadow: 0 14px 26px rgba(0,0,0,.24);
-  transition: transform .12s ease, filter .12s ease, opacity .18s ease;
+  transition: transform .08s ease, filter .08s ease, opacity .12s ease;
+  touch-action: manipulation;
 }
-.bonusBtn:hover{ filter: brightness(1.10); transform: translateY(-2px) scale(1.02); }
-.bonusBtn:active{ transform: translateY(-1px) scale(1.00); }
+.bonusBtn:hover{ filter: brightness(1.10); transform: translateY(-1px) scale(1.01); }
+.bonusBtn:active{ transform: translateY(0px) scale(1.00); }
 .bonusBtn.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
 /* Circle balloon = +SECONDS */
@@ -396,10 +421,10 @@ body::before{
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
 }
 
-/* ✅ Wheel: a bit bigger (highlight), still fits */
+/* ✅ Wheel: bigger highlight, still fits */
 .wheelWrap{
   position: relative;
-  width: min(1240px, 84vh, 70vw);
+  width: min(1260px, 85vh, 72vw);
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
@@ -430,15 +455,24 @@ body::before{
   place-items: center;
   transition: transform 3600ms cubic-bezier(.18,.88,.1,1);
 }
-#wheelSvg{ width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 22px rgba(0,0,0,.35)); }
+#wheelSvg{
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 18px 22px rgba(0,0,0,.35));
+  touch-action: manipulation; /* ✅ */
+  -webkit-tap-highlight-color: transparent; /* ✅ */
+}
 
-/* no constant glow; glow on hover/click/flash */
+/* ✅ No delay feel: remove filter transition lag */
 .slice{
   stroke: rgba(255,255,255,.22);
   stroke-width: 2;
   cursor: pointer;
-  transition: opacity 140ms ease, stroke-width 140ms ease, filter 160ms ease;
+  transition: opacity 60ms linear, stroke-width 60ms linear, filter 0ms linear;
   filter: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .slice:hover{
   filter:
@@ -519,62 +553,57 @@ body::before{
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
-/* Toys list */
+/* ✅ Prize Toys beside wheel: compact + 2-column grid so it fits the screen */
 .allToysGrid{
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
   gap: 10px;
   min-height: 0;
+  padding-bottom: 4px;
+}
+@media (max-width: 1100px){
+  .allToysGrid{ grid-template-columns: 1fr; }
 }
 .toyMini{
   border-radius: 16px;
-  padding: 10px 10px;
+  padding: 8px 9px;
   background: rgba(255,255,255,.06);
   border: 1px solid rgba(255,255,255,.14);
-  box-shadow: 0 10px 26px rgba(0,0,0,.18);
+  box-shadow: 0 10px 22px rgba(0,0,0,.16);
   display: grid;
-  grid-template-columns: 44px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 38px 1fr;
+  gap: 8px;
   align-items: center;
+  min-width: 0;
 }
 .toyMiniEmoji{
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 26px;
+  font-size: 22px;
   background: rgba(0,0,0,.22);
   border: 1px solid rgba(255,255,255,.12);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
 }
 .toyMiniMid{ display: grid; gap: 2px; min-width: 0; }
 .toyMiniName{
   font-weight: 1000;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .toyMiniDesc{
-  font-size: 11px;
-  line-height: 1.2;
+  font-size: 10px;
+  line-height: 1.15;
   color: rgba(255,255,255,.78);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.toyMiniRight{ display: grid; gap: 6px; justify-items: end; }
-.toyMiniCost{
-  font-weight: 1000;
-  font-size: 11px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  border: 1px dashed rgba(255,255,255,.16);
-  white-space: nowrap;
-}
+.toyMiniRight{ display:none; } /* ✅ keep compact (details still in Shop modal) */
 .toyMiniOwned{
   display: inline-flex;
   justify-self: end;
@@ -596,9 +625,10 @@ body::before{
   border-radius: 14px;
   cursor: pointer;
   box-shadow: 0 10px 25px rgba(0,0,0,.22);
-  transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+  transition: transform .08s ease, filter .08s ease, opacity .12s ease;
   user-select: none;
   font-weight: 900;
+  touch-action: manipulation;
 }
 .btn:hover{ filter: brightness(1.10); }
 .btn:active{ transform: translateY(1px) scale(.99); }
@@ -638,8 +668,10 @@ body::before{
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
+
+/* ✅ extend welcome box so title fits better */
 .modalCard{
-  width: min(560px, 92vw);
+  width: min(680px, 94vw); /* was 560px */
   border-radius: 20px;
   padding: 18px;
   background: rgba(0,0,0,.30);
@@ -704,7 +736,7 @@ body::before{
   50%{ transform: translate3d(18px,10px,0) scale(1.05); opacity:1; }
 }
 
-/* Welcome twinkles */
+/* ✅ Welcome twinkles: starburst style */
 .twinkleLayer{
   position: absolute;
   inset: 0;
@@ -717,33 +749,31 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,245,220,.95);
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-  box-shadow:
-    0 0 12px rgba(255,220,140,.34),
-    0 0 24px rgba(255,220,140,.18);
-  opacity: .15;
-  transform: translate(-50%,-50%) scale(.85);
+  border-radius: 999px;
+  transform: translate(-50%,-50%) scale(.9);
+  opacity: .12;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.98) 0%,
+                            rgba(255,244,210,.95) 10%,
+                            rgba(255,220,140,.70) 24%,
+                            rgba(255,200,90,.32) 42%,
+                            transparent 68%),
+    repeating-conic-gradient(from 0deg,
+      rgba(255,235,180,.55) 0 1.2deg,
+      transparent 1.2deg 9deg),
+    linear-gradient(90deg, transparent 0 46%, rgba(255,230,170,.42) 50%, transparent 54%),
+    linear-gradient(0deg,  transparent 0 46%, rgba(255,230,170,.42) 50%, transparent 54%);
+  box-shadow: 0 0 12px rgba(255,220,140,.22), 0 0 24px rgba(255,200,90,.14);
+  filter: blur(.12px);
   animation: twinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes twinkle{
-  0%,100%{ opacity:.18; transform: translate(-50%,-50%) scale(.80); filter: brightness(.9); }
-  50%{ opacity:1; transform: translate(-50%,-50%) scale(1.15); filter: brightness(1.25); }
+  0%,100%{ opacity:.12; transform: translate(-50%,-50%) scale(.85); filter: brightness(.95) blur(.12px); }
+  50%{ opacity:1; transform: translate(-50%,-50%) scale(1.12); filter: brightness(1.25) blur(.12px); }
 }
 
-/* Sparkles */
+/* Sparkles (keep star shape) */
 .sparkles{ position:absolute; inset:0; pointer-events:none; z-index: 1; }
 .sparkle{
   position:absolute;
@@ -751,33 +781,28 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,255,255,.92);
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-  box-shadow: 0 0 14px rgba(255,255,255,.30);
-  opacity: .0;
+  border-radius: 999px;
   transform: translate(-50%,-50%) scale(.9);
+  opacity: .0;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.98) 0%,
+                            rgba(255,244,210,.90) 12%,
+                            rgba(255,220,140,.55) 28%,
+                            transparent 66%),
+    repeating-conic-gradient(from 0deg, rgba(255,235,180,.50) 0 1.1deg, transparent 1.1deg 10deg);
+  box-shadow: 0 0 14px rgba(255,255,255,.22);
+  filter: blur(.10px);
   animation: sparklePop var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes sparklePop{
   0%{ transform: translate(-50%,-50%) scale(.55); opacity:0; }
   20%{ opacity:.95; }
-  50%{ transform: translate(-50%,-50%) scale(1.15); opacity:.7; }
+  50%{ transform: translate(-50%,-50%) scale(1.18); opacity:.7; }
   100%{ transform: translate(-50%,-50%) scale(.7); opacity:0; }
 }
 
-/* flags */
+/* ✅ Two lines of flaglets */
 .flagRow{ position: relative; z-index: 2; display: grid; gap: 8px; margin-bottom: 10px; }
 .flagString{
   height: 10px;
@@ -787,7 +812,16 @@ body::before{
   box-shadow: 0 10px 18px rgba(0,0,0,.18);
   opacity: .9;
 }
-.flags{ display:flex; justify-content:center; flex-wrap:wrap; gap: 8px; }
+.flagsWrap{
+  display: grid;
+  gap: 8px;
+}
+.flagsLine{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap: 8px;
+}
 .flag{
   width: 30px;
   height: 28px;
@@ -813,7 +847,7 @@ body::before{
   border-radius: 22px;
   padding: 16px 14px 14px;
   margin: 6px auto 10px;
-  width: min(580px, 100%);
+  width: min(620px, 100%);
   background: rgba(0,0,0,.22);
   border: 1px solid rgba(255,255,255,.16);
   box-shadow:
@@ -842,12 +876,12 @@ body::before{
   font-size: 12px;
 }
 
-/* ✅ Welcome title also Cinzel Decorative, one line */
+/* Welcome title also Cinzel Decorative */
 .neonTitle{
   margin: 6px 0 0;
   font-family: "Cinzel Decorative", serif;
   font-weight: 700;
-  font-size: clamp(22px, 4.0vw, 44px);
+  font-size: clamp(22px, 3.6vw, 44px);
   line-height: 1.05;
   letter-spacing: 1.0px;
   text-shadow: 0 18px 35px rgba(0,0,0,.55);
@@ -1146,7 +1180,7 @@ body::before{
   100%{ transform: translateX(-50%); }
 }
 
-/* END SCREEN */
+/* END SCREEN (keeps stars too) */
 .endCard{
   width: min(820px, 92vw);
   border-radius: 26px;
@@ -1186,30 +1220,26 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,255,255,.92);
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-  box-shadow:
-    0 0 12px rgba(255,255,255,.22),
-    0 0 24px rgba(255,220,140,.14);
-  opacity: .14;
+  border-radius: 999px;
   transform: translate(-50%,-50%) scale(.9);
+  opacity: .12;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.98) 0%,
+                            rgba(255,244,210,.95) 10%,
+                            rgba(255,220,140,.70) 24%,
+                            rgba(255,200,90,.32) 42%,
+                            transparent 68%),
+    repeating-conic-gradient(from 0deg, rgba(255,235,180,.55) 0 1.2deg, transparent 1.2deg 9deg),
+    linear-gradient(90deg, transparent 0 46%, rgba(255,230,170,.42) 50%, transparent 54%),
+    linear-gradient(0deg,  transparent 0 46%, rgba(255,230,170,.42) 50%, transparent 54%);
+  box-shadow: 0 0 12px rgba(255,255,255,.18), 0 0 26px rgba(255,220,140,.12);
+  filter: blur(.12px);
   animation: endTwinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes endTwinkle{
-  0%,100%{ opacity:.14; transform: translate(-50%,-50%) scale(.88); filter: brightness(.9); }
-  50%{ opacity:.95; transform: translate(-50%,-50%) scale(1.18); filter: brightness(1.25); }
+  0%,100%{ opacity:.12; transform: translate(-50%,-50%) scale(.86); filter: brightness(.95) blur(.12px); }
+  50%{ opacity:.95; transform: translate(-50%,-50%) scale(1.14); filter: brightness(1.25) blur(.12px); }
 }
 
 .endTop{
@@ -1243,7 +1273,7 @@ body::before{
   line-height: 1.4;
 }
 
-/* ✅ Prize grid centered strongly */
+/* Prize grid centered */
 .endGrid{
   width: min(720px, 100%);
   display: grid;
@@ -1280,7 +1310,7 @@ body::before{
 .endBtns{ display:flex; gap: 10px; flex-wrap: wrap; justify-content:center; margin-top: 10px; }
 .hiddenBtn{ display:none !important; }
 
-/* ✅ Center single “play again to collect prizes” card */
+/* Center single “play again” card */
 .endGrid.singleCenter{
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
@@ -1357,9 +1387,14 @@ body::before{
             <div class="twinkleLayer" id="twinkles" aria-hidden="true"></div>
             <div class="sparkles" id="sparkles" aria-hidden="true"></div>
 
+            <!-- ✅ two strings + two lines of flags -->
             <div class="flagRow" aria-hidden="true">
               <div class="flagString"></div>
-              <div class="flags" id="flags"></div>
+              <div class="flagsWrap">
+                <div class="flagsLine" id="flagsTop"></div>
+                <div class="flagsLine" id="flagsBottom"></div>
+              </div>
+              <div class="flagString"></div>
             </div>
 
             <div class="neonSign">
@@ -1461,11 +1496,9 @@ body::before{
           <div class="shopChip"><span class="k">Best:</span> <span id="endBest">0</span></div>
         </div>
 
-        <!-- ✅ Prizes always centered -->
         <div id="endToysGrid" class="endGrid"></div>
 
         <div class="endBtns">
-          <!-- ✅ Only shown on Better Luck Next Time -->
           <button id="endPlayAgainBtn" class="btn primary glowBtn hiddenBtn" type="button">Try again for a prize!</button>
           <button id="endBackToWelcomeBtn" class="btn primary glowBtn" type="button">End Game</button>
         </div>
@@ -1500,47 +1533,48 @@ body::before{
       <section class="stage">
         <aside class="leftPanel">
           <div class="panelTitle">Game Details</div>
-
-          <div class="hudGrid">
-            <div class="stat">
-              <div class="statLabel">Round</div>
-              <div class="statValue" id="roundEl">0</div>
-            </div>
-            <div class="stat">
-              <div class="statLabel">Tickets</div>
-              <div class="statValue" id="ticketsEl">0</div>
-            </div>
-            <div class="stat">
-              <div class="statLabel">Prizes</div>
-              <div class="statValue" id="prizesEl">0</div>
-            </div>
-            <div class="stat">
-              <div class="statLabel">Best</div>
-              <div class="statValue" id="bestEl">0</div>
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
-
-            <div class="bonusWrap">
-              <div class="bonusLabel">Bonus (each round)</div>
-              <div id="bonusBalloons" class="bonusBalloons"></div>
-            </div>
-
-            <div class="rows">
-              <div class="row">
-                <div class="rowLabel">Pattern length</div>
-                <div class="pips" id="patternSlots"></div>
+          <div class="leftPanelInner">
+            <div class="hudGrid">
+              <div class="stat">
+                <div class="statLabel">Round</div>
+                <div class="statValue" id="roundEl">0</div>
               </div>
-
-              <div class="row">
-                <div class="rowLabel">Your input</div>
-                <div class="pips" id="playerPips"></div>
+              <div class="stat">
+                <div class="statLabel">Tickets</div>
+                <div class="statValue" id="ticketsEl">0</div>
+              </div>
+              <div class="stat">
+                <div class="statLabel">Prizes</div>
+                <div class="statValue" id="prizesEl">0</div>
+              </div>
+              <div class="stat">
+                <div class="statLabel">Best</div>
+                <div class="statValue" id="bestEl">0</div>
               </div>
             </div>
 
-            <div class="hint">Tip: Memorize the sequence as numbers (1–10), then tap in the same order.</div>
+            <div class="panel">
+              <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
+
+              <div class="bonusWrap">
+                <div class="bonusLabel">Bonus (each round)</div>
+                <div id="bonusBalloons" class="bonusBalloons"></div>
+              </div>
+
+              <div class="rows">
+                <div class="row">
+                  <div class="rowLabel">Pattern length</div>
+                  <div class="pips" id="patternSlots"></div>
+                </div>
+
+                <div class="row">
+                  <div class="rowLabel">Your input</div>
+                  <div class="pips" id="playerPips"></div>
+                </div>
+              </div>
+
+              <div class="hint">Tip: Memorize the sequence as numbers (1–10), then tap in the same order.</div>
+            </div>
           </div>
         </aside>
 
@@ -1580,16 +1614,17 @@ body::before{
 
         <aside class="rightPanel">
           <div class="panelTitle">Prize Toys</div>
+          <div class="rightPanelInner">
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+              <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
+              <div class="shopChip"><span class="k">Tickets:</span> <span id="ticketsChip">0</span></div>
+            </div>
 
-          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
-            <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
-            <div class="shopChip"><span class="k">Tickets:</span> <span id="ticketsChip">0</span></div>
-          </div>
+            <div id="allToysGrid" class="allToysGrid"></div>
 
-          <div id="allToysGrid" class="allToysGrid"></div>
-
-          <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
-            Lose a run to open the Prize Shop.
+            <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
+              Lose a run to open the Prize Shop.
+            </div>
           </div>
         </aside>
       </section>
@@ -1628,7 +1663,8 @@ const els = {
 
   twinkles: document.getElementById("twinkles"),
   sparkles: document.getElementById("sparkles"),
-  flags: document.getElementById("flags"),
+  flagsTop: document.getElementById("flagsTop"),
+  flagsBottom: document.getElementById("flagsBottom"),
 
   welcomeModal: document.getElementById("welcomeModal"),
   welcomePage: document.getElementById("welcomePage"),
@@ -1730,7 +1766,7 @@ function shuffle(arr){
 }
 function setStatus(msg){ els.statusEl.textContent = msg; }
 
-/* ✅ Stars: slightly smaller sizing */
+/* ✅ Starburst builder (smaller but like uploaded) */
 function buildStars(){
   if (!els.stars) return;
   els.stars.innerHTML = "";
@@ -1738,11 +1774,11 @@ function buildStars(){
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "star";
-    const size = (5 + Math.random()*6).toFixed(2); // smaller than before
+    const size = (8 + Math.random()*12).toFixed(2);
     s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--s", `${size}px`);
-    s.style.setProperty("--t", `${(2.4 + Math.random()*3.4).toFixed(2)}s`);
+    s.style.setProperty("--t", `${(2.2 + Math.random()*3.8).toFixed(2)}s`);
     s.style.setProperty("--d", `${(-Math.random()*3.5).toFixed(2)}s`);
     els.stars.appendChild(s);
   }
@@ -1752,30 +1788,32 @@ function buildStars(){
 function buildEndTwinkles(){
   if (!els.endTwinkles) return;
   els.endTwinkles.innerHTML = "";
-  const n = 42;
+  const n = 44;
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "endTwStar";
-    const size = (5 + Math.random()*7).toFixed(2);
+    const size = (8 + Math.random()*12).toFixed(2);
     s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--s", `${size}px`);
-    s.style.setProperty("--t", `${(1.6 + Math.random()*2.2).toFixed(2)}s`);
+    s.style.setProperty("--t", `${(1.7 + Math.random()*2.6).toFixed(2)}s`);
     s.style.setProperty("--d", `${(-Math.random()*2.6).toFixed(2)}s`);
     els.endTwinkles.appendChild(s);
   }
 }
 
-/* Welcome decor */
+/* ✅ Two lines of flags */
 function buildFlags(){
-  els.flags.innerHTML = "";
+  els.flagsTop.innerHTML = "";
+  els.flagsBottom.innerHTML = "";
   const n = 34;
+  const half = Math.ceil(n/2);
   for (let i=0;i<n;i++){
     const f = document.createElement("div");
     f.className = "flag";
     f.style.setProperty("--h", String(Math.floor(Math.random()*360)));
     f.style.setProperty("--d", `${(-Math.random()*1.7).toFixed(2)}s`);
-    els.flags.appendChild(f);
+    (i < half ? els.flagsTop : els.flagsBottom).appendChild(f);
   }
 }
 function buildSparkles(){
@@ -1786,7 +1824,7 @@ function buildSparkles(){
     s.className = "sparkle";
     s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
-    s.style.setProperty("--s", `${(6 + Math.random()*6).toFixed(2)}px`);
+    s.style.setProperty("--s", `${(8 + Math.random()*10).toFixed(2)}px`);
     s.style.setProperty("--t", `${(1.8 + Math.random()*2.2).toFixed(2)}s`);
     s.style.setProperty("--d", `${(-Math.random()*2.5).toFixed(2)}s`);
     els.sparkles.appendChild(s);
@@ -1794,14 +1832,14 @@ function buildSparkles(){
 }
 function buildTwinkles(){
   els.twinkles.innerHTML = "";
-  const n = 40;
+  const n = 44;
   for (let i=0;i<n;i++){
     const d = document.createElement("div");
     d.className = "twStar";
     d.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
     d.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
-    d.style.setProperty("--s", `${(5 + Math.random()*7).toFixed(2)}px`);
-    d.style.setProperty("--t", `${(1.6 + Math.random()*1.8).toFixed(2)}s`);
+    d.style.setProperty("--s", `${(8 + Math.random()*12).toFixed(2)}px`);
+    d.style.setProperty("--t", `${(1.6 + Math.random()*2.0).toFixed(2)}s`);
     d.style.setProperty("--d", `${(-Math.random()*2.6).toFixed(2)}s`);
     els.twinkles.appendChild(d);
   }
@@ -2073,7 +2111,8 @@ function spawnTicketBonus(){
   btn.type = "button";
   btn.className = "bonusBtn bonusTicket";
   btn.innerHTML = `<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>`;
-  btn.addEventListener("click", () => {
+  btn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
     ensureAudio();
     if (!gameActive) return;
     tickets += 1;
@@ -2100,7 +2139,8 @@ function spawnSecondsBalloon(){
     </div>
     <div class="string" aria-hidden="true"></div>
   `;
-  btn.addEventListener("click", () => {
+  btn.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
     ensureAudio();
     if (!gameActive) return;
     addTimeBonus(bonusMs);
@@ -2137,17 +2177,17 @@ function randomColorIndex(){
   return idx;
 }
 
-/* Flash speed up at round 5+ */
+/* ✅ Round 5 should NOT become too fast */
 function getFlashTiming(){
-  let flashMs = clamp(520 - round * 28, 160, 520);
-  let gapMs   = clamp(120 - round * 5,  42, 120);
-  if (round >= 5){
-    flashMs = Math.max(120, Math.floor(flashMs * 0.72));
-    gapMs   = Math.max(30,  Math.floor(gapMs   * 0.72));
-  }
-  if (round >= 8){
-    flashMs = Math.max(95, Math.floor(flashMs * 0.82));
-    gapMs   = Math.max(24, Math.floor(gapMs   * 0.82));
+  // Slower curve and higher minimums
+  let flashMs = clamp(560 - round * 16, 240, 560);
+  let gapMs   = clamp(150 - round * 3,  70, 150);
+
+  // No sudden speed-up at round 5
+  // Slight gradual tightening only
+  if (round >= 9){
+    flashMs = Math.max(220, Math.floor(flashMs * 0.95));
+    gapMs   = Math.max(65,  Math.floor(gapMs   * 0.95));
   }
   return { flashMs, gapMs };
 }
@@ -2232,7 +2272,9 @@ function onPlayerPick(colorIndex){
   if (!gameActive || !isPlayerTurn || busy) return;
   ensureAudio();
   sfxColor(colorIndex, "tap");
-  flashSlice(colorIndex, 210);
+
+  // fire-and-forget flash (no delay before logic)
+  flashSlice(colorIndex, 180);
 
   player.push(colorIndex);
   renderPlayerPips();
@@ -2292,7 +2334,7 @@ async function startNewGame({ resetTickets }){
   await advanceRound();
 }
 
-/* Toys list */
+/* Toys list (compact cards) */
 function renderAllToys(){
   sortShopItems();
   els.allToysGrid.innerHTML = "";
@@ -2303,12 +2345,8 @@ function renderAllToys(){
     c.innerHTML = `
       <div class="toyMiniEmoji">${item.emoji}</div>
       <div class="toyMiniMid">
-        <div class="toyMiniName">${item.name}</div>
-        <div class="toyMiniDesc">${item.desc}</div>
-      </div>
-      <div class="toyMiniRight">
-        <div class="toyMiniCost">${item.cost} 🎟️</div>
-        ${owned ? `<span class="toyMiniOwned">Owned</span>` : ``}
+        <div class="toyMiniName">${item.name}${owned ? " ✅" : ""}</div>
+        <div class="toyMiniDesc">${item.cost} 🎟️ • ${item.desc}</div>
       </div>
     `;
     els.allToysGrid.appendChild(c);
@@ -2398,11 +2436,9 @@ function openEndCongrats(){
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
   }
 }
-function closeEndCongrats(){
-  els.endCongratsModal.classList.add("hidden");
-}
+function closeEndCongrats(){ els.endCongratsModal.classList.add("hidden"); }
 
-/* ✅ Try again button: return to the game */
+/* Try again button: return to the game */
 async function playAgainFromEnd(){
   closeEndCongrats();
   closeShop();
@@ -2501,7 +2537,8 @@ function renderShopItems(){
     btn.textContent = owned ? "Owned" : (tickets < item.cost ? "Need tickets" : "Buy");
     btn.disabled = owned || tickets < item.cost;
 
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("pointerdown", async (e) => {
+      e.preventDefault();
       ensureAudio();
       if (owned || tickets < item.cost) return;
 
@@ -2767,40 +2804,56 @@ function runConfetti(){
 }
 
 /* Events */
-els.welcomeNextBtn.addEventListener("click", () => {
+els.welcomeNextBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
   showInstructionsPage();
   const r = els.welcomeNextBtn.getBoundingClientRect();
   confettiBurst(r.left + r.width/2, r.top + r.height/2, 120, 4.6);
 });
-els.welcomeBackBtn.addEventListener("click", () => showWelcomePage());
+els.welcomeBackBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  showWelcomePage();
+});
 
-els.startBtn.addEventListener("click", async () => {
+els.startBtn.addEventListener("pointerdown", async (e) => {
+  e.preventDefault();
   if (!coinInserted) return;
   hideWelcome();
   await startNewGame({ resetTickets: true });
 });
 
-els.backToHomeBtn.addEventListener("click", () => {
+els.backToHomeBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
   closeShop();
   openEndCongrats();
 });
 
-els.endPlayAgainBtn.addEventListener("click", () => playAgainFromEnd());
+els.endPlayAgainBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  playAgainFromEnd();
+});
 
-els.endBackToWelcomeBtn.addEventListener("click", () => {
+els.endBackToWelcomeBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
   closeEndCongrats();
   goHomeEnd();
 });
 
-els.shopContinueBtn.addEventListener("click", () => continueFromShop());
+els.shopContinueBtn.addEventListener("pointerdown", (e) => {
+  e.preventDefault();
+  continueFromShop();
+});
+
 els.coin.addEventListener("pointerdown", onCoinPointerDown, { passive: false });
 
-els.wheelSvg.addEventListener("click", (e) => {
+/* ✅ Use pointerdown on wheel slices for instant selection (no click delay) */
+els.wheelSvg.addEventListener("pointerdown", (e) => {
   const target = e.target;
   if (!(target instanceof SVGPathElement)) return;
   if (!target.classList.contains("slice")) return;
+  e.preventDefault();
   onPlayerPick(Number(target.dataset.slice));
-});
+}, { passive: false });
 
 /* Init */
 function init(){
