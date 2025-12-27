@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&family=Lobster+Two:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -48,12 +48,7 @@ body::before{
   opacity: .42;
 }
 
-/* ========= PERF NOTE =========
-   Reduce the number + weight of animated layers so everything feels instant.
-   (Less DOM nodes, lighter shadows, fewer heavy filters)
-================================*/
-
-/* ✅ GAME background starbursts (like your uploaded image, but lighter count) */
+/* ===== Background starbursts (like uploaded image) ===== */
 #stars{
   position: fixed;
   inset: 0;
@@ -110,7 +105,7 @@ body::before{
   50%{ opacity:.82; transform: translate(-50%,-50%) scale(1.06); filter: brightness(1.18) blur(.10px); }
 }
 
-/* Background balloons (reduced rate/count) */
+/* Background balloons (clearer visuals, fewer heavy effects) */
 #balloons{
   position: fixed;
   inset: 0;
@@ -185,7 +180,7 @@ body::before{
   width: min(1440px, 98vw);
 }
 
-/* App: true full height so footer never overlaps stage */
+/* App layout */
 .app{
   width: 100%;
   height: calc(100vh - 8px);
@@ -195,7 +190,6 @@ body::before{
   gap: 8px;
 }
 
-/* Stage uses available height and leaves room for footer automatically */
 .stage{
   display: grid;
   grid-template-columns:
@@ -208,7 +202,7 @@ body::before{
   height: 100%;
 }
 
-/* Side panels scroll internally (no page scroll) */
+/* Side panels scroll internally */
 .leftPanel, .rightPanel{
   display: grid;
   gap: 10px;
@@ -225,7 +219,6 @@ body::before{
   border-radius: 14px;
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
-  backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
   text-align: center;
 }
@@ -246,11 +239,10 @@ body::before{
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
   width: min(900px, 100%);
 }
 
-/* Cinzel Decorative for title */
+/* Cinzel Decorative title */
 .centerTitle{
   font-family: "Cinzel Decorative", serif;
   font-weight: 700;
@@ -277,7 +269,6 @@ body::before{
   border-radius: 16px;
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
-  backdrop-filter: blur(10px);
   box-shadow: 0 10px 24px rgba(0,0,0,.18);
 }
 .statLabel{ font-size: 12px; color: var(--muted); font-weight: 800; }
@@ -289,7 +280,6 @@ body::before{
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
   min-height: 0;
 }
 .status{ font-weight: 800; font-size: 13px; line-height: 1.35; margin-bottom: 10px; }
@@ -328,7 +318,6 @@ body::before{
 .bonusBtn:active{ transform: translateY(0px) scale(1.00); }
 .bonusBtn.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* Circle balloon = +SECONDS */
 .bonusBalloonCircle{
   position: relative;
   width: 84px;
@@ -369,7 +358,6 @@ body::before{
 .bonusBalloonCircle .big{ font-size: 18px; letter-spacing: .2px; }
 .bonusBalloonCircle .small{ margin-top: 2px; font-size: 10px; letter-spacing: .9px; opacity: .92; }
 
-/* Ticket shape = +TICKET */
 .bonusTicket{
   position: relative;
   width: 118px;
@@ -412,7 +400,7 @@ body::before{
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
 }
 
-/* ✅ Wheel: bigger highlight, still fits and stays above footer (stage row handles it) */
+/* Wheel (no backdrop blur so balloons stay crisp) */
 .wheelWrap{
   position: relative;
   width: min(1260px, 84vh, 72vw);
@@ -423,7 +411,7 @@ body::before{
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
+  contain: layout paint;
 }
 .pointer{
   position: absolute;
@@ -451,17 +439,17 @@ body::before{
   width: 100%;
   height: 100%;
   display: block;
-  filter: drop-shadow(0 16px 18px rgba(0,0,0,.30));
+  filter: drop-shadow(0 14px 16px rgba(0,0,0,.26));
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ✅ Make slice interactions feel instant (no extra transition lag) */
+/* Instant feeling taps (no transition delay on click) */
 .slice{
   stroke: rgba(255,255,255,.22);
   stroke-width: 2;
   cursor: pointer;
-  transition: opacity 50ms linear, stroke-width 50ms linear;
+  transition: opacity 0ms linear, stroke-width 0ms linear;
   filter: none;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -478,13 +466,6 @@ body::before{
     drop-shadow(0 0 20px color-mix(in srgb, var(--glow) 60%, transparent));
 }
 .sliceDim{ opacity: .18; }
-
-@keyframes whiteBorderFlash{
-  0%{ opacity:1; stroke: rgba(255,255,255,.65); stroke-width:2; filter: drop-shadow(0 0 8px var(--glow)); }
-  40%{ opacity:1; stroke: rgba(255,255,255,1); stroke-width:12; filter: drop-shadow(0 0 18px var(--glow)) drop-shadow(0 0 26px var(--glow)); }
-  100%{ opacity:1; stroke: rgba(255,255,255,.65); stroke-width:2; filter: drop-shadow(0 0 8px var(--glow)); }
-}
-.slice.flash{ animation: whiteBorderFlash 260ms ease-in-out both; }
 
 /* Lights around wheel */
 .wheelLights{
@@ -527,7 +508,6 @@ body::before{
   background: rgba(0,0,0,.22);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: 0 16px 34px rgba(0,0,0,.32);
-  backdrop-filter: blur(10px);
   display: grid;
   place-items: center;
   gap: 6px;
@@ -548,7 +528,7 @@ body::before{
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
-/* ✅ Prize Toys beside wheel: ONE vertical column */
+/* Prize Toys list: one vertical column */
 .allToysGrid{
   display: grid;
   grid-template-columns: 1fr;
@@ -643,13 +623,10 @@ body::before{
   display: grid;
   place-items: center;
   background: rgba(0,0,0,.60);
-  backdrop-filter: blur(7px);
   padding: 18px;
 }
 .modal.hidden{ display: none; }
 .modal.show{ display: grid; }
-
-/* ✅ extend welcome box so title fits better */
 .modalCard{
   width: min(680px, 94vw);
   border-radius: 20px;
@@ -716,7 +693,7 @@ body::before{
   50%{ transform: translate3d(16px,10px,0) scale(1.05); opacity:1; }
 }
 
-/* ✅ Welcome twinkles: starburst style (lighter count) */
+/* Welcome twinkles */
 .twinkleLayer{
   position: absolute;
   inset: 0;
@@ -754,7 +731,7 @@ body::before{
   50%{ opacity:.88; transform: translate(-50%,-50%) scale(1.10); filter: brightness(1.18) blur(.12px); }
 }
 
-/* Sparkles (still stars, reduced) */
+/* Sparkles */
 .sparkles{ position:absolute; inset:0; pointer-events:none; z-index: 1; }
 .sparkle{
   position:absolute;
@@ -784,7 +761,7 @@ body::before{
   100%{ transform: translate(-50%,-50%) scale(.75); opacity:0; }
 }
 
-/* ✅ Flaglets: ONLY two lines */
+/* Flaglets: ONLY two rows */
 .flagRow{ position: relative; z-index: 2; display: grid; gap: 8px; margin-bottom: 10px; }
 .flagString{
   height: 10px;
@@ -815,7 +792,7 @@ body::before{
   50%{ transform: rotate(3deg) translateY(1px); }
 }
 
-/* neon sign */
+/* Neon sign */
 .neonSign{
   position: relative;
   z-index: 2;
@@ -851,7 +828,6 @@ body::before{
   font-size: 12px;
 }
 
-/* Welcome title also Cinzel Decorative */
 .neonTitle{
   margin: 6px 0 0;
   font-family: "Cinzel Decorative", serif;
@@ -871,7 +847,6 @@ body::before{
 .neonTitle .w2{ color: rgba(120,255,240,.95); text-shadow: 0 0 8px rgba(110,255,240,.28), 0 0 18px rgba(110,255,240,.16), 0 18px 35px rgba(0,0,0,.55); }
 .neonTitle .w3{ color: rgba(255,220,150,.95); text-shadow: 0 0 8px rgba(255,220,150,.22), 0 0 18px rgba(255,220,150,.12), 0 18px 35px rgba(0,0,0,.55); }
 
-/* welcome subtitle */
 .neonSub{
   margin: 10px auto 0;
   color: rgba(255,255,255,.90);
@@ -910,7 +885,6 @@ body::before{
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-3px); }
 }
-
 .welcomeCTA{
   display: flex;
   justify-content: center;
@@ -1075,7 +1049,6 @@ body::before{
   display: grid;
   place-items: center;
   background: rgba(0,0,0,.50);
-  backdrop-filter: blur(5px);
   padding: 18px;
 }
 .bigMsg.hidden{ display: none; }
@@ -1207,12 +1180,11 @@ body::before{
   justify-items: center;
 }
 
-/* ✅ End title base (no forced all-caps) */
+/* Titles (no forced all-caps) */
 .endTitle{
   margin: 0;
   font-size: clamp(30px, 4.2vw, 56px);
-  font-weight: 700;
-  letter-spacing: .4px;
+  letter-spacing: .2px;
   display: inline-flex;
   gap: 6px;
   flex-wrap: wrap;
@@ -1223,15 +1195,13 @@ body::before{
   color: var(--c, rgba(255,255,255,.95));
   text-shadow: 0 0 14px rgba(255,255,255,.18);
 }
-.endTitle.lucky{
+
+/* Better Luck + Congratulations both use Molle (as requested) */
+.endTitle.lucky,
+.endTitle.congrats{
   font-family: "Molle", cursive;
   font-weight: 400;
   letter-spacing: .2px;
-}
-.endTitle.congrats{
-  font-family: "Lobster Two", cursive;
-  font-weight: 700;
-  letter-spacing: .3px;
 }
 
 .endSub{
@@ -1242,19 +1212,16 @@ body::before{
   line-height: 1.4;
 }
 
-/* Prize grid centered */
+/* ✅ Prize toys centered (even last row) */
 .endGrid{
-  width: min(720px, 100%);
+  width: min(740px, 100%);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0,1fr));
-  gap: 10px;
+  gap: 12px;
   margin-top: 6px;
-  justify-items: center;
   justify-content: center;
+  justify-items: center;
   align-items: start;
-}
-@media (max-width: 700px){
-  .endGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  grid-template-columns: repeat(auto-fit, minmax(210px, 230px));
 }
 .endToy{
   border-radius: 18px;
@@ -1265,7 +1232,7 @@ body::before{
   display: grid;
   gap: 6px;
   justify-items: center;
-  width: min(220px, 100%);
+  width: 100%;
 }
 .endToy .e{ font-size: 44px; filter: drop-shadow(0 14px 18px rgba(0,0,0,.30)); }
 .endToy .n{ font-weight: 1000; font-size: 12px; line-height: 1.15; color: rgba(255,255,255,.92); }
@@ -1276,11 +1243,8 @@ body::before{
 
 /* Center single “play again” card */
 .endGrid.singleCenter{
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-}
-.endGrid.singleCenter .endToy{
-  width: min(380px, 92%);
+  grid-template-columns: minmax(220px, 420px);
+  justify-content: center;
 }
 
 /* Prize shop */
@@ -1323,13 +1287,23 @@ body::before{
 .shopCost{ font-weight: 1000; font-size: 13px; }
 .shopFooter{ margin-top: 12px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
-/* ✅ Footer never overlaps (separate grid row) */
+/* ✅ Footer aligned to the left column (Game Details side), still bottom */
 .footer{
   opacity: .9;
   font-size: 12px;
-  text-align: center;
   font-weight: 700;
   padding: 10px 0 6px;
+  display: grid;
+  grid-template-columns:
+    clamp(240px, 22vw, 330px)
+    1fr
+    clamp(240px, 22vw, 330px);
+  align-items: center;
+}
+.footer span{
+  grid-column: 1;
+  justify-self: start;
+  padding-left: 10px;
 }
   </style>
 </head>
@@ -1341,7 +1315,7 @@ body::before{
   <canvas id="confetti" aria-hidden="true"></canvas>
   <div id="fxLayer" aria-hidden="true"></div>
 
-  <!-- WELCOME MODAL (2 pages) -->
+  <!-- WELCOME MODAL -->
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
     <div class="modalCard">
 
@@ -1352,7 +1326,7 @@ body::before{
             <div class="twinkleLayer" id="twinkles" aria-hidden="true"></div>
             <div class="sparkles" id="sparkles" aria-hidden="true"></div>
 
-            <!-- ✅ two strings + exactly two lines of flags -->
+            <!-- two strings + exactly two lines of flags -->
             <div class="flagRow" aria-hidden="true">
               <div class="flagString"></div>
               <div class="flagsWrap">
@@ -1586,10 +1560,6 @@ body::before{
             </div>
 
             <div id="allToysGrid" class="allToysGrid"></div>
-
-            <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
-              Lose a run to open the Prize Shop.
-            </div>
           </div>
         </aside>
       </section>
@@ -1695,6 +1665,13 @@ const els = {
 let best = Number(localStorage.getItem("mcw_best_carnival") || "0");
 let prizesOwned = JSON.parse(localStorage.getItem("mcw_prizes_owned_carnival") || "[]");
 
+/* ✅ Prevent duplicates forever (so you can never buy same toy again) */
+function dedupePrizesOwned(){
+  prizesOwned = Array.from(new Set(prizesOwned)).filter(Boolean);
+  localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
+}
+dedupePrizesOwned();
+
 let segments = [];
 let rotationDeg = 0;
 let gameActive = false;
@@ -1732,10 +1709,10 @@ function shuffle(arr){
 }
 function setStatus(msg){ els.statusEl.textContent = msg; }
 
-/* ✅ Starburst builder (reduced count) */
+/* Background starbursts */
 function buildStars(){
   els.stars.innerHTML = "";
-  const n = 54; // reduced
+  const n = 54;
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "star";
@@ -1752,7 +1729,7 @@ function buildStars(){
 /* End twinkles */
 function buildEndTwinkles(){
   els.endTwinkles.innerHTML = "";
-  const n = 32; // reduced
+  const n = 32;
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "endTwStar";
@@ -1766,7 +1743,7 @@ function buildEndTwinkles(){
   }
 }
 
-/* ✅ Two lines of flags only */
+/* Two rows of flags only */
 function buildFlags(){
   els.flagsTop.innerHTML = "";
   els.flagsBottom.innerHTML = "";
@@ -1781,10 +1758,10 @@ function buildFlags(){
   }
 }
 
-/* Welcome sparkles (reduced) */
+/* Welcome sparkles */
 function buildSparkles(){
   els.sparkles.innerHTML = "";
-  const n = 16; // reduced
+  const n = 16;
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "sparkle";
@@ -1798,7 +1775,7 @@ function buildSparkles(){
 }
 function buildTwinkles(){
   els.twinkles.innerHTML = "";
-  const n = 30; // reduced
+  const n = 30;
   for (let i=0;i<n;i++){
     const d = document.createElement("div");
     d.className = "twStar";
@@ -1855,7 +1832,7 @@ function showInstructionsPage(){
   els.instructionsPage.classList.remove("hiddenPage");
 }
 
-/* Big message overlay with optional ticker */
+/* Big message overlay */
 async function showBigMessage({title, sub = "", ms = 900, tickerText = ""}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
@@ -1877,7 +1854,7 @@ async function showBigMessage({title, sub = "", ms = 900, tickerText = ""}){
   els.bigTicker.classList.remove("show");
 }
 
-/* Balloons (reduced spawn rate to avoid “laggy feel”) */
+/* Balloons */
 function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   const b = document.createElement("div");
   b.className = "balloon";
@@ -1896,12 +1873,12 @@ function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   setTimeout(() => { if (b.isConnected) b.remove(); }, (t * 1000) + 1200);
 }
 function spawnBackgroundBalloons(){
-  for (let i = 0; i < 14; i++) spawnOneBalloon({ durationS: 10 + Math.random() * 10 }); // reduced
+  for (let i = 0; i < 14; i++) spawnOneBalloon({ durationS: 10 + Math.random() * 10 });
   if (balloonInterval) clearInterval(balloonInterval);
   balloonInterval = setInterval(() => {
     spawnOneBalloon();
     if (Math.random() < 0.18) spawnOneBalloon();
-  }, 1450); // slower
+  }, 1450);
 }
 
 /* Wheel lights */
@@ -1969,7 +1946,7 @@ function setSlicesDim(dim){
   els.wheelSvg.querySelectorAll(".slice").forEach(n => n.classList.toggle("sliceDim", dim));
 }
 
-/* Sounds per color */
+/* Sounds */
 const COLOR_TONES = [262, 294, 330, 349, 392, 440, 494, 523, 587, 659];
 const COLOR_WAVES = ["sine","triangle","sine","triangle","sine","triangle","sine","triangle","sine","triangle"];
 function sfxColor(index, kind="tap"){
@@ -1984,23 +1961,39 @@ function sfxColor(index, kind="tap"){
   tone(base * 2, t + 0.015, dur * 0.7, "sine", g * 0.55);
 }
 
-/* ✅ Shorter flash so taps feel instant */
-async function flashSlice(sliceIndex, ms){
+/* ✅ Instant flash (no CSS animation delays) */
+function flashSliceNow(sliceIndex, ms){
   const node = els.wheelSvg.querySelector(`.slice[data-slice="${sliceIndex}"]`);
-  if (!node) return wait(ms);
-  node.style.setProperty("--glow", segments[sliceIndex].color);
-  node.classList.add("flash");
+  if (!node) return;
+  const glow = segments[sliceIndex]?.color || "#fff";
+
+  // cancel previous flash on this node
+  if (node._flashTO) clearTimeout(node._flashTO);
+
+  node.style.stroke = "rgba(255,255,255,1)";
+  node.style.strokeWidth = "12";
+  node.style.filter =
+    `drop-shadow(0 0 14px ${glow}) drop-shadow(0 0 22px ${glow})`;
+
+  node._flashTO = setTimeout(() => {
+    node.style.stroke = "";
+    node.style.strokeWidth = "";
+    node.style.filter = "";
+    node._flashTO = null;
+  }, ms);
+}
+async function flashSliceAsync(sliceIndex, ms){
+  flashSliceNow(sliceIndex, ms);
   sfxColor(sliceIndex, "flash");
   await wait(ms);
-  node.classList.remove("flash");
 }
 
-/* Spin */
+/* Spin (smoother transform, avoid jank) */
 function spinOnce(durationMs){
   return new Promise((resolve) => {
     rotationDeg += 1800 + Math.random() * 2400;
     els.rotator.style.transition = `transform ${durationMs}ms cubic-bezier(.18,.88,.1,1)`;
-    els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+    els.rotator.style.transform = `rotate(${rotationDeg}deg) translateZ(0)`;
     const onEnd = (ev) => {
       if (ev.propertyName !== "transform") return;
       els.rotator.removeEventListener("transitionend", onEnd);
@@ -2034,7 +2027,7 @@ function addTimeBonus(ms){
   }
 }
 
-/* ✅ Timer updates only when text changes (reduces “laggy” reflow) */
+/* Timer updates only when text changes */
 function startTimer(){
   stopTimer();
   const base = 2400;
@@ -2153,7 +2146,7 @@ function randomColorIndex(){
   return idx;
 }
 
-/* ✅ Round 5 should NOT suddenly get too fast */
+/* Round speed (round 5 not too fast) */
 function getFlashTiming(){
   let flashMs = clamp(560 - round * 16, 260, 560);
   let gapMs   = clamp(150 - round * 3,  75, 150);
@@ -2170,7 +2163,7 @@ async function showSequence(){
   const { flashMs, gapMs } = getFlashTiming();
   for (const s of sequence){
     await wait(gapMs);
-    await flashSlice(s, flashMs);
+    await flashSliceAsync(s, flashMs);
   }
   setSlicesDim(false);
 }
@@ -2240,14 +2233,14 @@ async function loseGame(reason){
   openShop();
 }
 
-/* Player input (pointerdown = instant) */
+/* Player input (instant) */
 function onPlayerPick(colorIndex){
   if (!gameActive || !isPlayerTurn || busy) return;
   ensureAudio();
   sfxColor(colorIndex, "tap");
 
-  // instant visual feedback (don't await)
-  flashSlice(colorIndex, 140);
+  // instant visual feedback
+  flashSliceNow(colorIndex, 140);
 
   player.push(colorIndex);
   renderPlayerPips();
@@ -2286,7 +2279,7 @@ async function startNewGame({ resetTickets }){
   renderWheel();
 
   rotationDeg = 0;
-  els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+  els.rotator.style.transform = `rotate(${rotationDeg}deg) translateZ(0)`;
 
   round = 0;
   sequence = [];
@@ -2310,6 +2303,7 @@ async function startNewGame({ resetTickets }){
 /* Toys list */
 function renderAllToys(){
   sortShopItems();
+  dedupePrizesOwned();
   els.allToysGrid.innerHTML = "";
   for (const item of SHOP_ITEMS){
     const owned = prizesOwned.includes(item.id);
@@ -2328,6 +2322,7 @@ function renderAllToys(){
 
 /* Shop */
 function openShop(){
+  dedupePrizesOwned();
   els.shopTickets.textContent = String(tickets);
   els.prizeCount.textContent = String(prizesOwned.length);
   els.shopBest.textContent = String(best);
@@ -2354,6 +2349,8 @@ function goHomeEnd(){
 
 /* End Screen */
 function openEndCongrats(){
+  dedupePrizesOwned();
+
   els.endTickets.textContent = String(tickets);
   els.endPrizeCount.textContent = String(prizesOwned.length);
   els.endBest.textContent = String(best);
@@ -2366,22 +2363,14 @@ function openEndCongrats(){
 
   if (ownedItems.length){
     els.endTitle.className = "endTitle congrats";
-    // Lobster Two + “Congrats” (not forced caps)
+    // ✅ Molle + “Congratulations!”
     els.endTitle.innerHTML = `
-      <span style="--c: rgba(255,120,220,.95)">C</span>
-      <span style="--c: rgba(120,255,240,.95)">o</span>
-      <span style="--c: rgba(255,220,150,.95)">n</span>
-      <span style="--c: rgba(170,255,120,.95)">g</span>
-      <span style="--c: rgba(140,200,255,.95)">r</span>
-      <span style="--c: rgba(255,160,80,.95)">a</span>
-      <span style="--c: rgba(200,120,255,.95)">t</span>
-      <span style="--c: rgba(255,110,220,.95)">s</span>
+      <span style="--c: rgba(255,120,220,.95)">Congratulations!</span>
     `;
     els.endSub.textContent = "Here are the prizes you collected 🎉";
     els.endPlayAgainBtn.classList.add("hiddenBtn");
   } else {
     els.endTitle.className = "endTitle lucky";
-    // Molle + “Better Luck Next Time!” exactly like that (not all caps)
     els.endTitle.innerHTML = `
       <span style="--c: rgba(255,120,220,.95)">Better</span>
       <span style="--c: rgba(120,255,240,.95)">Luck</span>
@@ -2485,6 +2474,7 @@ function animatePrizeFly({ fromRect, toRect, emoji }){
 
 function renderShopItems(){
   sortShopItems();
+  dedupePrizesOwned();
   els.shopItems.innerHTML = "";
 
   for (const item of SHOP_ITEMS){
@@ -2511,17 +2501,23 @@ function renderShopItems(){
     const btn = document.createElement("button");
     btn.className = "btn primary";
     btn.type = "button";
+
+    // ✅ owned is always locked
     btn.textContent = owned ? "Owned" : (tickets < item.cost ? "Need tickets" : "Buy");
     btn.disabled = owned || tickets < item.cost;
 
     btn.addEventListener("pointerdown", async (e) => {
       e.preventDefault();
       ensureAudio();
-      if (owned || tickets < item.cost) return;
+      dedupePrizesOwned();
+
+      // hard guard against duplicates
+      if (prizesOwned.includes(item.id)) return;
+      if (tickets < item.cost) return;
 
       tickets -= item.cost;
       prizesOwned.push(item.id);
-      localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
+      dedupePrizesOwned();
       sfxBell();
 
       updateHUD();
@@ -2562,7 +2558,7 @@ function updateHUD(){
   renderAllToys();
 }
 
-/* Sounds base */
+/* Audio */
 function ensureAudio(){
   if (!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -2823,7 +2819,7 @@ els.shopContinueBtn.addEventListener("pointerdown", (e) => {
 
 els.coin.addEventListener("pointerdown", onCoinPointerDown, { passive: false });
 
-/* ✅ Use pointerdown on wheel slices for instant selection */
+/* Wheel slice tapping */
 els.wheelSvg.addEventListener("pointerdown", (e) => {
   const target = e.target;
   if (!(target instanceof SVGPathElement)) return;
