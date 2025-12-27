@@ -47,6 +47,32 @@ body::before{
   opacity: .52;
 }
 
+/* ============== */
+/* ✅ CHANGE #7: Tiny star border utility for boxes */
+/* ============== */
+.starBorder{ position: relative; }
+.starBorder::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events:none;
+  padding: 2px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.92) 0 1.2px, transparent 1.6px) 0 0/14px 14px repeat,
+    radial-gradient(circle, rgba(170,240,255,.55) 0 1px, transparent 1.4px) 7px 7px/18px 18px repeat;
+
+  /* mask the pattern so it only shows on the border area */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  opacity: .62;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,.18));
+}
+
 /* ✅ Medium twinkling stars in GAME background */
 #stars{
   position: fixed;
@@ -55,19 +81,31 @@ body::before{
   overflow: hidden;
   z-index: 0;
 }
+/* ✅ CHANGE #6: stars are tiny star-shapes (not circles) */
 .star{
   position: absolute;
   left: var(--x);
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  border-radius: 999px;
-  background: rgba(255,255,255,.92);
+  background: rgba(255,255,255,.95);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 92%,
+    50% 72%,
+    21% 92%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
   box-shadow:
-    0 0 10px rgba(255,255,255,.38),
-    0 0 26px rgba(140,220,255,.16);
+    0 0 10px rgba(255,255,255,.32),
+    0 0 26px rgba(140,220,255,.14);
   opacity: .18;
-  transform: translate(-50%,-50%) scale(.9);
+  transform: translate(-50%,-50%) scale(.95);
   animation: starTwinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
@@ -75,12 +113,12 @@ body::before{
   content:"";
   position:absolute;
   inset:-10px;
-  background: radial-gradient(circle, rgba(255,255,255,.12), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
   border-radius: 999px;
 }
 @keyframes starTwinkle{
-  0%,100%{ opacity:.18; transform: translate(-50%,-50%) scale(.85); filter: brightness(.9); }
-  50%{ opacity:.95; transform: translate(-50%,-50%) scale(1.12); filter: brightness(1.25); }
+  0%,100%{ opacity:.18; transform: translate(-50%,-50%) scale(.88); filter: brightness(.9); }
+  50%{ opacity:.95; transform: translate(-50%,-50%) scale(1.14); filter: brightness(1.25); }
 }
 
 /* Background balloons */
@@ -188,6 +226,8 @@ body::before{
   border: 1px solid rgba(255,255,255,.14);
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  /* ✅ CHANGE #3: center the "Prize Toys" label (and others) */
+  text-align: center;
 }
 
 .centerCol{ display: grid; gap: 10px; justify-items: center; min-height: 0; }
@@ -672,25 +712,37 @@ body::before{
   pointer-events: none;
   z-index: 1;
 }
+/* ✅ CHANGE #6: welcome twinkles are small star-shapes too */
 .twDot{
   position: absolute;
   left: var(--x);
   top: var(--y);
   width: 7px;
   height: 7px;
-  border-radius: 999px;
   background: rgba(255,235,200,.95);
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 92%,
+    50% 72%,
+    21% 92%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
   box-shadow:
-    0 0 10px rgba(255,220,140,.40),
-    0 0 22px rgba(255,220,140,.22);
+    0 0 10px rgba(255,220,140,.32),
+    0 0 22px rgba(255,220,140,.18);
   opacity: .15;
-  transform: scale(.85);
+  transform: scale(.9);
   animation: twinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes twinkle{
-  0%,100%{ opacity:.18; transform: scale(.78); filter: brightness(.9); }
-  50%{ opacity:1; transform: scale(1.12); filter: brightness(1.25); }
+  0%,100%{ opacity:.18; transform: scale(.82); filter: brightness(.9); }
+  50%{ opacity:1; transform: scale(1.18); filter: brightness(1.25); }
 }
 
 /* sparkles */
@@ -1139,6 +1191,8 @@ body::before{
 }
 .endTitle .pink{ color: rgba(255,120,220,.95); text-shadow: 0 0 16px rgba(255,120,220,.28); }
 .endTitle .gold{ color: rgba(255,220,150,.95); text-shadow: 0 0 16px rgba(255,220,150,.22); }
+.endTitle .ice { color: rgba(130,245,255,.95); text-shadow: 0 0 16px rgba(130,245,255,.22); }
+
 .endSub{
   margin: 0;
   color: rgba(255,255,255,.88);
@@ -1249,12 +1303,14 @@ body::before{
 
   <!-- WELCOME MODAL (2 pages) -->
   <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
-    <div class="modalCard">
+    <!-- ✅ CHANGE #7: star border on welcome modal card -->
+    <div class="modalCard starBorder">
 
       <!-- PAGE 1: Night Market Welcome -->
       <div id="welcomePage">
         <div class="welcomeWrap">
-          <div class="nmHero">
+          <!-- ✅ CHANGE #7: star border on nmHero -->
+          <div class="nmHero starBorder">
             <div class="twinkleLayer" id="twinkles" aria-hidden="true"></div>
             <div class="sparkles" id="sparkles" aria-hidden="true"></div>
 
@@ -1266,16 +1322,14 @@ body::before{
             <div class="neonSign">
               <div class="neonKicker">NIGHT MARKET GAME</div>
 
-              <!-- ✅ title words different colors -->
               <h2 class="neonTitle">
                 <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
               </h2>
 
-              <!-- ✅ subtitle now Oleo Script -->
-              <p class="neonSub">Spin the wheel, watch the flashing colors, repeat the sequence, and collect tickets for prizes 🎟️</p>
+              <!-- ✅ CHANGE #5: subtitle one line -->
+              <p class="neonSub oneLine">Spin the wheel, watch the flashing colors, repeat the sequence, and collect tickets for prizes 🎟️</p>
 
               <div class="nmIcons" aria-hidden="true">
-                <!-- ✅ removed “Night Market Lights” chip -->
                 <div class="nmChip">🧸 Prizes</div>
                 <div class="nmChip">🎈 Bonus</div>
                 <div class="nmChip">🎡 Spin</div>
@@ -1294,7 +1348,8 @@ body::before{
         <h2 class="modalTitle oneLine">How to Play</h2>
         <p class="modalSub oneLine">Color Memory Wheel</p>
 
-        <div class="modalSection" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
+        <!-- ✅ CHANGE #7: star border on instruction box -->
+        <div class="modalSection starBorder" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
           <h3 class="modalH" style="text-align:center; margin:0 0 8px 0; font-size:13px; color:rgba(255,255,255,.9); font-weight:900;">Instructions</h3>
           <ol class="modalList" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82); line-height:1.45; font-weight:600;">
             <li>Drag the <b>10 NTD coin</b> into the coin slot.</li>
@@ -1306,7 +1361,8 @@ body::before{
           </ol>
         </div>
 
-        <div class="coinArea">
+        <!-- ✅ CHANGE #7: star border on coin area -->
+        <div class="coinArea starBorder">
           <div class="coinHint">Insert Coin (drag into the slot)</div>
           <div class="coinRow">
             <div id="coinSlot" class="coinSlot" aria-hidden="true">
@@ -1337,7 +1393,8 @@ body::before{
 
   <!-- BIG MESSAGE OVERLAY -->
   <div id="bigMsg" class="bigMsg hidden" aria-hidden="true">
-    <div class="bigMsgInner">
+    <!-- ✅ CHANGE #7: star border on Round overlay -->
+    <div class="bigMsgInner starBorder">
       <div id="bigTitle" class="bigTitle">...</div>
       <div id="bigSub" class="bigSub">...</div>
 
@@ -1350,11 +1407,14 @@ body::before{
     </div>
   </div>
 
-  <!-- ✅ END CONGRATS (ONLY when user ends) -->
+  <!-- ✅ END SCREEN (ALWAYS shows when user ends) -->
   <div id="endCongratsModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="endCard">
+    <!-- ✅ CHANGE #7: star border on congrats/end card -->
+    <div class="endCard starBorder">
       <div class="endTop">
-        <h2 class="endTitle"><span class="pink">CONGRATS</span> <span class="gold">WINNER!</span></h2>
+        <!-- ✅ CHANGE #2: remove "WINNER!", title will be set in JS -->
+        <h2 id="endTitle" class="endTitle"><span class="pink">CONGRATS</span></h2>
+
         <p id="endSub" class="endSub">You collected prizes!</p>
 
         <div class="endChips">
@@ -1365,6 +1425,7 @@ body::before{
 
         <div id="endToysGrid" class="endGrid"></div>
 
+        <!-- ✅ CHANGE #1: no continue button here (only back to welcome) -->
         <div class="endBtns">
           <button id="endBackToWelcomeBtn" class="btn primary glowBtn" type="button">Back to Welcome</button>
         </div>
@@ -1374,7 +1435,8 @@ body::before{
 
   <!-- PRIZE SHOP MODAL -->
   <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modalCard wide">
+    <!-- ✅ CHANGE #7: star border on shop card -->
+    <div class="modalCard wide starBorder">
       <h2 class="modalTitle">Prize Shop</h2>
       <p class="modalSub oneLine">Spend tickets on toys — or continue playing.</p>
 
@@ -1398,28 +1460,29 @@ body::before{
     <main class="app">
       <section class="stage">
         <aside class="leftPanel">
-          <div class="panelTitle">Game Details</div>
+          <!-- ✅ CHANGE #7: star border on panels -->
+          <div class="panelTitle starBorder">Game Details</div>
 
           <div class="hudGrid">
-            <div class="stat">
+            <div class="stat starBorder">
               <div class="statLabel">Round</div>
               <div class="statValue" id="roundEl">0</div>
             </div>
-            <div class="stat">
+            <div class="stat starBorder">
               <div class="statLabel">Tickets</div>
               <div class="statValue" id="ticketsEl">0</div>
             </div>
-            <div class="stat">
+            <div class="stat starBorder">
               <div class="statLabel">Prizes</div>
               <div class="statValue" id="prizesEl">0</div>
             </div>
-            <div class="stat">
+            <div class="stat starBorder">
               <div class="statLabel">Best</div>
               <div class="statValue" id="bestEl">0</div>
             </div>
           </div>
 
-          <div class="panel">
+          <div class="panel starBorder">
             <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
 
             <div class="bonusWrap">
@@ -1444,15 +1507,14 @@ body::before{
         </aside>
 
         <section class="centerCol">
-          <div class="centerHeader">
-            <!-- ✅ title words different colors -->
+          <div class="centerHeader starBorder">
             <div class="centerTitle titleWords">
               <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
             </div>
             <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
           </div>
 
-          <div class="wheelWrap">
+          <div class="wheelWrap starBorder">
             <div class="pointer" aria-hidden="true"></div>
             <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
 
@@ -1461,7 +1523,7 @@ body::before{
             </div>
 
             <div class="centerOverlay" aria-hidden="true">
-              <div class="centerGlass">
+              <div class="centerGlass starBorder">
                 <svg class="hg" viewBox="0 0 100 100">
                   <defs>
                     <clipPath id="topClip"><rect id="topRect" x="25" y="10" width="50" height="40"></rect></clipPath>
@@ -1479,7 +1541,7 @@ body::before{
         </section>
 
         <aside class="rightPanel">
-          <div class="panelTitle">Prize Toys</div>
+          <div class="panelTitle starBorder">Prize Toys</div>
 
           <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
             <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
@@ -1488,7 +1550,7 @@ body::before{
 
           <div id="allToysGrid" class="allToysGrid"></div>
 
-          <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
+          <div class="hint starBorder" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
             Lose a run to open the Prize Shop.
           </div>
         </aside>
@@ -1550,6 +1612,7 @@ const els = {
   bigTickerTrack: document.getElementById("bigTickerTrack"),
 
   endCongratsModal: document.getElementById("endCongratsModal"),
+  endTitle: document.getElementById("endTitle"),
   endSub: document.getElementById("endSub"),
   endTickets: document.getElementById("endTickets"),
   endPrizeCount: document.getElementById("endPrizeCount"),
@@ -1631,15 +1694,15 @@ function setStatus(msg){ els.statusEl.textContent = msg; }
 function buildStars(){
   if (!els.stars) return;
   els.stars.innerHTML = "";
-  const n = 70; // medium amount
+  const n = 90; // a bit more, but tiny
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "star";
-    const size = (3 + Math.random()*5).toFixed(2); // medium size
+    const size = (2 + Math.random()*3).toFixed(2); // ✅ CHANGE #6: smaller stars
     s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--s", `${size}px`);
-    s.style.setProperty("--t", `${(2.4 + Math.random()*3.4).toFixed(2)}s`);
+    s.style.setProperty("--t", `${(2.0 + Math.random()*3.2).toFixed(2)}s`);
     s.style.setProperty("--d", `${(-Math.random()*3.5).toFixed(2)}s`);
     els.stars.appendChild(s);
   }
@@ -1672,7 +1735,7 @@ function buildSparkles(){
 }
 function buildTwinkles(){
   els.twinkles.innerHTML = "";
-  const n = 28;
+  const n = 30;
   for (let i=0;i<n;i++){
     const d = document.createElement("div");
     d.className = "twDot";
@@ -1855,7 +1918,7 @@ function sfxColor(index, kind="tap"){
 }
 
 async function flashSlice(sliceIndex, ms){
-  const node = els.wheelSvg.querySelector(`.slice[data-slice="${sliceIndex}"]`);
+  const node = els.wheelSvg.querySelector(\`.slice[data-slice="\${sliceIndex}"]\`);
   if (!node) return wait(ms);
   node.style.setProperty("--glow", segments[sliceIndex].color);
   node.classList.add("flash");
@@ -1868,8 +1931,8 @@ async function flashSlice(sliceIndex, ms){
 function spinOnce(durationMs){
   return new Promise((resolve) => {
     rotationDeg += 1800 + Math.random() * 2400;
-    els.rotator.style.transition = `transform ${durationMs}ms cubic-bezier(.18,.88,.1,1)`;
-    els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+    els.rotator.style.transition = \`transform \${durationMs}ms cubic-bezier(.18,.88,.1,1)\`;
+    els.rotator.style.transform = \`rotate(\${rotationDeg}deg)\`;
     const onEnd = (ev) => {
       if (ev.propertyName !== "transform") return;
       els.rotator.removeEventListener("transitionend", onEnd);
@@ -1914,7 +1977,7 @@ function startTimer(){
     const remaining = Math.max(0, timerTotal - elapsed);
     const frac = remaining / timerTotal;
     setHourglass(frac);
-    els.timerText.textContent = `${(remaining / 1000).toFixed(1)}s`;
+    els.timerText.textContent = \`\${(remaining / 1000).toFixed(1)}s\`;
     if (remaining <= 0){ loseGame("TIME UP"); return; }
     rafId = requestAnimationFrame(tick);
   };
@@ -1947,7 +2010,7 @@ function spawnTicketBonus(){
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "bonusBtn bonusTicket";
-  btn.innerHTML = `<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>`;
+  btn.innerHTML = \`<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>\`;
   btn.addEventListener("click", () => {
     ensureAudio();
     if (!gameActive) return;
@@ -1967,15 +2030,15 @@ function spawnSecondsBalloon(){
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "bonusBtn bonusBalloonCircle";
-  btn.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
+  btn.style.setProperty("--h", \`\${Math.floor(Math.random() * 360)}\`);
   const bonusMs = 2500; // +2.5 seconds
-  btn.innerHTML = `
+  btn.innerHTML = \`
     <div>
       <div class="big">+2.5s</div>
       <div class="small">TIME</div>
     </div>
     <div class="string" aria-hidden="true"></div>
-  `;
+  \`;
   btn.addEventListener("click", () => {
     ensureAudio();
     if (!gameActive) return;
@@ -2051,7 +2114,7 @@ async function playRound(){
   renderSlots(sequence.length);
   expected = [...sequence];
 
-  setStatus(`Round ${round}: spinning...`);
+  setStatus(\`Round \${round}: spinning...\`);
   await spinOnce(Math.min(6500, 3300 + round * 180));
 
   setStatus("Watch the pattern.");
@@ -2074,9 +2137,9 @@ async function advanceRound(){
   spawnRoundBonus();
 
   if (round >= 2){
-    const ticker = `🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸  ➜  PROCEEDING TO ROUND ${round}  ➜  GET READY!  🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸`;
+    const ticker = \`🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸  ➜  PROCEEDING TO ROUND \${round}  ➜  GET READY!  🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸\`;
     await showBigMessage({
-      title: `ROUND ${round}`,
+      title: \`ROUND \${round}\`,
       sub: "Proceeding...",
       ms: 1800,
       tickerText: ticker
@@ -2103,7 +2166,7 @@ async function loseGame(reason){
   updateHUD();
 
   sfxBuzzer();
-  await showBigMessage({ title: "GAME OVER!", sub: `Reason: ${reason}`, ms: 1000, tickerText: "" });
+  await showBigMessage({ title: "GAME OVER!", sub: \`Reason: \${reason}\`, ms: 1000, tickerText: "" });
 
   if (newBest){
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.2);
@@ -2158,7 +2221,7 @@ async function startNewGame({ resetTickets }){
   renderWheel();
 
   rotationDeg = 0;
-  els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+  els.rotator.style.transform = \`rotate(\${rotationDeg}deg)\`;
 
   round = 0;
   sequence = [];
@@ -2189,17 +2252,17 @@ function renderAllToys(){
 
     const c = document.createElement("div");
     c.className = "toyMini";
-    c.innerHTML = `
-      <div class="toyMiniEmoji">${item.emoji}</div>
+    c.innerHTML = \`
+      <div class="toyMiniEmoji">\${item.emoji}</div>
       <div class="toyMiniMid">
-        <div class="toyMiniName">${item.name}</div>
-        <div class="toyMiniDesc">${item.desc}</div>
+        <div class="toyMiniName">\${item.name}</div>
+        <div class="toyMiniDesc">\${item.desc}</div>
       </div>
       <div class="toyMiniRight">
-        <div class="toyMiniCost">${item.cost} 🎟️</div>
-        ${owned ? `<span class="toyMiniOwned">Owned</span>` : ``}
+        <div class="toyMiniCost">\${item.cost} 🎟️</div>
+        \${owned ? \`<span class="toyMiniOwned">Owned</span>\` : \`\`}
       </div>
-    `;
+    \`;
     els.allToysGrid.appendChild(c);
   }
 }
@@ -2230,7 +2293,7 @@ function goHomeEnd(){
   resetCoinUI();
 }
 
-/* ✅ End Congrats: show ONLY when ending */
+/* ✅ CHANGE #4: End screen ALWAYS shows. If no toy -> Better Luck Next Time */
 function openEndCongrats(){
   els.endTickets.textContent = String(tickets);
   els.endPrizeCount.textContent = String(prizesOwned.length);
@@ -2240,23 +2303,32 @@ function openEndCongrats(){
     .map(id => SHOP_ITEMS.find(x => x.id === id))
     .filter(Boolean);
 
-  els.endSub.textContent =
-    ownedItems.length
-      ? "Here are the prizes you collected 🎉"
-      : "Thanks for playing!";
+  if (ownedItems.length){
+    els.endTitle.innerHTML = \`<span class="pink">CONGRATS</span>\`;
+    els.endSub.textContent = "Here are the prizes you collected 🎉";
+  } else {
+    els.endTitle.innerHTML = \`<span class="ice">BETTER LUCK</span> <span class="gold">NEXT TIME</span>\`;
+    els.endSub.textContent = "No prizes this time — try again and win some toys! ✨";
+  }
 
   els.endToysGrid.innerHTML = "";
   if (ownedItems.length){
     for (const it of ownedItems){
       const c = document.createElement("div");
       c.className = "endToy";
-      c.innerHTML = `<div class="e">${it.emoji}</div><div class="n">${it.name}</div>`;
+      c.innerHTML = \`<div class="e">\${it.emoji}</div><div class="n">\${it.name}</div>\`;
       els.endToysGrid.appendChild(c);
     }
+    confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
+  } else {
+    const c = document.createElement("div");
+    c.className = "endToy";
+    c.innerHTML = \`<div class="e">😅</div><div class="n">No prizes collected</div>\`;
+    els.endToysGrid.appendChild(c);
+    confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 80, 3.2);
   }
 
   els.endCongratsModal.classList.remove("hidden");
-  confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
 }
 function closeEndCongrats(){
   els.endCongratsModal.classList.add("hidden");
@@ -2273,8 +2345,8 @@ function animatePrizeFly({ fromRect, toRect, emoji }){
   const el = document.createElement("div");
   el.textContent = emoji;
   el.style.position = "fixed";
-  el.style.left = `${fromRect.left + fromRect.width/2}px`;
-  el.style.top = `${fromRect.top + fromRect.height/2}px`;
+  el.style.left = \`\${fromRect.left + fromRect.width/2}px\`;
+  el.style.top = \`\${fromRect.top + fromRect.height/2}px\`;
   el.style.transform = "translate(-50%,-50%) scale(1)";
   el.style.fontSize = "40px";
   el.style.filter = "drop-shadow(0 14px 18px rgba(0,0,0,.35))";
@@ -2306,10 +2378,10 @@ function animatePrizeFly({ fromRect, toRect, emoji }){
     const e = easeOutCubic(t);
     const x = bezier(e, x0, ctrlX, x1);
     const y = bezier(e, y0, ctrlY, y1);
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
+    el.style.left = \`\${x}px\`;
+    el.style.top = \`\${y}px\`;
     const s = 1 - e * 0.55;
-    el.style.transform = `translate(-50%,-50%) scale(${s})`;
+    el.style.transform = \`translate(-50%,-50%) scale(\${s})\`;
     el.style.opacity = String(1 - e * 0.15);
 
     if (t < 1){
@@ -2330,11 +2402,11 @@ function renderShopItems(){
     const owned = prizesOwned.includes(item.id);
 
     const card = document.createElement("div");
-    card.className = "shopItem";
+    card.className = "shopItem starBorder"; // ✅ CHANGE #7
 
     const name = document.createElement("div");
     name.className = "shopName";
-    name.innerHTML = `<span class="shopEmoji">${item.emoji}</span> <span>${item.name}</span>`;
+    name.innerHTML = \`<span class="shopEmoji">\${item.emoji}</span> <span>\${item.name}</span>\`;
 
     const desc = document.createElement("div");
     desc.className = "shopDesc";
@@ -2345,7 +2417,7 @@ function renderShopItems(){
 
     const cost = document.createElement("div");
     cost.className = "shopCost";
-    cost.textContent = `Cost: ${item.cost} tickets`;
+    cost.textContent = \`Cost: \${item.cost} tickets\`;
 
     const btn = document.createElement("button");
     btn.className = "btn primary";
@@ -2370,9 +2442,8 @@ function renderShopItems(){
       animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
       confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 140, 4.6);
 
-      /* ✅ No congrats popup on purchase anymore */
-      setStatus(`Purchased: ${item.name} ✅`);
-      await showBigMessage({ title: "PURCHASED!", sub: `${item.emoji} ${item.name}\nTickets left: ${tickets}`, ms: 900 });
+      setStatus(\`Purchased: \${item.name} ✅\`);
+      await showBigMessage({ title: "PURCHASED!", sub: \`\${item.emoji} \${item.name}\nTickets left: \${tickets}\`, ms: 900 });
     });
 
     row.appendChild(cost);
@@ -2475,13 +2546,13 @@ function animateCoinIntoSlot(slotRect){
   const slitY = slotRect.top + slotRect.height * 0.46;
 
   ghost.classList.add("coinDrop");
-  ghost.style.left = `${slitX}px`;
-  ghost.style.top = `${slitY}px`;
+  ghost.style.left = \`\${slitX}px\`;
+  ghost.style.top = \`\${slitY}px\`;
 
   setTimeout(() => {
     if (!ghost) return;
     requestAnimationFrame(() => {
-      ghost.style.top = `${slitY + 26}px`;
+      ghost.style.top = \`\${slitY + 26}px\`;
       ghost.style.transform = "translate(-50%,-50%) scale(0.10)";
       ghost.style.opacity = "0";
       ghost.style.filter = "blur(1.2px)";
@@ -2513,16 +2584,16 @@ function onCoinPointerDown(e){
 
   const move = (ev) => {
     if (!dragging || !ghost) return;
-    ghost.style.left = `${ev.clientX}px`;
-    ghost.style.top = `${ev.clientY}px`;
+    ghost.style.left = \`\${ev.clientX}px\`;
+    ghost.style.top = \`\${ev.clientY}px\`;
   };
   const up = (ev) => {
     if (!dragging) return;
     dragging = false;
 
     if (ghost){
-      ghost.style.left = `${ev.clientX}px`;
-      ghost.style.top = `${ev.clientY}px`;
+      ghost.style.left = \`\${ev.clientX}px\`;
+      ghost.style.top = \`\${ev.clientY}px\`;
 
       const coinRect = ghost.getBoundingClientRect();
       const slotRect = els.coinSlot.getBoundingClientRect();
@@ -2633,15 +2704,12 @@ els.startBtn.addEventListener("click", async () => {
   await startNewGame({ resetTickets: true });
 });
 
-/* ✅ End button now shows congrats ONLY when ending */
+/* ✅ CHANGE #4: End button ALWAYS opens end screen (even with 0 prizes) */
 els.backToHomeBtn.addEventListener("click", () => {
   closeShop();
-  if (prizesOwned.length > 0){
-    openEndCongrats();
-  } else {
-    goHomeEnd();
-  }
+  openEndCongrats();
 });
+
 els.endBackToWelcomeBtn.addEventListener("click", () => {
   closeEndCongrats();
   goHomeEnd();
