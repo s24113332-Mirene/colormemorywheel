@@ -188,7 +188,6 @@ body::before{
   border: 1px solid rgba(255,255,255,.14);
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0,0,0,.18);
-  text-align: center; /* ✅ center “Prize Toys” label (and other panel titles) */
 }
 
 .centerCol{ display: grid; gap: 10px; justify-items: center; min-height: 0; }
@@ -666,43 +665,32 @@ body::before{
   50%{ transform: translate3d(18px,10px,0) scale(1.05); opacity:1; }
 }
 
-/* ✅ twinkling SMALL STARS layer (WELCOME) */
+/* twinkling lights layer */
 .twinkleLayer{
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 1;
 }
-.twStar{
+.twDot{
   position: absolute;
   left: var(--x);
   top: var(--y);
-  width: 6px;
-  height: 6px;
-  background: rgba(255,245,220,.95);
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,235,200,.95);
   box-shadow:
     0 0 10px rgba(255,220,140,.40),
     0 0 22px rgba(255,220,140,.22);
   opacity: .15;
-  transform: translate(-50%,-50%) scale(.85);
+  transform: scale(.85);
   animation: twinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes twinkle{
-  0%,100%{ opacity:.18; transform: translate(-50%,-50%) scale(.78); filter: brightness(.9); }
-  50%{ opacity:1; transform: translate(-50%,-50%) scale(1.12); filter: brightness(1.25); }
+  0%,100%{ opacity:.18; transform: scale(.78); filter: brightness(.9); }
+  50%{ opacity:1; transform: scale(1.12); filter: brightness(1.25); }
 }
 
 /* sparkles */
@@ -839,7 +827,7 @@ body::before{
   80%{ filter: brightness(.92); }
   84%{ filter: brightness(1.12); }
 }
-/* ✅ welcome subtitle: one line + shorter text */
+/* ✅ welcome subtitle font -> Oleo Script */
 .neonSub{
   margin: 10px auto 0;
   color: rgba(255,255,255,.90);
@@ -849,9 +837,6 @@ body::before{
   font-weight: 400;
   font-size: 18px;
   text-shadow: 0 10px 22px rgba(0,0,0,.35);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .nmIcons{
   position: relative;
@@ -1138,46 +1123,6 @@ body::before{
   pointer-events:none;
   opacity: .9;
 }
-
-/* ✅ twinkling stars INSIDE the end card box */
-.endTwinkleLayer{
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-.endTwStar{
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--s);
-  height: var(--s);
-  background: rgba(255,255,255,.92);
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-  box-shadow:
-    0 0 10px rgba(255,255,255,.22),
-    0 0 22px rgba(255,220,140,.14);
-  opacity: .14;
-  transform: translate(-50%,-50%) scale(.9);
-  animation: endTwinkle var(--t) ease-in-out infinite;
-  animation-delay: var(--d);
-}
-@keyframes endTwinkle{
-  0%,100%{ opacity:.14; transform: translate(-50%,-50%) scale(.85); filter: brightness(.9); }
-  50%{ opacity:.95; transform: translate(-50%,-50%) scale(1.12); filter: brightness(1.25); }
-}
-
 .endTop{
   position: relative;
   z-index: 2;
@@ -1191,15 +1136,9 @@ body::before{
   font-size: clamp(30px, 4.2vw, 56px);
   font-weight: 400;
   letter-spacing: .8px;
-  display: inline-flex;
-  gap: 4px;
-  flex-wrap: wrap;
-  justify-content: center;
 }
-.endTitle span{
-  color: var(--c, rgba(255,255,255,.95));
-  text-shadow: 0 0 16px rgba(255,255,255,.22);
-}
+.endTitle .pink{ color: rgba(255,120,220,.95); text-shadow: 0 0 16px rgba(255,120,220,.28); }
+.endTitle .gold{ color: rgba(255,220,150,.95); text-shadow: 0 0 16px rgba(255,220,150,.22); }
 .endSub{
   margin: 0;
   color: rgba(255,255,255,.88);
@@ -1213,8 +1152,6 @@ body::before{
   grid-template-columns: repeat(3, minmax(0,1fr));
   gap: 10px;
   margin-top: 6px;
-  justify-items: center;   /* ✅ center items */
-  justify-content: center; /* ✅ center grid as a whole */
 }
 @media (max-width: 700px){
   .endGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -1228,7 +1165,6 @@ body::before{
   display: grid;
   gap: 6px;
   justify-items: center;
-  width: min(220px, 100%);
 }
 .endToy .e{ font-size: 44px; filter: drop-shadow(0 14px 18px rgba(0,0,0,.35)); }
 .endToy .n{
@@ -1249,15 +1185,6 @@ body::before{
   flex-wrap: wrap;
   justify-content:center;
   margin-top: 10px;
-}
-
-/* ✅ Center the single “Play again...” card */
-.endGrid.singleCenter{
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
-}
-.endGrid.singleCenter .endToy{
-  width: min(360px, 92%);
 }
 
 /* Prize shop */
@@ -1339,14 +1266,16 @@ body::before{
             <div class="neonSign">
               <div class="neonKicker">NIGHT MARKET GAME</div>
 
+              <!-- ✅ title words different colors -->
               <h2 class="neonTitle">
                 <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
               </h2>
 
-              <!-- ✅ one-line shorter subtitle -->
-              <p class="neonSub">Spin • Remember • Win Tickets 🎟️</p>
+              <!-- ✅ subtitle now Oleo Script -->
+              <p class="neonSub">Spin the wheel, watch the flashing colors, repeat the sequence, and collect tickets for prizes 🎟️</p>
 
               <div class="nmIcons" aria-hidden="true">
+                <!-- ✅ removed “Night Market Lights” chip -->
                 <div class="nmChip">🧸 Prizes</div>
                 <div class="nmChip">🎈 Bonus</div>
                 <div class="nmChip">🎡 Spin</div>
@@ -1421,25 +1350,11 @@ body::before{
     </div>
   </div>
 
-  <!-- ✅ END SCREEN (ONLY when user ends) -->
+  <!-- ✅ END CONGRATS (ONLY when user ends) -->
   <div id="endCongratsModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="endCard">
-      <!-- ✅ twinkling stars inside the box -->
-      <div class="endTwinkleLayer" id="endTwinkles" aria-hidden="true"></div>
-
       <div class="endTop">
-        <!-- ✅ no “Winner”, title changes dynamically -->
-        <h2 id="endTitle" class="endTitle">
-          <span style="--c: rgba(255,120,220,.95)">C</span>
-          <span style="--c: rgba(120,255,240,.95)">O</span>
-          <span style="--c: rgba(255,220,150,.95)">N</span>
-          <span style="--c: rgba(170,255,120,.95)">G</span>
-          <span style="--c: rgba(140,200,255,.95)">R</span>
-          <span style="--c: rgba(255,160,80,.95)">A</span>
-          <span style="--c: rgba(200,120,255,.95)">T</span>
-          <span style="--c: rgba(255,110,220,.95)">S</span>
-        </h2>
-
+        <h2 class="endTitle"><span class="pink">CONGRATS</span> <span class="gold">WINNER!</span></h2>
         <p id="endSub" class="endSub">You collected prizes!</p>
 
         <div class="endChips">
@@ -1451,8 +1366,7 @@ body::before{
         <div id="endToysGrid" class="endGrid"></div>
 
         <div class="endBtns">
-          <!-- ✅ renamed -->
-          <button id="endBackToWelcomeBtn" class="btn primary glowBtn" type="button">End Game</button>
+          <button id="endBackToWelcomeBtn" class="btn primary glowBtn" type="button">Back to Welcome</button>
         </div>
       </div>
     </div>
@@ -1531,6 +1445,7 @@ body::before{
 
         <section class="centerCol">
           <div class="centerHeader">
+            <!-- ✅ title words different colors -->
             <div class="centerTitle titleWords">
               <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
             </div>
@@ -1635,13 +1550,11 @@ const els = {
   bigTickerTrack: document.getElementById("bigTickerTrack"),
 
   endCongratsModal: document.getElementById("endCongratsModal"),
-  endTitle: document.getElementById("endTitle"),
   endSub: document.getElementById("endSub"),
   endTickets: document.getElementById("endTickets"),
   endPrizeCount: document.getElementById("endPrizeCount"),
   endBest: document.getElementById("endBest"),
   endToysGrid: document.getElementById("endToysGrid"),
-  endTwinkles: document.getElementById("endTwinkles"),
   endBackToWelcomeBtn: document.getElementById("endBackToWelcomeBtn"),
 
   shopModal: document.getElementById("shopModal"),
@@ -1718,35 +1631,17 @@ function setStatus(msg){ els.statusEl.textContent = msg; }
 function buildStars(){
   if (!els.stars) return;
   els.stars.innerHTML = "";
-  const n = 70;
+  const n = 70; // medium amount
   for (let i=0;i<n;i++){
     const s = document.createElement("div");
     s.className = "star";
-    const size = (3 + Math.random()*5).toFixed(2);
+    const size = (3 + Math.random()*5).toFixed(2); // medium size
     s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
     s.style.setProperty("--s", `${size}px`);
     s.style.setProperty("--t", `${(2.4 + Math.random()*3.4).toFixed(2)}s`);
     s.style.setProperty("--d", `${(-Math.random()*3.5).toFixed(2)}s`);
     els.stars.appendChild(s);
-  }
-}
-
-/* ✅ End card twinkles */
-function buildEndTwinkles(){
-  if (!els.endTwinkles) return;
-  els.endTwinkles.innerHTML = "";
-  const n = 26;
-  for (let i=0;i<n;i++){
-    const s = document.createElement("div");
-    s.className = "endTwStar";
-    const size = (4 + Math.random()*5).toFixed(2);
-    s.style.setProperty("--x", `${(6 + Math.random()*88).toFixed(2)}%`);
-    s.style.setProperty("--y", `${(10 + Math.random()*76).toFixed(2)}%`);
-    s.style.setProperty("--s", `${size}px`);
-    s.style.setProperty("--t", `${(1.6 + Math.random()*2.2).toFixed(2)}s`);
-    s.style.setProperty("--d", `${(-Math.random()*2.6).toFixed(2)}s`);
-    els.endTwinkles.appendChild(s);
   }
 }
 
@@ -1775,13 +1670,12 @@ function buildSparkles(){
     els.sparkles.appendChild(s);
   }
 }
-/* ✅ Welcome twinkles = small stars (not circles) */
 function buildTwinkles(){
   els.twinkles.innerHTML = "";
   const n = 28;
   for (let i=0;i<n;i++){
     const d = document.createElement("div");
-    d.className = "twStar";
+    d.className = "twDot";
     d.style.setProperty("--x", `${(6 + Math.random()*88).toFixed(2)}%`);
     d.style.setProperty("--y", `${(8 + Math.random()*72).toFixed(2)}%`);
     d.style.setProperty("--t", `${(1.6 + Math.random()*1.8).toFixed(2)}s`);
@@ -1808,7 +1702,6 @@ window.addEventListener("resize", () => {
   renderAllToys();
   renderShopItems();
   buildStars();
-  buildEndTwinkles();
 });
 
 /* Welcome pages */
@@ -2337,7 +2230,7 @@ function goHomeEnd(){
   resetCoinUI();
 }
 
-/* ✅ End Screen: shows CONGRATS (colored) OR Better Luck Next Time! */
+/* ✅ End Congrats: show ONLY when ending */
 function openEndCongrats(){
   els.endTickets.textContent = String(tickets);
   els.endPrizeCount.textContent = String(prizesOwned.length);
@@ -2347,33 +2240,10 @@ function openEndCongrats(){
     .map(id => SHOP_ITEMS.find(x => x.id === id))
     .filter(Boolean);
 
-  // reset centering mode
-  els.endToysGrid.classList.remove("singleCenter");
-
-  if (ownedItems.length){
-    // ✅ CONGRATS in different colors (letters)
-    els.endTitle.innerHTML = `
-      <span style="--c: rgba(255,120,220,.95)">C</span>
-      <span style="--c: rgba(120,255,240,.95)">O</span>
-      <span style="--c: rgba(255,220,150,.95)">N</span>
-      <span style="--c: rgba(170,255,120,.95)">G</span>
-      <span style="--c: rgba(140,200,255,.95)">R</span>
-      <span style="--c: rgba(255,160,80,.95)">A</span>
-      <span style="--c: rgba(200,120,255,.95)">T</span>
-      <span style="--c: rgba(255,110,220,.95)">S</span>
-    `;
-    els.endSub.textContent = "Here are the prizes you collected 🎉";
-  } else {
-    // ✅ Better Luck Next Time! (different colors + exclamation)
-    els.endTitle.innerHTML = `
-      <span style="--c: rgba(255,120,220,.95)">Better</span>
-      <span style="--c: rgba(120,255,240,.95)">Luck</span>
-      <span style="--c: rgba(255,220,150,.95)">Next</span>
-      <span style="--c: rgba(170,255,120,.95)">Time!</span>
-    `;
-    els.endSub.textContent = "No prize this time — try again and win tickets! 🎟️";
-    els.endToysGrid.classList.add("singleCenter"); // ✅ center the message card
-  }
+  els.endSub.textContent =
+    ownedItems.length
+      ? "Here are the prizes you collected 🎉"
+      : "Thanks for playing!";
 
   els.endToysGrid.innerHTML = "";
   if (ownedItems.length){
@@ -2383,19 +2253,10 @@ function openEndCongrats(){
       c.innerHTML = `<div class="e">${it.emoji}</div><div class="n">${it.name}</div>`;
       els.endToysGrid.appendChild(c);
     }
-  } else {
-    const c = document.createElement("div");
-    c.className = "endToy";
-    c.innerHTML = `<div class="e">🎡</div><div class="n">Play again to collect prizes!</div>`;
-    els.endToysGrid.appendChild(c);
   }
 
   els.endCongratsModal.classList.remove("hidden");
-
-  // ✅ confetti only when you actually won prizes
-  if (ownedItems.length){
-    confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
-  }
+  confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
 }
 function closeEndCongrats(){
   els.endCongratsModal.classList.add("hidden");
@@ -2509,6 +2370,7 @@ function renderShopItems(){
       animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
       confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 140, 4.6);
 
+      /* ✅ No congrats popup on purchase anymore */
       setStatus(`Purchased: ${item.name} ✅`);
       await showBigMessage({ title: "PURCHASED!", sub: `${item.emoji} ${item.name}\nTickets left: ${tickets}`, ms: 900 });
     });
@@ -2771,10 +2633,14 @@ els.startBtn.addEventListener("click", async () => {
   await startNewGame({ resetTickets: true });
 });
 
-/* ✅ End button shows end screen always (even if no prizes) */
+/* ✅ End button now shows congrats ONLY when ending */
 els.backToHomeBtn.addEventListener("click", () => {
   closeShop();
-  openEndCongrats();
+  if (prizesOwned.length > 0){
+    openEndCongrats();
+  } else {
+    goHomeEnd();
+  }
 });
 els.endBackToWelcomeBtn.addEventListener("click", () => {
   closeEndCongrats();
@@ -2795,11 +2661,9 @@ els.wheelSvg.addEventListener("click", (e) => {
 function init(){
   resizeConfettiCanvas();
 
-  buildStars();
-  buildEndTwinkles();
-
+  buildStars();     // ✅ stars
   buildFlags();
-  buildTwinkles();   // ✅ small stars in welcome box
+  buildTwinkles();
   buildSparkles();
 
   spawnBackgroundBalloons();
