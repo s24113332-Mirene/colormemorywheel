@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -61,7 +61,7 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,255,255,.95);
+  background: rgba(255,255,255,.94);
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -75,11 +75,11 @@ body::before{
     39% 35%
   );
   box-shadow:
-    0 0 12px rgba(255,255,255,.35),
-    0 0 28px rgba(140,220,255,.22),
-    0 0 46px rgba(255,220,140,.12);
-  opacity: .22;
-  transform: translate(-50%,-50%) scale(.9);
+    0 0 10px rgba(255,255,255,.38),
+    0 0 22px rgba(160,220,255,.22),
+    0 0 34px rgba(255,220,160,.12);
+  opacity: .20;
+  transform: translate(-50%,-50%) scale(.92);
   animation: starTwinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
@@ -87,12 +87,12 @@ body::before{
   content:"";
   position:absolute;
   inset:-12px;
-  background: radial-gradient(circle, rgba(255,255,255,.12), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,.10), transparent 70%);
   border-radius: 999px;
 }
 @keyframes starTwinkle{
-  0%,100%{ opacity:.20; transform: translate(-50%,-50%) scale(.86); filter: brightness(.95); }
-  50%{ opacity:.98; transform: translate(-50%,-50%) scale(1.12); filter: brightness(1.25); }
+  0%,100%{ opacity:.20; transform: translate(-50%,-50%) scale(.90); filter: brightness(.95); }
+  50%{ opacity:.96; transform: translate(-50%,-50%) scale(1.14); filter: brightness(1.28); }
 }
 
 /* Background balloons */
@@ -166,7 +166,7 @@ body::before{
   transform: translate(-50%, -50%) scale(var(--appScale));
   transform-origin: center;
   z-index: 1;
-  width: min(1500px, 98vw);
+  width: min(1440px, 98vw);
 }
 
 /* App */
@@ -176,26 +176,29 @@ body::before{
   display: grid;
   grid-template-rows: 1fr auto;
 }
+
+/* ✅ Make side panels more balanced so wheel stays centered */
 .stage{
-  /* ✅ side panels balanced so wheel is visually centered */
   display: grid;
   grid-template-columns:
-    clamp(230px, 18vw, 320px)
+    clamp(240px, 22vw, 330px)
     1fr
-    clamp(230px, 18vw, 320px);
+    clamp(240px, 22vw, 330px);
   gap: 12px;
   align-items: start;
   height: calc(100vh - 20px);
   min-height: 0;
 }
-@media (max-width: 980px){
-  .stage{
-    grid-template-columns: 1fr;
-    height: auto;
-    overflow: auto;
-  }
+
+/* ✅ Side panels scroll if needed (keeps center stable) */
+.leftPanel, .rightPanel{
+  display: grid;
+  gap: 10px;
+  min-height: 0;
+  max-height: calc(100vh - 44px);
+  overflow: auto;
+  padding-right: 4px;
 }
-.leftPanel, .rightPanel{ display: grid; gap: 10px; min-height: 0; }
 
 .panelTitle{
   font-family: "Protest Revolution", "Inter", system-ui;
@@ -220,21 +223,24 @@ body::before{
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
-  width: min(980px, 100%);
+  width: min(900px, 100%);
 }
 
-/* ✅ Color Memory Wheel title: Cinzel Decorative, ALL CAPS, forced one line */
+/* ✅ Cinzel Decorative for “COLOR MEMORY WHEEL”, all caps, one line */
 .centerTitle{
-  font-family: "Cinzel Decorative", "Inter", system-ui;
-  font-weight: 900;
-  font-size: clamp(22px, 2.6vw, 42px);
-  letter-spacing: .4px;
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 700;
+  font-size: clamp(22px, 2.7vw, 40px);
+  letter-spacing: 1.1px;
   text-transform: uppercase;
+  display: inline-flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: nowrap;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 100%;
 }
-.titleWords{ display: inline-flex; gap: 10px; align-items: baseline; justify-content: center; }
 .titleWords .w1{
   color: rgba(255,110,220,.98);
   text-shadow: 0 0 12px rgba(255,110,220,.22), 0 12px 28px rgba(0,0,0,.35);
@@ -390,14 +396,14 @@ body::before{
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.22));
 }
 
-/* ✅ Wheel: bigger highlight */
+/* ✅ Wheel: a bit bigger (highlight), still fits */
 .wheelWrap{
   position: relative;
-  width: min(1260px, 84vh, 70vw);
+  width: min(1240px, 84vh, 70vw);
   aspect-ratio: 1;
   margin: 0 auto;
   border-radius: 22px;
-  padding: 16px;
+  padding: 14px;
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
@@ -426,7 +432,7 @@ body::before{
 }
 #wheelSvg{ width: 100%; height: 100%; display: block; filter: drop-shadow(0 18px 22px rgba(0,0,0,.35)); }
 
-/* ✅ no constant glow; glow only on hover/click/flash */
+/* no constant glow; glow on hover/click/flash */
 .slice{
   stroke: rgba(255,255,255,.22);
   stroke-width: 2;
@@ -666,8 +672,9 @@ body::before{
 }
 .hiddenPage{ display: none; }
 
-/* ✅ WELCOME: twinkling stars cover whole box */
+/* WELCOME */
 .welcomeWrap{ text-align: center; display: grid; gap: 14px; }
+
 .nmHero{
   position: relative;
   border-radius: 22px;
@@ -696,6 +703,8 @@ body::before{
   0%,100%{ transform: translate3d(-18px,-6px,0) scale(1.02); opacity:.75; }
   50%{ transform: translate3d(18px,10px,0) scale(1.05); opacity:1; }
 }
+
+/* Welcome twinkles */
 .twinkleLayer{
   position: absolute;
   inset: 0;
@@ -708,7 +717,7 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,245,220,.96);
+  background: rgba(255,245,220,.95);
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -722,23 +731,20 @@ body::before{
     39% 35%
   );
   box-shadow:
-    0 0 12px rgba(255,220,140,.30),
-    0 0 26px rgba(255,220,140,.16);
-  opacity: .16;
+    0 0 12px rgba(255,220,140,.34),
+    0 0 24px rgba(255,220,140,.18);
+  opacity: .15;
   transform: translate(-50%,-50%) scale(.85);
   animation: twinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes twinkle{
-  0%,100%{ opacity:.16; transform: translate(-50%,-50%) scale(.82); filter: brightness(.95); }
-  50%{ opacity:1; transform: translate(-50%,-50%) scale(1.10); filter: brightness(1.25); }
+  0%,100%{ opacity:.18; transform: translate(-50%,-50%) scale(.80); filter: brightness(.9); }
+  50%{ opacity:1; transform: translate(-50%,-50%) scale(1.15); filter: brightness(1.25); }
 }
-.sparkles{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index: 1;
-}
+
+/* Sparkles */
+.sparkles{ position:absolute; inset:0; pointer-events:none; z-index: 1; }
 .sparkle{
   position:absolute;
   left: var(--x);
@@ -758,7 +764,7 @@ body::before{
     2% 35%,
     39% 35%
   );
-  box-shadow: 0 0 14px rgba(255,255,255,.26), 0 0 30px rgba(255,220,140,.12);
+  box-shadow: 0 0 14px rgba(255,255,255,.30);
   opacity: .0;
   transform: translate(-50%,-50%) scale(.9);
   animation: sparklePop var(--t) ease-in-out infinite;
@@ -767,18 +773,12 @@ body::before{
 @keyframes sparklePop{
   0%{ transform: translate(-50%,-50%) scale(.55); opacity:0; }
   20%{ opacity:.95; }
-  50%{ transform: translate(-50%,-50%) scale(1.10); opacity:.72; }
+  50%{ transform: translate(-50%,-50%) scale(1.15); opacity:.7; }
   100%{ transform: translate(-50%,-50%) scale(.7); opacity:0; }
 }
 
 /* flags */
-.flagRow{
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 8px;
-  margin-bottom: 10px;
-}
+.flagRow{ position: relative; z-index: 2; display: grid; gap: 8px; margin-bottom: 10px; }
 .flagString{
   height: 10px;
   border-radius: 999px;
@@ -787,12 +787,7 @@ body::before{
   box-shadow: 0 10px 18px rgba(0,0,0,.18);
   opacity: .9;
 }
-.flags{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap: 8px;
-}
+.flags{ display:flex; justify-content:center; flex-wrap:wrap; gap: 8px; }
 .flag{
   width: 30px;
   height: 28px;
@@ -818,7 +813,7 @@ body::before{
   border-radius: 22px;
   padding: 16px 14px 14px;
   margin: 6px auto 10px;
-  width: min(520px, 100%);
+  width: min(580px, 100%);
   background: rgba(0,0,0,.22);
   border: 1px solid rgba(255,255,255,.16);
   box-shadow:
@@ -847,25 +842,22 @@ body::before{
   font-size: 12px;
 }
 
-/* ✅ Welcome title: Cinzel Decorative, ALL CAPS, one line */
+/* ✅ Welcome title also Cinzel Decorative, one line */
 .neonTitle{
   margin: 6px 0 0;
-  font-family: "Cinzel Decorative", "Inter", system-ui;
-  font-weight: 900;
-  font-size: clamp(24px, 4.0vw, 46px);
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 700;
+  font-size: clamp(22px, 4.0vw, 44px);
   line-height: 1.05;
-  letter-spacing: .35px;
+  letter-spacing: 1.0px;
   text-shadow: 0 18px 35px rgba(0,0,0,.55);
   text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: inline-flex;
   gap: 10px;
   justify-content: center;
-  align-items: baseline;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
-
 .neonTitle .w1{
   color: rgba(255,110,220,.95);
   text-shadow: 0 0 10px rgba(255,100,210,.45), 0 0 22px rgba(255,100,210,.25), 0 18px 35px rgba(0,0,0,.55);
@@ -929,6 +921,7 @@ body::before{
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-4px); }
 }
+
 .welcomeCTA{
   display: flex;
   justify-content: center;
@@ -1012,7 +1005,8 @@ body::before{
   display: grid;
   place-items: center;
 }
-/* Gold coin */
+
+/* Gold coin with "COIN" */
 .coin{
   width: 62px;
   height: 62px;
@@ -1152,7 +1146,7 @@ body::before{
   100%{ transform: translateX(-50%); }
 }
 
-/* ✅ END SCREEN */
+/* END SCREEN */
 .endCard{
   width: min(820px, 92vw);
   border-radius: 26px;
@@ -1180,7 +1174,6 @@ body::before{
   opacity: .9;
 }
 
-/* end stars */
 .endTwinkleLayer{
   position: absolute;
   inset: 0;
@@ -1193,7 +1186,7 @@ body::before{
   top: var(--y);
   width: var(--s);
   height: var(--s);
-  background: rgba(255,255,255,.95);
+  background: rgba(255,255,255,.92);
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -1208,14 +1201,14 @@ body::before{
   );
   box-shadow:
     0 0 12px rgba(255,255,255,.22),
-    0 0 26px rgba(255,220,140,.14);
+    0 0 24px rgba(255,220,140,.14);
   opacity: .14;
   transform: translate(-50%,-50%) scale(.9);
   animation: endTwinkle var(--t) ease-in-out infinite;
   animation-delay: var(--d);
 }
 @keyframes endTwinkle{
-  0%,100%{ opacity:.14; transform: translate(-50%,-50%) scale(.88); filter: brightness(.95); }
+  0%,100%{ opacity:.14; transform: translate(-50%,-50%) scale(.88); filter: brightness(.9); }
   50%{ opacity:.95; transform: translate(-50%,-50%) scale(1.18); filter: brightness(1.25); }
 }
 
@@ -1233,7 +1226,7 @@ body::before{
   font-weight: 400;
   letter-spacing: .8px;
   display: inline-flex;
-  gap: 4px;
+  gap: 6px;
   flex-wrap: wrap;
   justify-content: center;
   text-transform: uppercase;
@@ -1250,17 +1243,16 @@ body::before{
   line-height: 1.4;
 }
 
-/* ✅ Prize grid centered */
+/* ✅ Prize grid centered strongly */
 .endGrid{
   width: min(720px, 100%);
   display: grid;
   grid-template-columns: repeat(3, minmax(0,1fr));
   gap: 10px;
-  margin-top: 10px;
-  margin-bottom: 6px;
+  margin-top: 6px;
   justify-items: center;
   justify-content: center;
-  place-content: center; /* ✅ keep in middle */
+  align-items: start;
 }
 @media (max-width: 700px){
   .endGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -1283,27 +1275,18 @@ body::before{
   line-height: 1.15;
   color: rgba(255,255,255,.92);
 }
-.endChips{
-  display:flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content:center;
-}
-.endBtns{
-  display:flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content:center;
-  margin-top: 10px;
-}
 
-/* ✅ Center the single “Play again...” card */
+.endChips{ display:flex; gap: 10px; flex-wrap: wrap; justify-content:center; }
+.endBtns{ display:flex; gap: 10px; flex-wrap: wrap; justify-content:center; margin-top: 10px; }
+.hiddenBtn{ display:none !important; }
+
+/* ✅ Center single “play again to collect prizes” card */
 .endGrid.singleCenter{
   grid-template-columns: minmax(0, 1fr);
   justify-items: center;
 }
 .endGrid.singleCenter .endToy{
-  width: min(360px, 92%);
+  width: min(380px, 92%);
 }
 
 /* Prize shop */
@@ -1313,14 +1296,1536 @@ body::before{
   gap: 14px;
   grid-template-columns: repeat(4, minmax(0,1fr));
 }
-@media (max-width: 980px){
-  .shopGrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-}
-@media (max-width: 520px){
-  .shopGrid{ grid-template-columns: 1fr; }
-}
 .shopItem{
   border-radius: 18px;
   padding: 14px;
   background: rgba(255,255,255,.06);
-  border: 1px solid
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 12px 30px rgba(0,0,0,.22);
+  transform: translateY(6px);
+  opacity: 0;
+  animation: shopIn .32s ease-out forwards;
+}
+.shopItem:nth-child(2){ animation-delay: .05s; }
+.shopItem:nth-child(3){ animation-delay: .10s; }
+.shopItem:nth-child(4){ animation-delay: .15s; }
+.shopItem:nth-child(5){ animation-delay: .20s; }
+.shopItem:nth-child(6){ animation-delay: .25s; }
+.shopItem:nth-child(7){ animation-delay: .30s; }
+.shopItem:nth-child(8){ animation-delay: .35s; }
+@keyframes shopIn{ to{ transform: translateY(0); opacity: 1; } }
+.shopName{
+  font-weight: 1000;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.shopEmoji{ font-size: 42px; line-height: 1; }
+.shopDesc{ margin: 0 0 10px 0; color: rgba(255,255,255,.80); font-size: 13px; line-height: 1.35; }
+.shopBuyRow{ display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.shopCost{ font-weight: 1000; font-size: 13px; }
+.shopFooter{ margin-top: 12px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+/* Footer */
+.footer{
+  opacity: .9;
+  font-size: 12px;
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 6px;
+}
+  </style>
+</head>
+
+<body>
+  <div id="stars" aria-hidden="true"></div>
+  <div id="balloons" aria-hidden="true"></div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <div id="fxLayer" aria-hidden="true"></div>
+
+  <!-- WELCOME MODAL (2 pages) -->
+  <div id="welcomeModal" class="modal show" role="dialog" aria-modal="true">
+    <div class="modalCard">
+
+      <!-- PAGE 1 -->
+      <div id="welcomePage">
+        <div class="welcomeWrap">
+          <div class="nmHero">
+            <div class="twinkleLayer" id="twinkles" aria-hidden="true"></div>
+            <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+
+            <div class="flagRow" aria-hidden="true">
+              <div class="flagString"></div>
+              <div class="flags" id="flags"></div>
+            </div>
+
+            <div class="neonSign">
+              <div class="neonKicker">NIGHT MARKET GAME</div>
+
+              <h2 class="neonTitle">
+                <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
+              </h2>
+
+              <p class="neonSub">Spin • Remember • Win Tickets 🎟️</p>
+
+              <div class="nmIcons" aria-hidden="true">
+                <div class="nmChip">🧸 Prizes</div>
+                <div class="nmChip">🎈 Bonus</div>
+                <div class="nmChip">🎡 Spin</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="welcomeCTA">
+            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter the Night Market ✨</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE 2 -->
+      <div id="instructionsPage" class="hiddenPage">
+        <h2 class="modalTitle oneLine">How to Play</h2>
+        <p class="modalSub oneLine">Color Memory Wheel</p>
+
+        <div class="modalSection" style="background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; padding: 12px; margin-bottom: 14px;">
+          <h3 class="modalH" style="text-align:center; margin:0 0 8px 0; font-size:13px; color:rgba(255,255,255,.9); font-weight:900;">Instructions</h3>
+          <ol class="modalList" style="margin:0; padding-left:18px; color:rgba(255,255,255,.82); line-height:1.45; font-weight:600;">
+            <li>Drag the <b>coin</b> into the coin slot.</li>
+            <li>Press <b>Start Game</b>.</li>
+            <li>Watch the wheel flash the pattern (each color has its own sound).</li>
+            <li>Tap the colors in the same order.</li>
+            <li>Earn <b>+1 ticket</b> after every successful round.</li>
+            <li><b>Bonus each round:</b> a <b>ticket</b> gives <b>+1 ticket</b>, or a <b>balloon</b> gives <b>+seconds</b>.</li>
+          </ol>
+        </div>
+
+        <div class="coinArea">
+          <div class="coinHint">Insert Coin (drag into the slot)</div>
+          <div class="coinRow">
+            <div id="coinSlot" class="coinSlot" aria-hidden="true">
+              <div class="coinMouth" aria-hidden="true"></div>
+              <div id="coinSlotState" class="coinSlotState">NO COIN</div>
+              <div class="coinSlotLabel">COIN SLOT</div>
+            </div>
+            <div class="coinPad">
+              <div id="coin" class="coin" role="button" aria-label="Coin">
+                <div class="coinFace">
+                  <div class="coinText">COIN</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="startBtn" class="btn primary bigBtn glowBtn" type="button" disabled>Start Game</button>
+
+        <div class="modalNav">
+          <button id="welcomeBackBtn" class="btn" type="button">Back</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BIG MESSAGE OVERLAY -->
+  <div id="bigMsg" class="bigMsg hidden" aria-hidden="true">
+    <div class="bigMsgInner">
+      <div id="bigTitle" class="bigTitle">...</div>
+      <div id="bigSub" class="bigSub">...</div>
+
+      <div id="bigTicker" class="bigTicker" aria-hidden="true">
+        <div id="bigTickerTrack" class="bigTickerTrack">
+          <span id="bigTickerTextA" class="bigTickerText">...</span>
+          <span id="bigTickerTextB" class="bigTickerText">...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- END SCREEN -->
+  <div id="endCongratsModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="endCard">
+      <div class="endTwinkleLayer" id="endTwinkles" aria-hidden="true"></div>
+
+      <div class="endTop">
+        <h2 id="endTitle" class="endTitle"></h2>
+
+        <p id="endSub" class="endSub">You collected prizes!</p>
+
+        <div class="endChips">
+          <div class="shopChip"><span class="k">Tickets left:</span> <span id="endTickets">0</span></div>
+          <div class="shopChip"><span class="k">Prizes:</span> <span id="endPrizeCount">0</span></div>
+          <div class="shopChip"><span class="k">Best:</span> <span id="endBest">0</span></div>
+        </div>
+
+        <!-- ✅ Prizes always centered -->
+        <div id="endToysGrid" class="endGrid"></div>
+
+        <div class="endBtns">
+          <!-- ✅ Only shown on Better Luck Next Time -->
+          <button id="endPlayAgainBtn" class="btn primary glowBtn hiddenBtn" type="button">Try again for a prize!</button>
+          <button id="endBackToWelcomeBtn" class="btn primary glowBtn" type="button">End Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIZE SHOP MODAL -->
+  <div id="shopModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modalCard wide">
+      <h2 class="modalTitle">Prize Shop</h2>
+      <p class="modalSub oneLine">Spend tickets on toys — or continue playing.</p>
+
+      <div class="shopStats">
+        <div class="shopChip"><span class="k">Tickets:</span> <span id="shopTickets">0</span></div>
+        <div class="shopChip"><span class="k">Toy Prizes:</span> <span id="prizeCount">0</span></div>
+        <div class="shopChip"><span class="k">Best:</span> <span id="shopBest">0</span></div>
+      </div>
+
+      <div id="shopItems" class="shopGrid"></div>
+
+      <div class="shopFooter">
+        <button id="shopContinueBtn" class="btn primary" type="button">Continue Game</button>
+        <button id="backToHomeBtn" class="btn" type="button">End</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCALE ROOT -->
+  <div id="scaleRoot">
+    <main class="app">
+      <section class="stage">
+        <aside class="leftPanel">
+          <div class="panelTitle">Game Details</div>
+
+          <div class="hudGrid">
+            <div class="stat">
+              <div class="statLabel">Round</div>
+              <div class="statValue" id="roundEl">0</div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Tickets</div>
+              <div class="statValue" id="ticketsEl">0</div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Prizes</div>
+              <div class="statValue" id="prizesEl">0</div>
+            </div>
+            <div class="stat">
+              <div class="statLabel">Best</div>
+              <div class="statValue" id="bestEl">0</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
+
+            <div class="bonusWrap">
+              <div class="bonusLabel">Bonus (each round)</div>
+              <div id="bonusBalloons" class="bonusBalloons"></div>
+            </div>
+
+            <div class="rows">
+              <div class="row">
+                <div class="rowLabel">Pattern length</div>
+                <div class="pips" id="patternSlots"></div>
+              </div>
+
+              <div class="row">
+                <div class="rowLabel">Your input</div>
+                <div class="pips" id="playerPips"></div>
+              </div>
+            </div>
+
+            <div class="hint">Tip: Memorize the sequence as numbers (1–10), then tap in the same order.</div>
+          </div>
+        </aside>
+
+        <section class="centerCol">
+          <div class="centerHeader">
+            <div class="centerTitle titleWords">
+              <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
+            </div>
+            <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
+          </div>
+
+          <div class="wheelWrap">
+            <div class="pointer" aria-hidden="true"></div>
+            <div id="wheelLights" class="wheelLights" aria-hidden="true"></div>
+
+            <div id="rotator" class="rotator">
+              <svg id="wheelSvg" viewBox="0 0 300 300" role="img" aria-label="Color memory wheel"></svg>
+            </div>
+
+            <div class="centerOverlay" aria-hidden="true">
+              <div class="centerGlass">
+                <svg class="hg" viewBox="0 0 100 100">
+                  <defs>
+                    <clipPath id="topClip"><rect id="topRect" x="25" y="10" width="50" height="40"></rect></clipPath>
+                    <clipPath id="bottomClip"><rect id="bottomRect" x="25" y="90" width="50" height="0"></rect></clipPath>
+                  </defs>
+                  <polygon class="hgSand" points="25,10 75,10 60,50 40,50" clip-path="url(#topClip)"></polygon>
+                  <polygon class="hgSand" points="40,50 60,50 75,90 25,90" clip-path="url(#bottomClip)"></polygon>
+                  <polygon class="hgGlass" points="25,10 75,10 60,50 75,90 25,90 40,50"></polygon>
+                  <line class="hgNeck" x1="50" y1="48" x2="50" y2="52"></line>
+                </svg>
+                <div class="timerText" id="timerText">--</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="rightPanel">
+          <div class="panelTitle">Prize Toys</div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+            <div class="shopChip"><span class="k">Owned:</span> <span id="ownedCount">0</span></div>
+            <div class="shopChip"><span class="k">Tickets:</span> <span id="ticketsChip">0</span></div>
+          </div>
+
+          <div id="allToysGrid" class="allToysGrid"></div>
+
+          <div class="hint" style="padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.14);">
+            Lose a run to open the Prize Shop.
+          </div>
+        </aside>
+      </section>
+
+      <footer class="footer">
+        <span>Created by Mirene Jane Grejalde (貴敏希)</span>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+const SLICE_COLORS = [
+  "#FF3B3B","#FF8C00","#FFD400","#A7F432","#00C853",
+  "#00E5FF","#00A3FF","#3F51B5","#8A2BE2","#FF4FD8"
+];
+
+let SHOP_ITEMS = [
+  { id:"ball",   emoji:"⚽", name:"Mini Bouncy Ball",       cost:2,  desc:"Small, bouncy, and impossible to not toss." },
+  { id:"bt",     emoji:"🧋", name:"Bubble Tea Keyring",     cost:4,  desc:"A boba keyring that screams night market." },
+  { id:"duck",   emoji:"🦆", name:"Rubber Duck",            cost:4,  desc:"Classic squeaky duck for pure joy." },
+  { id:"yoyo",   emoji:"🪀", name:"Classic Yo-Yo",          cost:6,  desc:"Smooth spin yo-yo for simple tricks." },
+  { id:"car",    emoji:"🚗", name:"Wind-Up Toy Car",        cost:6,  desc:"Wind it up and it zooms across the table." },
+  { id:"cube",   emoji:"🧩", name:"Mini Puzzle Cube",       cost:8,  desc:"A tiny cube puzzle to keep your hands busy." },
+  { id:"squish", emoji:"🐙", name:"Squishy Octopus",        cost:8,  desc:"Soft squishy toy—super popular at night markets." },
+  { id:"teddy",  emoji:"🧸", name:"Plush Teddy Bear",       cost:10, desc:"Big soft plush prize — top shelf reward!" },
+];
+function sortShopItems(){ SHOP_ITEMS = [...SHOP_ITEMS].sort((a,b) => a.cost - b.cost || a.name.localeCompare(b.name)); }
+sortShopItems();
+
+const els = {
+  stars: document.getElementById("stars"),
+  balloons: document.getElementById("balloons"),
+  confetti: document.getElementById("confetti"),
+  fxLayer: document.getElementById("fxLayer"),
+  scaleRoot: document.getElementById("scaleRoot"),
+
+  twinkles: document.getElementById("twinkles"),
+  sparkles: document.getElementById("sparkles"),
+  flags: document.getElementById("flags"),
+
+  welcomeModal: document.getElementById("welcomeModal"),
+  welcomePage: document.getElementById("welcomePage"),
+  instructionsPage: document.getElementById("instructionsPage"),
+  welcomeNextBtn: document.getElementById("welcomeNextBtn"),
+  welcomeBackBtn: document.getElementById("welcomeBackBtn"),
+
+  startBtn: document.getElementById("startBtn"),
+  coin: document.getElementById("coin"),
+  coinSlot: document.getElementById("coinSlot"),
+  coinSlotState: document.getElementById("coinSlotState"),
+
+  bigMsg: document.getElementById("bigMsg"),
+  bigTitle: document.getElementById("bigTitle"),
+  bigSub: document.getElementById("bigSub"),
+  bigTicker: document.getElementById("bigTicker"),
+  bigTickerTextA: document.getElementById("bigTickerTextA"),
+  bigTickerTextB: document.getElementById("bigTickerTextB"),
+  bigTickerTrack: document.getElementById("bigTickerTrack"),
+
+  endCongratsModal: document.getElementById("endCongratsModal"),
+  endTitle: document.getElementById("endTitle"),
+  endSub: document.getElementById("endSub"),
+  endTickets: document.getElementById("endTickets"),
+  endPrizeCount: document.getElementById("endPrizeCount"),
+  endBest: document.getElementById("endBest"),
+  endToysGrid: document.getElementById("endToysGrid"),
+  endTwinkles: document.getElementById("endTwinkles"),
+  endBackToWelcomeBtn: document.getElementById("endBackToWelcomeBtn"),
+  endPlayAgainBtn: document.getElementById("endPlayAgainBtn"),
+
+  shopModal: document.getElementById("shopModal"),
+  shopItems: document.getElementById("shopItems"),
+  shopTickets: document.getElementById("shopTickets"),
+  prizeCount: document.getElementById("prizeCount"),
+  shopBest: document.getElementById("shopBest"),
+  backToHomeBtn: document.getElementById("backToHomeBtn"),
+  shopContinueBtn: document.getElementById("shopContinueBtn"),
+
+  roundEl: document.getElementById("roundEl"),
+  bestEl: document.getElementById("bestEl"),
+  ticketsEl: document.getElementById("ticketsEl"),
+  ticketsChip: document.getElementById("ticketsChip"),
+  prizesEl: document.getElementById("prizesEl"),
+
+  ownedCount: document.getElementById("ownedCount"),
+  allToysGrid: document.getElementById("allToysGrid"),
+
+  statusEl: document.getElementById("statusEl"),
+  patternSlots: document.getElementById("patternSlots"),
+  playerPips: document.getElementById("playerPips"),
+  bonusBalloons: document.getElementById("bonusBalloons"),
+
+  wheelSvg: document.getElementById("wheelSvg"),
+  rotator: document.getElementById("rotator"),
+  wheelLights: document.getElementById("wheelLights"),
+
+  timerText: document.getElementById("timerText"),
+  topRect: document.getElementById("topRect"),
+  bottomRect: document.getElementById("bottomRect"),
+};
+
+let best = Number(localStorage.getItem("mcw_best_carnival") || "0");
+let prizesOwned = JSON.parse(localStorage.getItem("mcw_prizes_owned_carnival") || "[]");
+
+let segments = [];
+let rotationDeg = 0;
+let gameActive = false;
+let busy = false;
+let isPlayerTurn = false;
+
+let round = 0;
+let tickets = 0;
+
+let sequence = [];
+let expected = [];
+let player = [];
+
+let rafId = null;
+let timerStart = 0;
+let timerTotal = 0;
+let pendingTimeBonusMs = 0;
+
+let audioCtx = null;
+let master = null;
+
+let coinInserted = false;
+let balloonInterval = null;
+
+function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function shuffle(arr){
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function setStatus(msg){ els.statusEl.textContent = msg; }
+
+/* ✅ Stars: slightly smaller sizing */
+function buildStars(){
+  if (!els.stars) return;
+  els.stars.innerHTML = "";
+  const n = 78;
+  for (let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className = "star";
+    const size = (5 + Math.random()*6).toFixed(2); // smaller than before
+    s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--s", `${size}px`);
+    s.style.setProperty("--t", `${(2.4 + Math.random()*3.4).toFixed(2)}s`);
+    s.style.setProperty("--d", `${(-Math.random()*3.5).toFixed(2)}s`);
+    els.stars.appendChild(s);
+  }
+}
+
+/* End twinkles */
+function buildEndTwinkles(){
+  if (!els.endTwinkles) return;
+  els.endTwinkles.innerHTML = "";
+  const n = 42;
+  for (let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className = "endTwStar";
+    const size = (5 + Math.random()*7).toFixed(2);
+    s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--s", `${size}px`);
+    s.style.setProperty("--t", `${(1.6 + Math.random()*2.2).toFixed(2)}s`);
+    s.style.setProperty("--d", `${(-Math.random()*2.6).toFixed(2)}s`);
+    els.endTwinkles.appendChild(s);
+  }
+}
+
+/* Welcome decor */
+function buildFlags(){
+  els.flags.innerHTML = "";
+  const n = 34;
+  for (let i=0;i<n;i++){
+    const f = document.createElement("div");
+    f.className = "flag";
+    f.style.setProperty("--h", String(Math.floor(Math.random()*360)));
+    f.style.setProperty("--d", `${(-Math.random()*1.7).toFixed(2)}s`);
+    els.flags.appendChild(f);
+  }
+}
+function buildSparkles(){
+  els.sparkles.innerHTML = "";
+  const n = 26;
+  for (let i=0;i<n;i++){
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
+    s.style.setProperty("--s", `${(6 + Math.random()*6).toFixed(2)}px`);
+    s.style.setProperty("--t", `${(1.8 + Math.random()*2.2).toFixed(2)}s`);
+    s.style.setProperty("--d", `${(-Math.random()*2.5).toFixed(2)}s`);
+    els.sparkles.appendChild(s);
+  }
+}
+function buildTwinkles(){
+  els.twinkles.innerHTML = "";
+  const n = 40;
+  for (let i=0;i<n;i++){
+    const d = document.createElement("div");
+    d.className = "twStar";
+    d.style.setProperty("--x", `${(Math.random()*100).toFixed(2)}%`);
+    d.style.setProperty("--y", `${(Math.random()*100).toFixed(2)}%`);
+    d.style.setProperty("--s", `${(5 + Math.random()*7).toFixed(2)}px`);
+    d.style.setProperty("--t", `${(1.6 + Math.random()*1.8).toFixed(2)}s`);
+    d.style.setProperty("--d", `${(-Math.random()*2.6).toFixed(2)}s`);
+    els.twinkles.appendChild(d);
+  }
+}
+
+/* Auto-scale */
+function applyAppScale(){
+  document.documentElement.style.setProperty("--appScale", "1");
+  const rect = els.scaleRoot.getBoundingClientRect();
+  const pad = 18;
+  const vw = window.innerWidth - pad * 2;
+  const vh = window.innerHeight - pad * 2;
+  const sx = vw / rect.width;
+  const sy = vh / rect.height;
+  const s = Math.min(1, sx, sy);
+  document.documentElement.style.setProperty("--appScale", String(s));
+  resizeConfettiCanvas();
+}
+window.addEventListener("resize", () => {
+  applyAppScale();
+  renderAllToys();
+  renderShopItems();
+  buildStars();
+  buildEndTwinkles();
+  buildTwinkles();
+  buildSparkles();
+});
+
+/* Welcome pages */
+function showWelcome(){
+  els.welcomeModal.classList.add("show");
+  els.welcomeModal.classList.remove("hidden");
+  showWelcomePage();
+  setStatus("Welcome! Enter to see instructions and insert coin.");
+  confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 90, 4.2);
+}
+function hideWelcome(){
+  els.welcomeModal.classList.remove("show");
+  els.welcomeModal.classList.add("hidden");
+}
+function showWelcomePage(){
+  els.welcomePage.classList.remove("hiddenPage");
+  els.instructionsPage.classList.add("hiddenPage");
+}
+function showInstructionsPage(){
+  els.welcomePage.classList.add("hiddenPage");
+  els.instructionsPage.classList.remove("hiddenPage");
+}
+
+/* Big message overlay with optional ticker */
+async function showBigMessage({title, sub = "", ms = 900, tickerText = ""}){
+  els.bigTitle.textContent = title;
+  els.bigSub.textContent = sub;
+
+  if (tickerText){
+    els.bigTickerTextA.textContent = tickerText;
+    els.bigTickerTextB.textContent = tickerText;
+    els.bigTicker.classList.add("show");
+    els.bigTickerTrack.style.animation = "none";
+    void els.bigTickerTrack.offsetHeight;
+    els.bigTickerTrack.style.animation = "";
+  } else {
+    els.bigTicker.classList.remove("show");
+  }
+
+  els.bigMsg.classList.remove("hidden");
+  await wait(ms);
+  els.bigMsg.classList.add("hidden");
+  els.bigTicker.classList.remove("show");
+}
+
+/* Balloons */
+function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
+  const b = document.createElement("div");
+  b.className = "balloon";
+  const x = xPct ?? (Math.random() * 100);
+  const w = sizePx ?? (44 + Math.random() * 60);
+  const t = durationS ?? (10 + Math.random() * 10);
+  b.style.setProperty("--x", `${x}%`);
+  b.style.setProperty("--w", `${w}px`);
+  b.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
+  b.style.setProperty("--t", `${t}s`);
+  b.style.setProperty("--s", `${60 + Math.random() * 120}px`);
+  const string = document.createElement("div");
+  string.className = "string";
+  b.appendChild(string);
+  els.balloons.appendChild(b);
+  setTimeout(() => { if (b.isConnected) b.remove(); }, (t * 1000) + 1200);
+}
+function spawnBackgroundBalloons(){
+  for (let i = 0; i < 28; i++) spawnOneBalloon({ durationS: 9 + Math.random() * 10 });
+  if (balloonInterval) clearInterval(balloonInterval);
+  balloonInterval = setInterval(() => {
+    spawnOneBalloon();
+    if (Math.random() < 0.35) spawnOneBalloon();
+  }, 900);
+}
+
+/* Wheel lights */
+function buildWheelLights(){
+  els.wheelLights.innerHTML = "";
+  const n = 36;
+  for (let i = 0; i < n; i++){
+    const a = (Math.PI * 2) * (i / n);
+    const x = 50 + Math.cos(a) * 48;
+    const y = 50 + Math.sin(a) * 48;
+    const b = document.createElement("div");
+    b.className = "wheelBulb";
+    b.style.left = `${x}%`;
+    b.style.top = `${y}%`;
+    b.style.setProperty("--d", `${(-Math.random()*2.4).toFixed(2)}s`);
+    els.wheelLights.appendChild(b);
+  }
+}
+
+/* Wheel */
+function buildSegments(){
+  const palette = shuffle(SLICE_COLORS);
+  segments = palette.map(c => ({ color: c }));
+}
+function polarToXY(cx, cy, r, angleDeg){
+  const rad = (angleDeg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+function wedgePath(cx, cy, r, startDeg, endDeg){
+  const a0 = polarToXY(cx, cy, r, startDeg);
+  const a1 = polarToXY(cx, cy, r, endDeg);
+  const largeArc = (endDeg - startDeg) > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${a0.x} ${a0.y} A ${r} ${r} 0 ${largeArc} 1 ${a1.x} ${a1.y} Z`;
+}
+function renderWheel(){
+  els.wheelSvg.innerHTML = "";
+  const cx = 150, cy = 150, r = 140;
+  const n = segments.length;
+  const slice = 360 / n;
+
+  const ring = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  ring.setAttribute("cx", cx);
+  ring.setAttribute("cy", cy);
+  ring.setAttribute("r", r - 1);
+  ring.setAttribute("fill", "none");
+  ring.setAttribute("stroke", "rgba(255,255,255,.18)");
+  ring.setAttribute("stroke-width", "6");
+  els.wheelSvg.appendChild(ring);
+
+  for (let i = 0; i < n; i++){
+    const seg = segments[i];
+    const start = i * slice - 90;
+    const end = (i + 1) * slice - 90;
+
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", wedgePath(cx, cy, r, start, end));
+    path.setAttribute("fill", seg.color);
+    path.classList.add("slice");
+    path.dataset.slice = String(i);
+    path.style.setProperty("--glow", seg.color);
+    els.wheelSvg.appendChild(path);
+  }
+}
+function setSlicesDim(dim){
+  els.wheelSvg.querySelectorAll(".slice").forEach(n => n.classList.toggle("sliceDim", dim));
+}
+
+/* Sounds per color */
+const COLOR_TONES = [262, 294, 330, 349, 392, 440, 494, 523, 587, 659];
+const COLOR_WAVES = ["sine","triangle","sine","triangle","sine","triangle","sine","triangle","sine","triangle"];
+function sfxColor(index, kind="tap"){
+  if (!audioCtx || !master) return;
+  const i = clamp(index|0, 0, 9);
+  const t = audioCtx.currentTime;
+  const base = COLOR_TONES[i];
+  const type = COLOR_WAVES[i];
+  const g = (kind === "flash") ? 0.06 : 0.10;
+  const dur = (kind === "flash") ? 0.07 : 0.10;
+  tone(base, t, dur, type, g);
+  tone(base * 2, t + 0.015, dur * 0.7, "sine", g * 0.55);
+}
+
+async function flashSlice(sliceIndex, ms){
+  const node = els.wheelSvg.querySelector(`.slice[data-slice="${sliceIndex}"]`);
+  if (!node) return wait(ms);
+  node.style.setProperty("--glow", segments[sliceIndex].color);
+  node.classList.add("flash");
+  sfxColor(sliceIndex, "flash");
+  await wait(ms);
+  node.classList.remove("flash");
+}
+
+/* Spin */
+function spinOnce(durationMs){
+  return new Promise((resolve) => {
+    rotationDeg += 1800 + Math.random() * 2400;
+    els.rotator.style.transition = `transform ${durationMs}ms cubic-bezier(.18,.88,.1,1)`;
+    els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+    const onEnd = (ev) => {
+      if (ev.propertyName !== "transform") return;
+      els.rotator.removeEventListener("transitionend", onEnd);
+      resolve();
+    };
+    els.rotator.addEventListener("transitionend", onEnd);
+  });
+}
+
+/* Hourglass */
+function setHourglass(fraction){
+  const clamped = Math.max(0, Math.min(1, fraction));
+  const topH = 40 * clamped;
+  const bottomH = 40 * (1 - clamped);
+  els.topRect.setAttribute("height", topH.toFixed(2));
+  const bottomY = 90 - bottomH;
+  els.bottomRect.setAttribute("y", bottomY.toFixed(2));
+  els.bottomRect.setAttribute("height", bottomH.toFixed(2));
+}
+function stopTimer(){
+  if (rafId){ cancelAnimationFrame(rafId); rafId = null; }
+  els.timerText.textContent = "--";
+  setHourglass(1);
+}
+function addTimeBonus(ms){
+  if (rafId){
+    timerTotal = Math.min(45000, timerTotal + ms);
+  } else {
+    pendingTimeBonusMs = Math.min(45000, pendingTimeBonusMs + ms);
+  }
+}
+function startTimer(){
+  stopTimer();
+  const base = 2400;
+  const perPick = 980;
+  timerTotal = Math.min(32000, base + (expected.length * perPick) + pendingTimeBonusMs);
+  pendingTimeBonusMs = 0;
+
+  timerStart = performance.now();
+  const tick = (now) => {
+    const elapsed = now - timerStart;
+    const remaining = Math.max(0, timerTotal - elapsed);
+    const frac = remaining / timerTotal;
+    setHourglass(frac);
+    els.timerText.textContent = `${(remaining / 1000).toFixed(1)}s`;
+    if (remaining <= 0){ loseGame("TIME UP"); return; }
+    rafId = requestAnimationFrame(tick);
+  };
+  rafId = requestAnimationFrame(tick);
+}
+
+/* Pips */
+function renderSlots(len){
+  els.patternSlots.innerHTML = "";
+  for (let i = 0; i < len; i++){
+    const d = document.createElement("div");
+    d.className = "pip slot";
+    els.patternSlots.appendChild(d);
+  }
+}
+function renderPlayerPips(){
+  els.playerPips.innerHTML = "";
+  for (const s of player){
+    const d = document.createElement("div");
+    d.className = "pip";
+    d.style.background = segments[s].color;
+    els.playerPips.appendChild(d);
+  }
+}
+
+/* Bonus */
+function clearBonusBalloons(){ els.bonusBalloons.innerHTML = ""; }
+function spawnTicketBonus(){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bonusBtn bonusTicket";
+  btn.innerHTML = `<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>`;
+  btn.addEventListener("click", () => {
+    ensureAudio();
+    if (!gameActive) return;
+    tickets += 1;
+    updateHUD();
+    setStatus("Bonus ticket! +1 ticket 🎟️");
+    sfxBell();
+    const r = btn.getBoundingClientRect();
+    confettiBurst(r.left + r.width/2, r.top + r.height/2, 70, 3.6);
+    btn.classList.add("pop");
+    setTimeout(() => btn.remove(), 180);
+  });
+  return btn;
+}
+function spawnSecondsBalloon(){
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bonusBtn bonusBalloonCircle";
+  btn.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
+  const bonusMs = 2500;
+  btn.innerHTML = `
+    <div>
+      <div class="big">+2.5s</div>
+      <div class="small">TIME</div>
+    </div>
+    <div class="string" aria-hidden="true"></div>
+  `;
+  btn.addEventListener("click", () => {
+    ensureAudio();
+    if (!gameActive) return;
+    addTimeBonus(bonusMs);
+    setStatus("Bonus time! +2.5 seconds ⏱️");
+    sfxBell();
+    const r = btn.getBoundingClientRect();
+    confettiBurst(r.left + r.width/2, r.top + r.height/2, 70, 3.6);
+    btn.classList.add("pop");
+    setTimeout(() => btn.remove(), 180);
+  });
+  return btn;
+}
+function spawnRoundBonus(){
+  clearBonusBalloons();
+  if (!gameActive) return;
+  const node = (Math.random() < 0.5) ? spawnTicketBonus() : spawnSecondsBalloon();
+  els.bonusBalloons.appendChild(node);
+  setTimeout(() => {
+    if (!node.isConnected) return;
+    node.classList.add("pop");
+    setTimeout(() => node.remove(), 220);
+  }, 5000);
+}
+
+/* Pattern */
+function randomColorIndex(){
+  let idx = Math.floor(Math.random() * 10);
+  if (sequence.length){
+    const last = sequence[sequence.length - 1];
+    if (idx === last && Math.random() < 0.75){
+      idx = (idx + 1 + Math.floor(Math.random() * 9)) % 10;
+    }
+  }
+  return idx;
+}
+
+/* Flash speed up at round 5+ */
+function getFlashTiming(){
+  let flashMs = clamp(520 - round * 28, 160, 520);
+  let gapMs   = clamp(120 - round * 5,  42, 120);
+  if (round >= 5){
+    flashMs = Math.max(120, Math.floor(flashMs * 0.72));
+    gapMs   = Math.max(30,  Math.floor(gapMs   * 0.72));
+  }
+  if (round >= 8){
+    flashMs = Math.max(95, Math.floor(flashMs * 0.82));
+    gapMs   = Math.max(24, Math.floor(gapMs   * 0.82));
+  }
+  return { flashMs, gapMs };
+}
+async function showSequence(){
+  setSlicesDim(true);
+  sfxBell();
+  const { flashMs, gapMs } = getFlashTiming();
+  for (const s of sequence){
+    await wait(gapMs);
+    await flashSlice(s, flashMs);
+  }
+  setSlicesDim(false);
+}
+async function playRound(){
+  busy = true;
+  isPlayerTurn = false;
+  player = [];
+  renderPlayerPips();
+  renderSlots(sequence.length);
+  expected = [...sequence];
+
+  setStatus(`Round ${round}: spinning...`);
+  await spinOnce(Math.min(6500, 3300 + round * 180));
+
+  setStatus("Watch the pattern.");
+  await showSequence();
+
+  setStatus("Spinning again...");
+  await spinOnce(2200);
+
+  setStatus("Your turn: repeat the colors.");
+  isPlayerTurn = true;
+  busy = false;
+  startTimer();
+}
+
+async function advanceRound(){
+  round += 1;
+  sequence.push(randomColorIndex());
+  updateHUD();
+  spawnRoundBonus();
+
+  if (round >= 2){
+    const emojiRun = `🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸 ✨🎏🏮 🍡🧋🍢 🧸🎡🎟️ `;
+    await showBigMessage({
+      title: `ROUND ${round}`,
+      sub: "Proceeding...",
+      ms: 1800,
+      tickerText: emojiRun + emojiRun + emojiRun
+    });
+  }
+  await playRound();
+}
+
+/* Lose + Shop */
+async function loseGame(reason){
+  stopTimer();
+  isPlayerTurn = false;
+  busy = false;
+  clearBonusBalloons();
+  pendingTimeBonusMs = 0;
+
+  const score = Math.max(0, round - 1);
+  const newBest = score > best;
+  best = Math.max(best, score);
+  localStorage.setItem("mcw_best_carnival", String(best));
+
+  gameActive = false;
+  updateHUD();
+
+  sfxBuzzer();
+  await showBigMessage({ title: "GAME OVER!", sub: `Reason: ${reason}`, ms: 1000, tickerText: "" });
+
+  if (newBest){
+    confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.2);
+  }
+  openShop();
+}
+
+/* Player input */
+function onPlayerPick(colorIndex){
+  if (!gameActive || !isPlayerTurn || busy) return;
+  ensureAudio();
+  sfxColor(colorIndex, "tap");
+  flashSlice(colorIndex, 210);
+
+  player.push(colorIndex);
+  renderPlayerPips();
+
+  const idx = player.length - 1;
+  if (player[idx] !== expected[idx]){
+    loseGame("WRONG COLOR");
+    return;
+  }
+  if (player.length === expected.length){
+    stopTimer();
+    isPlayerTurn = false;
+
+    tickets += 1;
+    sfxCheer();
+
+    clearBonusBalloons();
+    setStatus("Correct! +1 ticket. Next round...");
+    updateHUD();
+
+    const w = els.wheelSvg.getBoundingClientRect();
+    confettiBurst(w.left + w.width/2, w.top + w.height/2, 140, 4.4);
+
+    busy = true;
+    setTimeout(() => { busy = false; advanceRound(); }, 650);
+  }
+}
+
+/* Start new run */
+async function startNewGame({ resetTickets }){
+  if (gameActive || busy) return;
+  ensureAudio();
+  sfxCoin();
+
+  buildSegments();
+  renderWheel();
+
+  rotationDeg = 0;
+  els.rotator.style.transform = `rotate(${rotationDeg}deg)`;
+
+  round = 0;
+  sequence = [];
+  expected = [];
+  player = [];
+
+  pendingTimeBonusMs = 0;
+  if (resetTickets) tickets = 0;
+
+  gameActive = true;
+  clearBonusBalloons();
+
+  stopTimer();
+  updateHUD();
+
+  setStatus("Get ready...");
+  await wait(300);
+  await advanceRound();
+}
+
+/* Toys list */
+function renderAllToys(){
+  sortShopItems();
+  els.allToysGrid.innerHTML = "";
+  for (const item of SHOP_ITEMS){
+    const owned = prizesOwned.includes(item.id);
+    const c = document.createElement("div");
+    c.className = "toyMini";
+    c.innerHTML = `
+      <div class="toyMiniEmoji">${item.emoji}</div>
+      <div class="toyMiniMid">
+        <div class="toyMiniName">${item.name}</div>
+        <div class="toyMiniDesc">${item.desc}</div>
+      </div>
+      <div class="toyMiniRight">
+        <div class="toyMiniCost">${item.cost} 🎟️</div>
+        ${owned ? `<span class="toyMiniOwned">Owned</span>` : ``}
+      </div>
+    `;
+    els.allToysGrid.appendChild(c);
+  }
+}
+
+/* Shop */
+function openShop(){
+  els.shopTickets.textContent = String(tickets);
+  els.prizeCount.textContent = String(prizesOwned.length);
+  els.shopBest.textContent = String(best);
+  renderShopItems();
+  els.shopModal.classList.remove("hidden");
+}
+function closeShop(){ els.shopModal.classList.add("hidden"); }
+
+/* End = wipe */
+function hardResetAllProgress(){
+  prizesOwned = [];
+  best = 0;
+  tickets = 0;
+  localStorage.removeItem("mcw_prizes_owned_carnival");
+  localStorage.removeItem("mcw_best_carnival");
+  updateHUD();
+}
+function goHomeEnd(){
+  closeShop();
+  hardResetAllProgress();
+  showWelcome();
+  resetCoinUI();
+}
+
+/* End Screen */
+function openEndCongrats(){
+  els.endTickets.textContent = String(tickets);
+  els.endPrizeCount.textContent = String(prizesOwned.length);
+  els.endBest.textContent = String(best);
+
+  const ownedItems = prizesOwned
+    .map(id => SHOP_ITEMS.find(x => x.id === id))
+    .filter(Boolean);
+
+  els.endToysGrid.classList.remove("singleCenter");
+
+  if (ownedItems.length){
+    els.endTitle.innerHTML = `
+      <span style="--c: rgba(255,120,220,.95)">C</span>
+      <span style="--c: rgba(120,255,240,.95)">O</span>
+      <span style="--c: rgba(255,220,150,.95)">N</span>
+      <span style="--c: rgba(170,255,120,.95)">G</span>
+      <span style="--c: rgba(140,200,255,.95)">R</span>
+      <span style="--c: rgba(255,160,80,.95)">A</span>
+      <span style="--c: rgba(200,120,255,.95)">T</span>
+      <span style="--c: rgba(255,110,220,.95)">S</span>
+    `;
+    els.endSub.textContent = "Here are the prizes you collected 🎉";
+    els.endPlayAgainBtn.classList.add("hiddenBtn");
+  } else {
+    els.endTitle.innerHTML = `
+      <span style="--c: rgba(255,120,220,.95)">Better</span>
+      <span style="--c: rgba(120,255,240,.95)">Luck</span>
+      <span style="--c: rgba(255,220,150,.95)">Next</span>
+      <span style="--c: rgba(170,255,120,.95)">Time!</span>
+    `;
+    els.endSub.textContent = "No prize this time — try again and win tickets! 🎟️";
+    els.endToysGrid.classList.add("singleCenter");
+    els.endPlayAgainBtn.classList.remove("hiddenBtn");
+  }
+
+  els.endToysGrid.innerHTML = "";
+  if (ownedItems.length){
+    for (const it of ownedItems){
+      const c = document.createElement("div");
+      c.className = "endToy";
+      c.innerHTML = `<div class="e">${it.emoji}</div><div class="n">${it.name}</div>`;
+      els.endToysGrid.appendChild(c);
+    }
+  } else {
+    const c = document.createElement("div");
+    c.className = "endToy";
+    c.innerHTML = `<div class="e">🎡</div><div class="n">Play again to collect prizes!</div>`;
+    els.endToysGrid.appendChild(c);
+  }
+
+  els.endCongratsModal.classList.remove("hidden");
+  if (ownedItems.length){
+    confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 220, 5.4);
+  }
+}
+function closeEndCongrats(){
+  els.endCongratsModal.classList.add("hidden");
+}
+
+/* ✅ Try again button: return to the game */
+async function playAgainFromEnd(){
+  closeEndCongrats();
+  closeShop();
+  hideWelcome();
+  await startNewGame({ resetTickets: false });
+}
+
+/* Continue from shop */
+async function continueFromShop(){
+  closeShop();
+  await startNewGame({ resetTickets: false });
+}
+
+/* Prize fly animation */
+function animatePrizeFly({ fromRect, toRect, emoji }){
+  const el = document.createElement("div");
+  el.textContent = emoji;
+  el.style.position = "fixed";
+  el.style.left = `${fromRect.left + fromRect.width/2}px`;
+  el.style.top = `${fromRect.top + fromRect.height/2}px`;
+  el.style.transform = "translate(-50%,-50%) scale(1)";
+  el.style.fontSize = "40px";
+  el.style.filter = "drop-shadow(0 14px 18px rgba(0,0,0,.35))";
+  el.style.willChange = "transform,left,top,opacity";
+  els.fxLayer.appendChild(el);
+
+  const x0 = fromRect.left + fromRect.width/2;
+  const y0 = fromRect.top + fromRect.height/2;
+  const x1 = toRect.left + toRect.width/2;
+  const y1 = toRect.top + toRect.height/2;
+
+  const ctrlX = (x0 + x1) / 2 + (Math.random() * 80 - 40);
+  const ctrlY = Math.min(y0, y1) - (90 + Math.random()*60);
+
+  const dur = 520;
+  const tStart = performance.now();
+
+  function bezier(t, p0, p1, p2){
+    const a = (1-t)*(1-t);
+    const b = 2*(1-t)*t;
+    const c = t*t;
+    return a*p0 + b*p1 + c*p2;
+  }
+  function easeOutCubic(t){ return 1 - Math.pow(1-t, 3); }
+
+  const step = (now) => {
+    const raw = (now - tStart) / dur;
+    const t = clamp(raw, 0, 1);
+    const e = easeOutCubic(t);
+    const x = bezier(e, x0, ctrlX, x1);
+    const y = bezier(e, y0, ctrlY, y1);
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    const s = 1 - e * 0.55;
+    el.style.transform = `translate(-50%,-50%) scale(${s})`;
+    el.style.opacity = String(1 - e * 0.15);
+
+    if (t < 1){
+      requestAnimationFrame(step);
+    } else {
+      el.remove();
+      confettiBurst(x1, y1, 110, 4.6);
+    }
+  };
+  requestAnimationFrame(step);
+}
+
+function renderShopItems(){
+  sortShopItems();
+  els.shopItems.innerHTML = "";
+
+  for (const item of SHOP_ITEMS){
+    const owned = prizesOwned.includes(item.id);
+
+    const card = document.createElement("div");
+    card.className = "shopItem";
+
+    const name = document.createElement("div");
+    name.className = "shopName";
+    name.innerHTML = `<span class="shopEmoji">${item.emoji}</span> <span>${item.name}</span>`;
+
+    const desc = document.createElement("div");
+    desc.className = "shopDesc";
+    desc.textContent = item.desc;
+
+    const row = document.createElement("div");
+    row.className = "shopBuyRow";
+
+    const cost = document.createElement("div");
+    cost.className = "shopCost";
+    cost.textContent = `Cost: ${item.cost} tickets`;
+
+    const btn = document.createElement("button");
+    btn.className = "btn primary";
+    btn.type = "button";
+    btn.textContent = owned ? "Owned" : (tickets < item.cost ? "Need tickets" : "Buy");
+    btn.disabled = owned || tickets < item.cost;
+
+    btn.addEventListener("click", async () => {
+      ensureAudio();
+      if (owned || tickets < item.cost) return;
+
+      tickets -= item.cost;
+      prizesOwned.push(item.id);
+      localStorage.setItem("mcw_prizes_owned_carnival", JSON.stringify(prizesOwned));
+      sfxBell();
+
+      updateHUD();
+      renderShopItems();
+
+      const fromRect = btn.getBoundingClientRect();
+      const toRect = els.ownedCount.getBoundingClientRect();
+      animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
+      confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 140, 4.6);
+
+      setStatus(`Purchased: ${item.name} ✅`);
+      await showBigMessage({ title: "PURCHASED!", sub: `${item.emoji} ${item.name}\nTickets left: ${tickets}`, ms: 900 });
+    });
+
+    row.appendChild(cost);
+    row.appendChild(btn);
+
+    card.appendChild(name);
+    card.appendChild(desc);
+    card.appendChild(row);
+
+    els.shopItems.appendChild(card);
+  }
+
+  els.shopTickets.textContent = String(tickets);
+  els.prizeCount.textContent = String(prizesOwned.length);
+  els.shopBest.textContent = String(best);
+}
+
+/* HUD */
+function updateHUD(){
+  els.roundEl.textContent = String(round);
+  els.bestEl.textContent = String(best);
+  els.ticketsEl.textContent = String(tickets);
+  els.ticketsChip.textContent = String(tickets);
+  els.prizesEl.textContent = String(prizesOwned.length);
+  els.ownedCount.textContent = String(prizesOwned.length);
+  renderAllToys();
+}
+
+/* Sounds base */
+function ensureAudio(){
+  if (!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    master = audioCtx.createGain();
+    master.gain.value = 0.25;
+    master.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === "suspended") audioCtx.resume();
+}
+function tone(freq, t0, dur, type="sine", gain=0.25){
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(freq, t0);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(master);
+  o.start(t0);
+  o.stop(t0 + dur + 0.02);
+}
+function sfxCoin(){
+  const t = audioCtx.currentTime;
+  tone(220, t, 0.10, "triangle", 0.18);
+  tone(440, t + 0.06, 0.12, "triangle", 0.18);
+  tone(660, t + 0.12, 0.10, "triangle", 0.14);
+}
+function sfxBell(){
+  const t = audioCtx.currentTime;
+  tone(880, t, 0.08, "sine", 0.16);
+  tone(1320, t + 0.02, 0.10, "sine", 0.12);
+  tone(1760, t + 0.04, 0.10, "sine", 0.10);
+}
+function sfxCheer(){
+  const t = audioCtx.currentTime;
+  tone(330, t, 0.18, "sawtooth", 0.08);
+  tone(392, t + 0.05, 0.22, "sawtooth", 0.08);
+  tone(523, t + 0.10, 0.25, "sawtooth", 0.08);
+  tone(659, t + 0.16, 0.22, "sawtooth", 0.06);
+}
+function sfxBuzzer(){
+  const t = audioCtx.currentTime;
+  tone(110, t, 0.25, "square", 0.12);
+  tone(92, t + 0.12, 0.30, "square", 0.10);
+}
+
+/* Coin drag-to-insert */
+let dragging = false;
+let ghost = null;
+function rectsOverlap(a, b){
+  return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+}
+function setCoinInsertedState(on){
+  coinInserted = on;
+  els.coinSlotState.textContent = on ? "COIN INSERTED" : "NO COIN";
+  els.startBtn.disabled = !on;
+  els.startBtn.textContent = "Start Game";
+}
+function resetCoinUI(){
+  if (ghost){ ghost.remove(); ghost = null; }
+  dragging = false;
+  els.coin.style.visibility = "visible";
+  els.coinSlot.classList.remove("inserting");
+  setCoinInsertedState(false);
+}
+function animateCoinIntoSlot(slotRect){
+  if (!ghost) return;
+  els.coinSlot.classList.add("inserting");
+
+  const slitX = slotRect.left + slotRect.width / 2;
+  const slitY = slotRect.top + slotRect.height * 0.46;
+
+  ghost.classList.add("coinDrop");
+  ghost.style.left = `${slitX}px`;
+  ghost.style.top = `${slitY}px`;
+
+  setTimeout(() => {
+    if (!ghost) return;
+    requestAnimationFrame(() => {
+      ghost.style.top = `${slitY + 26}px`;
+      ghost.style.transform = "translate(-50%,-50%) scale(0.10)";
+      ghost.style.opacity = "0";
+      ghost.style.filter = "blur(1.2px)";
+    });
+  }, 140);
+
+  setTimeout(() => {
+    if (ghost){ ghost.remove(); ghost = null; }
+    els.coin.style.visibility = "hidden";
+    els.coinSlot.classList.remove("inserting");
+    setCoinInsertedState(true);
+    setStatus("Coin accepted. Press Start Game.");
+    ensureAudio(); sfxCoin();
+    const r = els.coinSlot.getBoundingClientRect();
+    confettiBurst(r.left + r.width/2, r.top + r.height/2, 80, 4.0);
+  }, 520);
+}
+function onCoinPointerDown(e){
+  if (coinInserted) return;
+  e.preventDefault();
+  dragging = true;
+
+  ghost = els.coin.cloneNode(true);
+  ghost.classList.add("coinGhost");
+  ghost.removeAttribute("id");
+  document.body.appendChild(ghost);
+
+  els.coin.style.visibility = "hidden";
+
+  const move = (ev) => {
+    if (!dragging || !ghost) return;
+    ghost.style.left = `${ev.clientX}px`;
+    ghost.style.top = `${ev.clientY}px`;
+  };
+  const up = (ev) => {
+    if (!dragging) return;
+    dragging = false;
+
+    if (ghost){
+      ghost.style.left = `${ev.clientX}px`;
+      ghost.style.top = `${ev.clientY}px`;
+
+      const coinRect = ghost.getBoundingClientRect();
+      const slotRect = els.coinSlot.getBoundingClientRect();
+
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
+
+      if (rectsOverlap(coinRect, slotRect)){
+        animateCoinIntoSlot(slotRect);
+      } else {
+        ghost.remove();
+        ghost = null;
+        els.coin.style.visibility = "visible";
+      }
+    }
+  };
+
+  window.addEventListener("pointermove", move, { passive: false });
+  window.addEventListener("pointerup", up, { passive: false });
+  window.addEventListener("pointercancel", up, { passive: false });
+}
+
+/* Confetti */
+const conf = { ctx: null, w: 0, h: 0, running: false, parts: [] };
+function resizeConfettiCanvas(){
+  const dpr = window.devicePixelRatio || 1;
+  conf.w = window.innerWidth;
+  conf.h = window.innerHeight;
+  els.confetti.width = Math.floor(conf.w * dpr);
+  els.confetti.height = Math.floor(conf.h * dpr);
+  els.confetti.style.width = conf.w + "px";
+  els.confetti.style.height = conf.h + "px";
+  conf.ctx = els.confetti.getContext("2d");
+  conf.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function confettiBurst(x, y, count=120, power=4.2){
+  const colors = SLICE_COLORS;
+  for (let i=0; i<count; i++){
+    const a = Math.random() * Math.PI * 2;
+    const sp = (Math.random() * 0.85 + 0.15) * (power * 2.6);
+    conf.parts.push({
+      x, y,
+      vx: Math.cos(a) * sp + (Math.random()*1.2 - 0.6),
+      vy: Math.sin(a) * sp - (power * 1.3),
+      g: 0.14 + Math.random()*0.12,
+      r: Math.random()*Math.PI*2,
+      vr: (Math.random()*0.25 - 0.125),
+      w: 3 + Math.random()*5,
+      h: 6 + Math.random()*10,
+      life: 58 + Math.floor(Math.random()*35),
+      color: colors[(Math.random()*colors.length)|0],
+      alpha: 1
+    });
+  }
+  if (!conf.running) runConfetti();
+}
+function runConfetti(){
+  conf.running = true;
+  const tick = () => {
+    const ctx = conf.ctx;
+    if (!ctx){ conf.running = false; return; }
+    ctx.clearRect(0,0,conf.w,conf.h);
+
+    for (let i=conf.parts.length-1; i>=0; i--){
+      const p = conf.parts[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.g;
+      p.r += p.vr;
+      p.life -= 1;
+      p.alpha = clamp(p.life / 65, 0, 1);
+
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.r);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+
+      if (p.life <= 0 || p.y > conf.h + 80){
+        conf.parts.splice(i, 1);
+      }
+    }
+
+    if (conf.parts.length){
+      requestAnimationFrame(tick);
+    } else {
+      conf.running = false;
+      ctx.clearRect(0,0,conf.w,conf.h);
+    }
+  };
+  requestAnimationFrame(tick);
+}
+
+/* Events */
+els.welcomeNextBtn.addEventListener("click", () => {
+  showInstructionsPage();
+  const r = els.welcomeNextBtn.getBoundingClientRect();
+  confettiBurst(r.left + r.width/2, r.top + r.height/2, 120, 4.6);
+});
+els.welcomeBackBtn.addEventListener("click", () => showWelcomePage());
+
+els.startBtn.addEventListener("click", async () => {
+  if (!coinInserted) return;
+  hideWelcome();
+  await startNewGame({ resetTickets: true });
+});
+
+els.backToHomeBtn.addEventListener("click", () => {
+  closeShop();
+  openEndCongrats();
+});
+
+els.endPlayAgainBtn.addEventListener("click", () => playAgainFromEnd());
+
+els.endBackToWelcomeBtn.addEventListener("click", () => {
+  closeEndCongrats();
+  goHomeEnd();
+});
+
+els.shopContinueBtn.addEventListener("click", () => continueFromShop());
+els.coin.addEventListener("pointerdown", onCoinPointerDown, { passive: false });
+
+els.wheelSvg.addEventListener("click", (e) => {
+  const target = e.target;
+  if (!(target instanceof SVGPathElement)) return;
+  if (!target.classList.contains("slice")) return;
+  onPlayerPick(Number(target.dataset.slice));
+});
+
+/* Init */
+function init(){
+  resizeConfettiCanvas();
+  buildStars();
+  buildEndTwinkles();
+  buildFlags();
+  buildTwinkles();
+  buildSparkles();
+  spawnBackgroundBalloons();
+  buildWheelLights();
+  buildSegments();
+  renderWheel();
+  setHourglass(1);
+  updateHUD();
+  resetCoinUI();
+  clearBonusBalloons();
+  showWelcome();
+
+  requestAnimationFrame(() => {
+    applyAppScale();
+    requestAnimationFrame(applyAppScale);
+  });
+}
+init();
+  </script>
+</body>
+</html>
