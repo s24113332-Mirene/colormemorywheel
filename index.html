@@ -256,6 +256,21 @@ body::before{
 .musicToggleBtn:hover{ filter: brightness(1.08); }
 .musicToggleBtn:active{ transform: translateY(0); }
 
+/* Music volume slider */
+.musicVolume{
+  width: 140px;
+  background: transparent;
+  -webkit-appearance: none;
+}
+.musicVolume:focus{ outline: none; }
+.musicVolume::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  height: 14px; width: 14px; border-radius: 50%; background: #ff8acb; box-shadow: 0 2px 4px rgba(0,0,0,.28);
+}
+.musicVolume::-moz-range-thumb{
+  height: 14px; width:14px; border-radius:50%; background:#ff8acb; box-shadow: 0 2px 4px rgba(0,0,0,.28);
+} 
+
 /* Glow pulse */
 @keyframes textGlowPulse{
   0%,100%{ filter: drop-shadow(0 0 10px rgba(255,255,255,.14)) drop-shadow(0 0 18px rgba(255,255,255,.06)); }
@@ -1491,6 +1506,14 @@ body::before{
               </div>
             </div>
 
+            <div style="display:flex; gap:8px; align-items:center; justify-content:center; margin:10px 0;">
+              <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
+                <div id="musicVolLabel" style="min-width:40px; text-align:right;">100%</div>
+              </div>
+            </div>
+
             <div class="panel">
               <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
 
@@ -1566,10 +1589,7 @@ body::before{
       </section>
 
       <footer class="footer">
-        <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-          <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
-          <span>Created by Mirene Jane Grejalde (貴敏希)</span>
-        </div>
+        <span>Created by Mirene Jane Grejalde (貴敏希)</span>
       </footer>
     </main>
   </div>
@@ -3050,8 +3070,29 @@ window.addEventListener('pointerdown', (e) => {
 
 // Music control UI handlers
 const _musicToggle = document.getElementById('musicToggleSideBtn');
+const _musicSlider = document.getElementById('musicVolume');
+const _musicVolLabel = document.getElementById('musicVolLabel');
 
 _musicToggle && _musicToggle.addEventListener('click', (e) => { e.preventDefault(); ensureAudio(); toggleMusicMute(); });
+
+if (_musicSlider){
+  // initialize slider to current music gain or stored previous
+  try{
+    const current = (musicGain && musicGain.gain && typeof musicGain.gain.value === 'number') ? musicGain.gain.value : prevMusicGain;
+    _musicSlider.value = String(current);
+    _musicVolLabel && (_musicVolLabel.textContent = Math.round(Number(_musicSlider.value) * 100) + '%');
+  }catch(e){ }
+
+  _musicSlider.addEventListener('input', (ev) => {
+    ensureAudio();
+    const v = Number(ev.target.value);
+    prevMusicGain = v;
+    _musicVolLabel && (_musicVolLabel.textContent = Math.round(v * 100) + '%');
+    if (!musicMuted && musicGain){
+      musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+    }
+  });
+}
 
 /* Init */
 function init(){
