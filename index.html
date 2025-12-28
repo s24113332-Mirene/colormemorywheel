@@ -2646,7 +2646,7 @@ function ensureAudio(){
   }
   if (audioCtx.state === "suspended") audioCtx.resume();
 }
-function tone(freq, t0, dur, type="sine", gain=0.25){
+function tone(freq, t0, dur, type="sine", gain=0.25, dest){
   const o = audioCtx.createOscillator();
   const g = audioCtx.createGain();
   o.type = type;
@@ -2654,7 +2654,8 @@ function tone(freq, t0, dur, type="sine", gain=0.25){
   g.gain.setValueAtTime(0.0001, t0);
   g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g).connect(master);
+  // route to provided destination (e.g., bgGain or musicGain) or fall back to master
+  o.connect(g).connect(dest || master);
   o.start(t0);
   o.stop(t0 + dur + 0.02);
 }
@@ -2724,56 +2725,83 @@ let musicMuted = false;       // music mute state
 let prevMusicGain = 1.0;      // store previous music gain
 
 function startBGM(){
-  // Lively arcade BGM: major-key arpeggio, bouncy rhythm, and bright pluck countermelody
+  // Richer arcade BGM: chord progression, syncopated rhythm, countermelody, and hi-hat ticks
   if (bgPlaying) return;
   bgPlaying = true;
   if (!audioCtx) return; // safety
 
-  // music gain for BGM
+  // ensure any previous BGM cleared
+  if (bgArpInterval){ clearInterval(bgArpInterval); bgArpInterval = null; }
+
+  // music gain for BGM (keep headroom for SFX)
   bgGain = audioCtx.createGain();
-  bgGain.gain.value = 0.18; // slightly lower base to keep SFX clear
+  bgGain.gain.value = 0.16;
   bgGain.connect(musicGain);
 
-  // Major-key arpeggio + bright pluck
-  // A major triad in the arcade register: A5, C#6, E6, A6
-  const arpNotes = [880, 1108.73, 1318.5, 1760];
-  let idx = 0;
+  // Chord progression (I - V - vi - IV) in A major (triads in a compact arcade register)
+  const progression = [
+    [880, 1108.73, 1318.5],   // A major
+    [659.25, 830.61, 987.77], // E major
+    [739.99, 880, 1108.73],   // F# minor
+    [587.33, 739.99, 880]     // D major
+  ];
+
+  let bar = 0;
   let step = 0;
-  const bpm = 140; // snappier tempo for a lively feel
-  const stepMs = (60000 / bpm) / 2; // 8th-note stepping
+  const bpm = 145; // snappier, lively tempo
+  const stepMs = (60000 / bpm) / 2; // 8th-note grid
+
+  // small deterministic pattern to create a musical arp feel
+  const pattern = [0,1,2,1,0,2,1,0];
 
   bgArpInterval = setInterval(() => {
     const tNow = audioCtx.currentTime;
+    const chord = progression[bar % progression.length];
 
-    // Bass pulse on strong beats (0 and 2) with subtle variation
+    // Bass pulse on strong beats (0 and 2)
     if (step % 4 === 0){
-      tone(110, tNow, 0.12, "square", 0.14);
+      tone(chord[0] / 4, tNow, 0.12, "square", 0.16, bgGain);
+      if (Math.random() > 0.7) tone(chord[0] / 2, tNow + 0.02, 0.08, "square", 0.08, bgGain);
     } else if (step % 4 === 2){
-      tone(110, tNow, 0.08, "square", 0.08);
+      tone(chord[0] / 4, tNow, 0.08, "square", 0.08, bgGain);
     }
 
-    // Main arpeggio note (square) - short and punchy
-    const f = arpNotes[idx % arpNotes.length];
-    tone(f, tNow + 0.002, 0.10, "square", 0.08);
+    // Main arpeggio voice (moves within the current triad)
+    const note = chord[pattern[step % pattern.length] % chord.length];
+    tone(note * (step % 8 < 4 ? 1 : 2), tNow + 0.002, 0.12, "square", 0.075, bgGain);
 
-    // Off-beat pluck (triangle) for bounce on 2 and 4
+    // Off-beat pluck for bounce
     if (step % 2 === 1){
-      tone(f * (Math.random() > 0.6 ? 1.5 : 2), tNow + 0.01, 0.06, "triangle", 0.05);
+      tone(note * (Math.random() > 0.6 ? 1.5 : 2), tNow + 0.01, 0.06, "triangle", 0.05, bgGain);
     }
 
-    // Light chord stab every bar to add cheerfulness
+    // Countermelody: higher, bell-like notes that move with the bar
+    if (step % 4 === 1){
+      const cmNote = chord[(Math.floor(step / 4)) % 3] * 2;
+      tone(cmNote, tNow + 0.015, 0.09, "sine", 0.045, bgGain);
+    }
+
+    // Hi-hat / tick: bright short tick on off-beats
+    if (step % 2 === 1){
+      tone(12000 * (1 + Math.random() * 0.08), tNow + 0.001, 0.02, "triangle", 0.03, bgGain);
+    }
+
+    // Chord stab at the start of each bar to add warmth
     if (step % 8 === 0){
-      tone(arpNotes[0] / 2, tNow + 0.004, 0.16, "sawtooth", 0.05);
-      tone(arpNotes[1] / 2, tNow + 0.004, 0.16, "sawtooth", 0.04);
+      tone(chord[0] / 2, tNow + 0.004, 0.18, "sawtooth", 0.04, bgGain);
+      tone(chord[1] / 2, tNow + 0.004, 0.18, "sawtooth", 0.03, bgGain);
+      tone(chord[2] / 2, tNow + 0.004, 0.18, "sawtooth", 0.02, bgGain);
     }
 
-    // Occasional high bell sparkle
-    if (Math.random() > 0.75){
-      tone(1760 * (Math.random() > 0.5 ? 1 : 2), tNow + 0.02, 0.04, "sine", 0.03);
+    // Occasional ascending fill for variety
+    if (Math.random() > 0.92){
+      tone(chord[0], tNow + 0.02, 0.06, "square", 0.05, bgGain);
+      tone(chord[1], tNow + 0.08, 0.06, "square", 0.05, bgGain);
+      tone(chord[2], tNow + 0.14, 0.06, "square", 0.05, bgGain);
     }
 
-    idx++;
     step++;
+    if (step % 8 === 0) bar++;
   }, stepMs);
 }
 
