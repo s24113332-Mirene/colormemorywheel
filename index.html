@@ -1285,6 +1285,21 @@ body::before{
   animation: rainbowShift 4.0s linear infinite;
 }
 
+/* 🔧 Wheel rainbow effect — copy the Congrats color animation to the wheel */
+@keyframes wheelHueRotate{
+  0%{ filter: hue-rotate(0deg); }
+  100%{ filter: hue-rotate(360deg); }
+}
+#wheelSvg.rainbow{
+  animation: wheelHueRotate 4s linear infinite;
+  /* subtle boost so the hues feel luminous like the Congrats text */
+  filter: drop-shadow(0 0 14px rgba(255,255,255,.12));
+}
+#wheelSvg.rainbow .slice{
+  transition: filter 0.15s linear;
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.06)) drop-shadow(0 0 18px rgba(255,255,255,.04));
+}
+
 .endSub{
   margin: 0;
   color: rgba(255,255,255,.88);
@@ -2473,10 +2488,16 @@ function openEndCongrats(){
 
   els.endCongratsModal.classList.remove("hidden");
   if (ownedItems.length){
+    els.wheelSvg.classList.add("rainbow");
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 180, 4.8);
+  } else {
+    els.wheelSvg.classList.remove("rainbow");
   }
 }
-function closeEndCongrats(){ els.endCongratsModal.classList.add("hidden"); }
+function closeEndCongrats(){ 
+  els.endCongratsModal.classList.add("hidden");
+  els.wheelSvg.classList.remove("rainbow");
+}
 
 async function playAgainFromEnd(){
   closeEndCongrats();
