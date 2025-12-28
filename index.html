@@ -2724,41 +2724,52 @@ let musicMuted = false;       // music mute state
 let prevMusicGain = 1.0;      // store previous music gain
 
 function startBGM(){
-  // Arcade-style, clean BGM: tight square arpeggio + bass pulse; no ambient pads or noisy textures
+  // Lively arcade BGM: major-key arpeggio, bouncy rhythm, and bright pluck countermelody
   if (bgPlaying) return;
   bgPlaying = true;
   if (!audioCtx) return; // safety
 
   // music gain for BGM
   bgGain = audioCtx.createGain();
-  bgGain.gain.value = 0.22;
+  bgGain.gain.value = 0.18; // slightly lower base to keep SFX clear
   bgGain.connect(musicGain);
 
-  // Clean arcade arpeggio + bass pulse using short, percussive envelopes
-  const arpNotes = [880, 1046.5, 1318.5, 1760]; // A5, C6, E6, A6 (bright arcade register)
+  // Major-key arpeggio + bright pluck
+  // A major triad in the arcade register: A5, C#6, E6, A6
+  const arpNotes = [880, 1108.73, 1318.5, 1760];
   let idx = 0;
   let step = 0;
-  const bpm = 132; // arcade-leaning tempo
+  const bpm = 140; // snappier tempo for a lively feel
   const stepMs = (60000 / bpm) / 2; // 8th-note stepping
 
-  // interval triggers short tone() calls (no sustained pads)
   bgArpInterval = setInterval(() => {
     const tNow = audioCtx.currentTime;
 
-    // Bass pulse on downbeats (every 4 steps)
+    // Bass pulse on strong beats (0 and 2) with subtle variation
     if (step % 4 === 0){
-      // punchy bass via tone helper
-      tone(110, tNow, 0.14, "square", 0.16);
+      tone(110, tNow, 0.12, "square", 0.14);
+    } else if (step % 4 === 2){
+      tone(110, tNow, 0.08, "square", 0.08);
     }
 
-    // Main arpeggio note (short square) - prominent, but not noisy
+    // Main arpeggio note (square) - short and punchy
     const f = arpNotes[idx % arpNotes.length];
-    // Use square for retro feeling, short duration and modest gain
-    tone(f, tNow + 0.002, 0.12, "square", 0.08);
+    tone(f, tNow + 0.002, 0.10, "square", 0.08);
 
-    // small octave hop every other cycle to add motion
-    if (step % 8 === 6){
-      tone(f * 2, tNow + 0.02, 0.08, "square", 0.05);
+    // Off-beat pluck (triangle) for bounce on 2 and 4
+    if (step % 2 === 1){
+      tone(f * (Math.random() > 0.6 ? 1.5 : 2), tNow + 0.01, 0.06, "triangle", 0.05);
+    }
+
+    // Light chord stab every bar to add cheerfulness
+    if (step % 8 === 0){
+      tone(arpNotes[0] / 2, tNow + 0.004, 0.16, "sawtooth", 0.05);
+      tone(arpNotes[1] / 2, tNow + 0.004, 0.16, "sawtooth", 0.04);
+    }
+
+    // Occasional high bell sparkle
+    if (Math.random() > 0.75){
+      tone(1760 * (Math.random() > 0.5 ? 1 : 2), tNow + 0.02, 0.04, "sine", 0.03);
     }
 
     idx++;
