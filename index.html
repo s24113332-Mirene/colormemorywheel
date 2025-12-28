@@ -1123,7 +1123,19 @@ body::before{
   width: min(760px, 92vw);
   overflow: hidden;
   position: relative;
+
+  /* Enter transition so the overlay feels intentional, not like a lag */
+  opacity: 0;
+  transform: translateY(-8px) scale(.98);
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms ease;
+  will-change: transform, opacity;
 }
+
+/* Visible state */
+.bigMsg:not(.hidden) .bigMsgInner{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+} 
 .bigTitle{
   font-family: "Protest Revolution", "Inter", system-ui;
   font-size: clamp(34px, 5.0vw, 62px);
@@ -2043,7 +2055,8 @@ function flashSliceNow(sliceIndex, ms){
   if (node._flashTO) clearTimeout(node._flashTO);
 
   node.classList.add("activeFlash");
-  node.style.stroke = "rgba(255,255,255,1)";
+  // Use the exact slice color for the stroke so the flash matches the slice (not a lighter white)
+  node.style.stroke = glow;
   node.style.strokeWidth = "12";
   node.style.filter = `drop-shadow(0 0 14px ${glow}) drop-shadow(0 0 22px ${glow})`;
 
@@ -2279,7 +2292,7 @@ async function advanceRound(){
     await showBigMessage({
       title: `ROUND ${round}`,
       sub: "Proceeding...",
-      ms: 1400,                // ✅ a bit longer so the player sees it clearly
+      ms: 2200,                // ✅ a bit longer so the player sees it clearly (2s)
       tickerText: emojiRun + emojiRun + emojiRun,
       spicy: true,
       confetti: true           // ✅ confetti appears immediately with ROUND box
