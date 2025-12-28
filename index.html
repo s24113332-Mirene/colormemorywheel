@@ -2832,6 +2832,38 @@ function loadExternalBGM(file){
   }
 }
 
+// Load a remote URL as external BGM (attempts to attach as MediaElementSource)
+function loadRemoteBGM(url){
+  if (!url) return;
+  ensureAudio();
+
+  // stop and clean previous
+  if (extAudio){ stopExternalBGM(); if (extObjectUrl){ try{ URL.revokeObjectURL(extObjectUrl); }catch(e){} extObjectUrl = null; } }
+
+  extAudio = new Audio(url);
+  extAudio.loop = true;
+  extAudio.crossOrigin = 'anonymous';
+  extAudio.preload = 'auto';
+
+  try{
+    extSource = audioCtx.createMediaElementSource(extAudio);
+    extSource.connect(musicGain);
+    extAvailable = true;
+    // try to start playback; may be blocked until user gesture
+    extAudio.play().catch(()=>{});
+  }catch(e){
+    extAvailable = false;
+  }
+}
+
+// Automatically load the requested track (will play if permitted by browser)
+try{
+  loadRemoteBGM('https://uppbeat.io/track/kevin-macleod/getting-it-done?utm_source=chatgpt.com');
+  // attempt immediate playback if possible
+  try{ playExternalBGM(); }catch(e){}
+}catch(e){}
+
+
 function playExternalBGM(){
   if (!extAudio) return;
   ensureAudio();
