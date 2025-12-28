@@ -117,7 +117,7 @@ body::before{
 .balloon{
   position: absolute;
   left: var(--x);
-  bottom: -22vh;
+  bottom: -24vh;
 
   width: var(--w);
   height: var(--w);
@@ -126,13 +126,13 @@ body::before{
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.55), rgba(255,255,255,0) 44%),
     radial-gradient(circle at 55% 80%, rgba(0,0,0,.18), rgba(0,0,0,0) 55%),
-    hsla(var(--h), 85%, 60%, 0.90);
+    hsla(var(--h), 85%, 60%, 0.88);
 
   box-shadow:
-    inset 0 -20px 26px rgba(0,0,0,.16),
-    inset 0 18px 24px rgba(255,255,255,.20);
+    inset 0 -18px 24px rgba(0,0,0,.15),
+    inset 0 16px 22px rgba(255,255,255,.18);
 
-  filter: drop-shadow(0 14px 16px rgba(0,0,0,.20));
+  filter: drop-shadow(0 14px 16px rgba(0,0,0,.18));
   animation: floatUp var(--t) linear forwards;
   opacity: 0;
   will-change: transform, opacity;
@@ -150,7 +150,7 @@ body::before{
 }
 @keyframes floatUp{
   0%{ transform: translateY(0) rotate(-2deg); opacity: 0; }
-  8%{ opacity: .92; }
+  8%{ opacity: .78; }
   100%{ transform: translateY(-140vh) rotate(2deg); opacity: 0; }
 }
 
@@ -268,8 +268,6 @@ body::before{
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-
-  /* extra padding prevents clipping of the last letter/glow */
   padding: 0 10px;
 
   filter:
@@ -441,14 +439,17 @@ body::before{
 .wheelWrap{
   position: relative;
 
-  /* ✅ Big wheel that always fits the viewport (width/height locked) */
-  --wheelSize: min(1400px, 92vmin, 94vw, calc(100vh - 190px));
+  /* ✅ BIGGER wheel */
+  --wheelSize: min(1800px, 98vmin, 99vw, calc(100vh - 140px));
   width: var(--wheelSize);
   height: var(--wheelSize);
 
   margin: 0 auto 6px;
   border-radius: 22px;
-  padding: clamp(10px, 1.6vmin, 16px);
+
+  /* slightly tighter padding so the actual wheel can be bigger */
+  padding: clamp(8px, 1.3vmin, 14px);
+
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
@@ -705,9 +706,8 @@ body::before{
 }
 .hiddenPage{ display: none; }
 
-/* WELCOME */
+/* WELCOME (unchanged from your last version) */
 .welcomeWrap{ text-align: center; display: grid; gap: 14px; }
-
 .nmHero{
   position: relative;
   border-radius: 22px;
@@ -736,20 +736,10 @@ body::before{
   0%,100%{ transform: translate3d(-16px,-6px,0) scale(1.02); opacity:.72; }
   50%{ transform: translate3d(16px,10px,0) scale(1.05); opacity:1; }
 }
-
-/* Welcome twinkles */
-.twinkleLayer{
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
+.twinkleLayer{ position: absolute; inset: 0; pointer-events: none; z-index: 1; }
 .twStar{
-  position: absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--s);
-  height: var(--s);
+  position: absolute; left: var(--x); top: var(--y);
+  width: var(--s); height: var(--s);
   border-radius: 999px;
   transform: translate(-50%,-50%) scale(.9);
   opacity: .12;
@@ -774,15 +764,11 @@ body::before{
   0%,100%{ opacity:.12; transform: translate(-50%,-50%) scale(.90); filter: brightness(.98) blur(.12px); }
   50%{ opacity:.88; transform: translate(-50%,-50%) scale(1.10); filter: brightness(1.18) blur(.12px); }
 }
-
-/* Sparkles */
 .sparkles{ position:absolute; inset:0; pointer-events:none; z-index: 1; }
 .sparkle{
   position:absolute;
-  left: var(--x);
-  top: var(--y);
-  width: var(--s);
-  height: var(--s);
+  left: var(--x); top: var(--y);
+  width: var(--s); height: var(--s);
   border-radius: 999px;
   transform: translate(-50%,-50%) scale(.9);
   opacity: .0;
@@ -804,8 +790,6 @@ body::before{
   50%{ transform: translate(-50%,-50%) scale(1.12); opacity:.65; }
   100%{ transform: translate(-50%,-50%) scale(.75); opacity:0; }
 }
-
-/* Flaglets: ONLY two rows */
 .flagRow{ position: relative; z-index: 2; display: grid; gap: 8px; margin-bottom: 10px; }
 .flagString{
   height: 10px;
@@ -841,8 +825,6 @@ body::before{
   0%,100%{ transform: rotate(-3deg) translateY(0); }
   50%{ transform: rotate(3deg) translateY(1px); }
 }
-
-/* Neon sign */
 .neonSign{
   position: relative;
   z-index: 2;
@@ -877,8 +859,6 @@ body::before{
   text-transform: uppercase;
   font-size: 12px;
 }
-
-/* Welcome title uses same gradient effect */
 .neonTitle{
   margin: 6px 0 0;
   font-family: "Cinzel Decorative", serif;
@@ -887,7 +867,6 @@ body::before{
   line-height: 1.15;
   letter-spacing: 1.0px;
   text-transform: uppercase;
-
   display: inline-flex;
   gap: 10px;
   justify-content: center;
@@ -895,7 +874,6 @@ body::before{
   white-space: normal;
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
-
 .neonSub{
   margin: 10px auto 0;
   color: rgba(255,255,255,.92);
@@ -910,7 +888,6 @@ body::before{
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .nmIcons{
   position: relative;
   z-index: 2;
@@ -935,12 +912,7 @@ body::before{
   0%,100%{ transform: translateY(0); }
   50%{ transform: translateY(-3px); }
 }
-.welcomeCTA{
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+.welcomeCTA{ display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
 /* Coin UI */
 .coinArea{
@@ -953,12 +925,7 @@ body::before{
   gap: 10px;
 }
 .coinHint{ font-size: 12px; color: rgba(255,255,255,.82); font-weight: 900; text-align: center; }
-.coinRow{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: center;
-}
+.coinRow{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center; }
 .coinSlot{
   position: relative;
   height: 86px;
@@ -1073,7 +1040,6 @@ body::before{
   text-shadow: 0 2px 0 rgba(255,255,255,.24);
 }
 .coin:active{ cursor: grabbing; transform: scale(.98); }
-
 .coinGhost{
   position: fixed;
   z-index: 9999;
@@ -1171,7 +1137,7 @@ body::before{
   100%{ transform: translateX(-50%); }
 }
 
-/* END SCREEN */
+/* END SCREEN + SHOP + FOOTER (unchanged from your last version) */
 .endCard{
   width: min(820px, 92vw);
   border-radius: 26px;
@@ -1198,13 +1164,7 @@ body::before{
   pointer-events:none;
   opacity: .9;
 }
-
-.endTwinkleLayer{
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
+.endTwinkleLayer{ position: absolute; inset: 0; pointer-events: none; z-index: 1; }
 .endTwStar{
   position: absolute;
   left: var(--x);
@@ -1233,16 +1193,7 @@ body::before{
   0%,100%{ opacity:.12; transform: translate(-50%,-50%) scale(.90); filter: brightness(.98) blur(.12px); }
   50%{ opacity:.86; transform: translate(-50%,-50%) scale(1.10); filter: brightness(1.18) blur(.12px); }
 }
-
-.endTop{
-  position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 12px;
-  justify-items: center;
-}
-
-/* Titles */
+.endTop{ position: relative; z-index: 2; display: grid; gap: 12px; justify-items: center; }
 .endTitle{
   margin: 0;
   font-size: clamp(30px, 4.2vw, 56px);
@@ -1253,19 +1204,8 @@ body::before{
   justify-content: center;
   text-transform: none;
 }
-.endTitle span{
-  text-shadow: 0 0 14px rgba(255,255,255,.12);
-}
-
-/* Better Luck + Congratulations both use Molle */
-.endTitle.lucky,
-.endTitle.congrats{
-  font-family: "Molle", cursive;
-  font-weight: 400;
-  letter-spacing: .2px;
-}
-
-/* ✅ subtitle to Mystery Quest (smaller so it won't overlap titles) */
+.endTitle span{ text-shadow: 0 0 14px rgba(255,255,255,.12); }
+.endTitle.lucky, .endTitle.congrats{ font-family: "Molle", cursive; font-weight: 400; letter-spacing: .2px; }
 .endSub{
   margin: 6px auto 0;
   color: rgba(255,255,255,.90);
@@ -1277,8 +1217,6 @@ body::before{
   text-shadow: 0 0 12px rgba(255,255,255,.14), 0 14px 30px rgba(0,0,0,.35);
   max-width: min(60ch, 92%);
 }
-
-/* Prize toys centered */
 .endGrid{
   width: min(740px, 100%);
   display: grid;
@@ -1302,19 +1240,13 @@ body::before{
 }
 .endToy .e{ font-size: 44px; filter: drop-shadow(0 14px 18px rgba(0,0,0,.30)); }
 .endToy .n{ font-weight: 1000; font-size: 12px; line-height: 1.15; color: rgba(255,255,255,.92); }
-
 .endChips{ display:flex; gap: 10px; flex-wrap: wrap; justify-content:center; }
 .endBtns{ display:flex; gap: 10px; flex-wrap: wrap; justify-content:center; margin-top: 10px; }
 .hiddenBtn{ display:none !important; }
 .endGrid.singleCenter{ grid-template-columns: minmax(220px, 420px); justify-content: center; }
 
-/* Prize shop */
 .shopStats{ display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 12px; justify-content: center; }
-.shopGrid{
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(4, minmax(0,1fr));
-}
+.shopGrid{ display: grid; gap: 14px; grid-template-columns: repeat(4, minmax(0,1fr)); }
 .shopItem{
   border-radius: 18px;
   padding: 14px;
@@ -1334,21 +1266,13 @@ body::before{
 .shopItem:nth-child(7){ animation-delay: .24s; }
 .shopItem:nth-child(8){ animation-delay: .28s; }
 @keyframes shopIn{ to{ transform: translateY(0); opacity: 1; } }
-.shopName{
-  font-weight: 1000;
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.shopName{ font-weight: 1000; margin: 0 0 8px 0; font-size: 16px; display: flex; align-items: center; gap: 10px; }
 .shopEmoji{ font-size: 42px; line-height: 1; }
 .shopDesc{ margin: 0 0 10px 0; color: rgba(255,255,255,.80); font-size: 13px; line-height: 1.35; }
 .shopBuyRow{ display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .shopCost{ font-weight: 1000; font-size: 13px; }
 .shopFooter{ margin-top: 12px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 
-/* Footer aligned left */
 .footer{
   opacity: .9;
   font-size: 12px;
@@ -1921,36 +1845,49 @@ async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy
   els.bigTicker.classList.remove("show");
 }
 
-/* Balloons */
+/* =========================
+   BALLOONS (LESS + SIZES)
+   ========================= */
+function randomBalloonSize(){
+  // Mostly small/medium, occasional large (no more "too many big balloons")
+  const r = Math.random();
+  if (r < 0.55) return 40 + Math.random() * 34;   // 40–74 small
+  if (r < 0.92) return 74 + Math.random() * 44;   // 74–118 medium
+  return 118 + Math.random() * 34;                // 118–152 large (rare)
+}
 function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   const b = document.createElement("div");
   b.className = "balloon";
   const x = xPct ?? (Math.random() * 100);
 
-  /* ✅ bigger balloons */
-  const w = sizePx ?? (70 + Math.random() * 95);
-
-  /* ✅ slightly longer float looks nicer with big balloons */
-  const t = durationS ?? (12 + Math.random() * 12);
+  const w = sizePx ?? randomBalloonSize();
+  const t = durationS ?? (12 + Math.random() * 14);
 
   b.style.setProperty("--x", `${x}%`);
-  b.style.setProperty("--w", `${w}px`);
+  b.style.setProperty("--w", `${w.toFixed(1)}px`);
   b.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
-  b.style.setProperty("--t", `${t}s`);
-  b.style.setProperty("--s", `${80 + Math.random() * 160}px`);
+  b.style.setProperty("--t", `${t.toFixed(2)}s`);
+  b.style.setProperty("--s", `${(50 + Math.random() * 120).toFixed(0)}px`);
+
   const string = document.createElement("div");
   string.className = "string";
   b.appendChild(string);
+
   els.balloons.appendChild(b);
   setTimeout(() => { if (b.isConnected) b.remove(); }, (t * 1000) + 1200);
 }
 function spawnBackgroundBalloons(){
-  for (let i = 0; i < 14; i++) spawnOneBalloon({ durationS: 10 + Math.random() * 10 });
+  // ✅ fewer balloons at start
+  for (let i = 0; i < 7; i++){
+    spawnOneBalloon({ durationS: 10 + Math.random() * 12 });
+  }
   if (balloonInterval) clearInterval(balloonInterval);
+
+  // ✅ slower spawn rate + rare double spawn
   balloonInterval = setInterval(() => {
     spawnOneBalloon();
-    if (Math.random() < 0.18) spawnOneBalloon();
-  }, 1450);
+    if (Math.random() < 0.10) spawnOneBalloon();
+  }, 2400);
 }
 
 /* Wheel lights */
