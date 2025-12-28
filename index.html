@@ -242,27 +242,19 @@ body::before{
   width: min(900px, 100%);
 }
 
-/* Music controls */
-.musicControls{
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.musicBtn{
+/* Music toggle button for left panel */
+.musicToggleBtn{
   background: rgba(255,255,255,.06);
   color: var(--text);
   border: 1px solid rgba(255,255,255,.08);
-  padding: 6px 8px;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
-  min-width: 44px;
+  display: inline-block;
 }
-.musicBtn:hover{ filter: brightness(1.08); }
-.musicBtn:active{ transform: translateY(0); }
+.musicToggleBtn:hover{ filter: brightness(1.08); }
+.musicToggleBtn:active{ transform: translateY(0); }
 
 /* Glow pulse */
 @keyframes textGlowPulse{
@@ -1499,6 +1491,10 @@ body::before{
               </div>
             </div>
 
+            <div style="display:flex; justify-content:center; margin:10px 0;">
+              <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
+            </div>
+
             <div class="panel">
               <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
 
@@ -1531,11 +1527,7 @@ body::before{
             </div>
             <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
 
-            <div class="musicControls" aria-hidden="false">
-              <button id="musicToggleBtn" class="musicBtn" type="button" title="Toggle music">🔊</button>
-              <button id="uploadMusicBtn" class="musicBtn" type="button" title="Upload music loop">Upload</button>
-              <input id="musicFileInput" type="file" accept="audio/*" style="display:none" />
-            </div>
+
           </div>
 
           <div class="wheelWrap">
@@ -2813,13 +2805,15 @@ function toggleMusicMute(){
   if (!musicGain) return;
   if (!audioCtx) ensureAudio();
   musicMuted = !musicMuted;
+  const btn = document.getElementById('musicToggleSideBtn');
   if (musicMuted){
     // smooth ramp to 0
+    prevMusicGain = musicGain.gain.value || prevMusicGain;
     musicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
-    document.getElementById('musicToggleBtn').textContent = '🔇';
+    if (btn) btn.textContent = 'Music: Off';
   } else {
     musicGain.gain.exponentialRampToValueAtTime(prevMusicGain, audioCtx.currentTime + 0.04);
-    document.getElementById('musicToggleBtn').textContent = '🔊';
+    if (btn) btn.textContent = 'Music: On';
   }
 }
 
@@ -3056,18 +3050,7 @@ window.addEventListener('pointerdown', (e) => {
 }, { passive: false });
 
 // Music control UI handlers
-const _uploadBtn = document.getElementById('uploadMusicBtn');
-const _fileInput = document.getElementById('musicFileInput');
-const _musicToggle = document.getElementById('musicToggleBtn');
-
-_uploadBtn && _uploadBtn.addEventListener('click', () => _fileInput && _fileInput.click());
-_fileInput && _fileInput.addEventListener('change', (ev) => {
-  const f = ev.target.files && ev.target.files[0];
-  if (f){
-    loadExternalBGM(f);
-    _uploadBtn.textContent = f.name.length > 12 ? f.name.slice(0,10) + '…' : f.name;
-  }
-});
+const _musicToggle = document.getElementById('musicToggleSideBtn');
 
 _musicToggle && _musicToggle.addEventListener('click', (e) => { e.preventDefault(); ensureAudio(); toggleMusicMute(); });
 
