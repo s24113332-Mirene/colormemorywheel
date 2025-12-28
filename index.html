@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&family=Bonheur+Royale&family=Playball&family=Spicy+Rice&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&family=Bonheur+Royale&family=Playball&family=Spicy+Rice&family=Mystery+Quest&family=Ultra&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -269,6 +269,9 @@ body::before{
   background-clip: text;
   color: transparent;
 
+  /* extra padding prevents clipping of the last letter/glow */
+  padding: 0 10px;
+
   filter:
     drop-shadow(0 0 14px rgba(255,255,255,.16))
     drop-shadow(0 0 22px rgba(255,255,255,.08));
@@ -284,12 +287,14 @@ body::before{
   font-size: clamp(22px, 2.7vw, 40px);
   letter-spacing: 1.1px;
   text-transform: uppercase;
+
   display: inline-flex;
   justify-content: center;
   align-items: baseline;
   gap: 10px;
-  flex-wrap: nowrap;
-  white-space: nowrap;
+  flex-wrap: wrap;            /* ✅ prevents cutting */
+  white-space: normal;        /* ✅ prevents cutting */
+  line-height: 1.15;          /* ✅ */
   max-width: 100%;
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
@@ -298,7 +303,7 @@ body::before{
   font-weight: 400;
   color: rgba(255,255,255,.92);
   letter-spacing: .2px;
-  font-family: "Bonheur Royale", cursive;   /* ✅ same as welcome subtitle */
+  font-family: "Bonheur Royale", cursive;
   font-size: clamp(20px, 2.4vw, 30px);
   text-shadow: 0 0 12px rgba(255,255,255,.14), 0 12px 26px rgba(0,0,0,.32);
 }
@@ -360,7 +365,7 @@ body::before{
 .bonusBtn:active{ transform: translateY(0px) scale(1.00); }
 .bonusBtn.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* ✅ Bonus balloon circular too */
+/* Bonus balloon circular too */
 .bonusBalloonCircle{
   position: relative;
   width: 84px;
@@ -435,9 +440,13 @@ body::before{
 /* Wheel */
 .wheelWrap{
   position: relative;
-  width: min(1260px, 84vh, 72vw);
+
+  /* ✅ fits to screen (accounts for header/footer) but still big */
+  width: min(1260px, 72vw, calc(100vh - 240px));
+  max-width: 96%;
   aspect-ratio: 1;
-  margin: 0 auto;
+
+  margin: 0 auto 6px;
   border-radius: 22px;
   padding: 14px;
   background: rgba(0,0,0,.18);
@@ -838,7 +847,7 @@ body::before{
   position: relative;
   z-index: 2;
   border-radius: 22px;
-  padding: 16px 14px 14px;
+  padding: 18px 18px 16px; /* ✅ more padding so letters/glow never clip */
   margin: 6px auto 10px;
   width: min(620px, 100%);
   background: rgba(0,0,0,.22);
@@ -846,7 +855,7 @@ body::before{
   box-shadow:
     0 18px 55px rgba(0,0,0,.45),
     0 0 0 2px rgba(255,255,255,.06) inset;
-  overflow: hidden;
+  overflow: visible; /* ✅ prevent the last letter from being cut */
 }
 .neonSign::before{
   content:"";
@@ -869,20 +878,21 @@ body::before{
   font-size: 12px;
 }
 
-/* ✅ Welcome title uses the SAME gradient/effect as "Congratulations!" */
+/* Welcome title uses same gradient effect */
 .neonTitle{
   margin: 6px 0 0;
   font-family: "Cinzel Decorative", serif;
   font-weight: 700;
   font-size: clamp(22px, 3.6vw, 44px);
-  line-height: 1.05;
+  line-height: 1.15;      /* ✅ */
   letter-spacing: 1.0px;
   text-transform: uppercase;
+
   display: inline-flex;
   gap: 10px;
   justify-content: center;
-  flex-wrap: nowrap;
-  white-space: nowrap;
+  flex-wrap: wrap;        /* ✅ prevent cut */
+  white-space: normal;    /* ✅ prevent cut */
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
 
@@ -1112,9 +1122,9 @@ body::before{
   letter-spacing: .8px;
 }
 .bigTitle.spicy{
-  font-family: "Spicy Rice", cursive; /* ✅ */
+  font-family: "Ultra", serif; /* ✅ Round 2 + Game Over = Ultra */
   font-weight: 400;
-  letter-spacing: 1.0px;
+  letter-spacing: 1.2px;
   background-image: linear-gradient(90deg, #ff8acb, #ffe08a, #b8ffb1, #9ad1ff, #d2a6ff, #ff8acb);
   background-size: 240% 100%;
   -webkit-background-clip: text;
@@ -1255,13 +1265,14 @@ body::before{
   letter-spacing: .2px;
 }
 
+/* ✅ subtitle to Mystery Quest */
 .endSub{
   margin: 0;
   color: rgba(255,255,255,.90);
   font-weight: 400;
   white-space: pre-line;
   line-height: 1.35;
-  font-family: "Playball", cursive; /* ✅ */
+  font-family: "Mystery Quest", cursive;
   font-size: clamp(18px, 2.6vw, 30px);
   text-shadow: 0 0 12px rgba(255,255,255,.14), 0 14px 30px rgba(0,0,0,.35);
 }
@@ -1387,12 +1398,10 @@ body::before{
             <div class="neonSign">
               <div class="neonKicker">NIGHT MARKET GAME</div>
 
-              <!-- ✅ same gradient effect as Congratulations -->
               <h2 class="neonTitle">
                 <span class="rainbowCongrats">Color Memory Wheel</span>
               </h2>
 
-              <!-- ✅ removed ticket emoji -->
               <p class="neonSub">Spin • Remember • Win Tickets</p>
 
               <div class="nmIcons" aria-hidden="true">
@@ -1404,7 +1413,6 @@ body::before{
           </div>
 
           <div class="welcomeCTA">
-            <!-- ✅ Enter text -->
             <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter</button>
           </div>
         </div>
@@ -1861,6 +1869,12 @@ window.addEventListener("resize", () => {
   buildSparkles();
 });
 
+/* extra scale passes after fonts load */
+window.addEventListener("load", () => {
+  setTimeout(applyAppScale, 600);
+  setTimeout(applyAppScale, 1500);
+});
+
 /* Welcome pages */
 function showWelcome(){
   els.welcomeModal.classList.add("show");
@@ -2196,13 +2210,13 @@ function randomColorIndex(){
   return idx;
 }
 
-/* ✅ Round 5: ONLY a little faster than the regular curve */
+/* Round 5: little faster */
 function getFlashTiming(){
   let flashMs = 560 - (round * 12);
   let gapMs   = 150 - (round * 3);
 
   if (round >= 5){
-    flashMs -= 40;  // small bump faster at round 5+
+    flashMs -= 40;
     gapMs   -= 10;
   }
 
@@ -2258,7 +2272,7 @@ async function advanceRound(){
       sub: "Proceeding...",
       ms: 1700,
       tickerText: emojiRun + emojiRun + emojiRun,
-      spicy: true   // ✅ Spicy Rice for Round 2+
+      spicy: true
     });
   }
   await playRound();
@@ -2286,7 +2300,7 @@ async function loseGame(reason){
     sub: `Reason: ${reason}`,
     ms: 950,
     tickerText: "",
-    spicy: true   // ✅ Spicy Rice for GAME OVER
+    spicy: true
   });
 
   if (newBest){
