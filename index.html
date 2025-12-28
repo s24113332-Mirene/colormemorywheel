@@ -261,6 +261,7 @@ body::before{
   width: 160px;
   background: transparent;
   -webkit-appearance: none;
+  appearance: none;
 }
 .musicVolume:focus{ outline: none; }
 
@@ -2725,47 +2726,71 @@ let prevMusicGain = 1.0;      // store previous music gain
 let prevMasterGain = 0.25;    // store previous master (game-wide) gain
 
 function startBGM(){
-  // Arcade-style, clean BGM: tight square arpeggio + bass pulse; no ambient pads or noisy textures
+  // 8‑bit chiptune Canon (Pachelbel) inspired arrangement
+  // Looping, lightweight square-wave melody + bass pulse routed through the music bus
   if (bgPlaying) return;
   bgPlaying = true;
   if (!audioCtx) return; // safety
 
-  // music gain for BGM
+  // clean up any previous BGM state
+  stopBGM();
+
+  // create a BGM gain node routed to the music bus so the Music toggle affects it
   bgGain = audioCtx.createGain();
-  bgGain.gain.value = 0.22;
-  bgGain.connect(musicGain);
+  bgGain.gain.value = 0.34;
+  bgGain.connect(musicGain || master);
 
-  // Clean arcade arpeggio + bass pulse using short, percussive envelopes
-  const arpNotes = [880, 1046.5, 1318.5, 1760]; // A5, C6, E6, A6 (bright arcade register)
-  let idx = 0;
-  let step = 0;
-  const bpm = 132; // arcade-leaning tempo
-  const stepMs = (60000 / bpm) / 2; // 8th-note stepping
+  // Canon chord-root progression (D major): D A B F# G D G A
+  const roots = [293.66, 220.00, 246.94, 185.00, 196.00, 146.83, 196.00, 220.00];
 
-  // interval triggers short tone() calls (no sustained pads)
+  // Simple chiptune melody pattern (looped) that sits over the progression
+  const melody = [
+    293.66, 329.63, 392.00, 293.66,
+    329.63, 392.00, 440.00, 392.00,
+    293.66, 329.63, 392.00, 293.66,
+    329.63, 392.00, 440.00, 392.00
+  ];
+
+  const bpm = 96; // relaxed Canon tempo
+  const stepSec = (60 / bpm) / 2; // 8th-note resolution in seconds
+  let index = 0;
+
+  // interval drives the chiptune sequencing
   bgArpInterval = setInterval(() => {
-    const tNow = audioCtx.currentTime;
+    const t = audioCtx.currentTime;
 
-    // Bass pulse on downbeats (every 4 steps)
-    if (step % 4 === 0){
-      // punchy bass via tone helper
-      tone(110, tNow, 0.14, "square", 0.16);
+    // melody voice (short square blip)
+    const m = melody[index % melody.length];
+    const o = audioCtx.createOscillator();
+    o.type = 'square';
+    o.frequency.setValueAtTime(m, t);
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.14, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+    o.connect(g).connect(bgGain);
+    o.start(t);
+    o.stop(t + 0.14);
+
+    // bass pulse on downbeats (every 4 steps)
+    if (index % 4 === 0){
+      const chordRoot = roots[Math.floor(index / 4) % roots.length];
+      const ob = audioCtx.createOscillator();
+      ob.type = 'square';
+      ob.frequency.setValueAtTime(chordRoot / 2, t); // lower octave bass
+      const gb = audioCtx.createGain();
+      gb.gain.setValueAtTime(0.0001, t);
+      gb.gain.exponentialRampToValueAtTime(0.26, t + 0.004);
+      gb.gain.exponentialRampToValueAtTime(0.0001, t + 0.32);
+      ob.connect(gb).connect(bgGain);
+      ob.start(t);
+      ob.stop(t + 0.36);
     }
 
-    // Main arpeggio note (short square) - prominent, but not noisy
-    const f = arpNotes[idx % arpNotes.length];
-    // Use square for retro feeling, short duration and modest gain
-    tone(f, tNow + 0.002, 0.12, "square", 0.08);
-
-    // small octave hop every other cycle to add motion
-    if (step % 8 === 6){
-      tone(f * 2, tNow + 0.02, 0.08, "square", 0.05);
-    }
-
-    idx++;
-    step++;
-  }, stepMs);
+    index++;
+  }, stepSec * 1000);
 }
+
 
 function stopBGM(){
   if (!bgPlaying) return;
