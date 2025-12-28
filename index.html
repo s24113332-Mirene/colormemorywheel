@@ -258,18 +258,29 @@ body::before{
 
 /* Music volume slider */
 .musicVolume{
-  width: 140px;
+  width: 160px;
   background: transparent;
   -webkit-appearance: none;
 }
 .musicVolume:focus{ outline: none; }
+
+/* track */
+.musicVolume::-webkit-slider-runnable-track{
+  height: 8px; border-radius: 8px; background: linear-gradient(90deg,#ff8acb 0%, #9ad1ff 100%);
+}
+.musicVolume::-moz-range-track{
+  height: 8px; border-radius: 8px; background: linear-gradient(90deg,#ff8acb 0%, #9ad1ff 100%);
+}
 .musicVolume::-webkit-slider-thumb{
   -webkit-appearance: none;
+  margin-top: -3px; /* center thumb */
   height: 14px; width: 14px; border-radius: 50%; background: #ff8acb; box-shadow: 0 2px 4px rgba(0,0,0,.28);
 }
 .musicVolume::-moz-range-thumb{
   height: 14px; width:14px; border-radius:50%; background:#ff8acb; box-shadow: 0 2px 4px rgba(0,0,0,.28);
-} 
+}
+.musicVolLabel{ cursor: pointer; user-select: none; font-size:13px; color: var(--muted); }
+
 
 /* Glow pulse */
 @keyframes textGlowPulse{
@@ -1506,13 +1517,7 @@ body::before{
               </div>
             </div>
 
-            <div style="display:flex; gap:8px; align-items:center; justify-content:center; margin:10px 0;">
-              <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
-                <div id="musicVolLabel" style="min-width:40px; text-align:right;">100%</div>
-              </div>
-            </div>
+
 
             <div class="panel">
               <div class="status" id="statusEl">Insert coin on the welcome page to start.</div>
@@ -1535,6 +1540,14 @@ body::before{
               </div>
 
               <div class="hint">Tip: Memorize the sequence as numbers (1–10), then tap in the same order.</div>
+
+              <div class="musicCenterControls" style="display:flex; gap:12px; align-items:center; justify-content:center; margin-top:10px;">
+                <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
+                  <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
+                </div>
+              </div>
             </div>
           </div>
         </aside>
@@ -3081,6 +3094,8 @@ if (_musicSlider){
     const current = (musicGain && musicGain.gain && typeof musicGain.gain.value === 'number') ? musicGain.gain.value : prevMusicGain;
     _musicSlider.value = String(current);
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(Number(_musicSlider.value) * 100) + '%');
+    // if starts at 0, reflect off state
+    if (Number(_musicSlider.value) === 0){ musicMuted = true; const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: Off'; }
   }catch(e){ }
 
   _musicSlider.addEventListener('input', (ev) => {
@@ -3088,8 +3103,32 @@ if (_musicSlider){
     const v = Number(ev.target.value);
     prevMusicGain = v;
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(v * 100) + '%');
-    if (!musicMuted && musicGain){
+    if (musicGain){
       musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+    }
+    // slider acts as on/off: if zero, set off state
+    const btn = document.getElementById('musicToggleSideBtn');
+    if (v === 0){ musicMuted = true; if (btn) btn.textContent = 'Music: Off'; } else { musicMuted = false; if (btn) btn.textContent = 'Music: On'; }
+  });
+
+  // clicking the label toggles between 0 and previous value
+  _musicVolLabel.addEventListener('click', (ev) => {
+    ensureAudio();
+    const btn = document.getElementById('musicToggleSideBtn');
+    if (musicMuted || Number(_musicSlider.value) === 0){
+      // turn on
+      const v = prevMusicGain || 1.0;
+      _musicSlider.value = String(v);
+      _musicVolLabel.textContent = Math.round(v * 100) + '%';
+      if (musicGain) musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+      musicMuted = false; if (btn) btn.textContent = 'Music: On';
+    } else {
+      // turn off
+      prevMusicGain = Number(_musicSlider.value) || prevMusicGain || 1.0;
+      _musicSlider.value = '0';
+      _musicVolLabel.textContent = '0%';
+      if (musicGain) musicGain.gain.setValueAtTime(0.0001, audioCtx.currentTime + 0.01);
+      musicMuted = true; if (btn) btn.textContent = 'Music: Off';
     }
   });
 }
