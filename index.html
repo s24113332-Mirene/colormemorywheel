@@ -2735,7 +2735,7 @@ function startBGM(){
 
   // music gain for BGM (keep headroom for SFX)
   bgGain = audioCtx.createGain();
-  bgGain.gain.value = 0.16;
+  bgGain.gain.value = 0.22; // increased slightly to make BGM more audible
   bgGain.connect(musicGain);
 
   // Chord progression (I - V - vi - IV) in A major (triads in a compact arcade register)
