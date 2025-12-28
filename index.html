@@ -6,7 +6,7 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&family=Bonheur+Royale&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&family=Bonheur+Royale&family=Playball&family=Spicy+Rice&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
@@ -49,7 +49,7 @@ body::before{
   opacity: .42;
 }
 
-/* ===== Background starbursts (like uploaded image) ===== */
+/* ===== Background starbursts ===== */
 #stars{
   position: fixed;
   inset: 0;
@@ -106,7 +106,7 @@ body::before{
   50%{ opacity:.82; transform: translate(-50%,-50%) scale(1.06); filter: brightness(1.18) blur(.10px); }
 }
 
-/* ===== Balloons (more balloon-like shape) ===== */
+/* ===== Balloons (CIRCULAR) ===== */
 #balloons{
   position: fixed;
   inset: 0;
@@ -120,10 +120,8 @@ body::before{
   bottom: -22vh;
 
   width: var(--w);
-  height: calc(var(--w) * 1.28);
-
-  /* balloon teardrop look */
-  border-radius: 50% 50% 48% 48% / 56% 56% 44% 44%;
+  height: var(--w);
+  border-radius: 999px;
 
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.55), rgba(255,255,255,0) 44%),
@@ -138,18 +136,6 @@ body::before{
   animation: floatUp var(--t) linear forwards;
   opacity: 0;
   will-change: transform, opacity;
-}
-.balloon::after{
-  content:"";
-  position: absolute;
-  left: 50%;
-  bottom: -10px;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-top: 12px solid rgba(255,255,255,.24);
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
 }
 .balloon .string{
   position: absolute;
@@ -255,12 +241,43 @@ body::before{
   width: min(900px, 100%);
 }
 
-/* ✅ Glow / lighting effect for game title */
+/* Glow pulse */
 @keyframes textGlowPulse{
   0%,100%{ filter: drop-shadow(0 0 10px rgba(255,255,255,.14)) drop-shadow(0 0 18px rgba(255,255,255,.06)); }
   50%{ filter: drop-shadow(0 0 14px rgba(255,255,255,.20)) drop-shadow(0 0 24px rgba(255,255,255,.10)); }
 }
 
+/* Congrats rainbow gradient */
+@keyframes rainbowShift{
+  0%{ background-position: 0% 50%; }
+  100%{ background-position: 100% 50%; }
+}
+.rainbowCongrats{
+  background-image: linear-gradient(90deg,
+    #ff8acb,
+    #9ad1ff,
+    #a7f4ff,
+    #b8ffb1,
+    #ffe08a,
+    #ffb07a,
+    #d2a6ff,
+    #ff8acb
+  );
+  background-size: 240% 100%;
+  background-position: 0% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  filter:
+    drop-shadow(0 0 14px rgba(255,255,255,.16))
+    drop-shadow(0 0 22px rgba(255,255,255,.08));
+  text-shadow: 0 18px 40px rgba(0,0,0,.55);
+
+  animation: rainbowShift 4.0s linear infinite;
+}
+
+/* During game title */
 .centerTitle{
   font-family: "Cinzel Decorative", serif;
   font-weight: 700;
@@ -276,21 +293,18 @@ body::before{
   max-width: 100%;
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
-.titleWords .w1{
-  color: rgba(255,110,220,.98);
-  text-shadow: 0 0 14px rgba(255,110,220,.35), 0 0 22px rgba(255,110,220,.18), 0 12px 26px rgba(0,0,0,.30);
+.centerSubtitle{
+  margin-top: 4px;
+  font-weight: 400;
+  color: rgba(255,255,255,.92);
+  letter-spacing: .2px;
+  font-family: "Bonheur Royale", cursive;   /* ✅ same as welcome subtitle */
+  font-size: clamp(20px, 2.4vw, 30px);
+  text-shadow: 0 0 12px rgba(255,255,255,.14), 0 12px 26px rgba(0,0,0,.32);
 }
-.titleWords .w2{
-  color: rgba(120,255,240,.98);
-  text-shadow: 0 0 14px rgba(120,255,240,.30), 0 0 22px rgba(120,255,240,.16), 0 12px 26px rgba(0,0,0,.30);
-}
-.titleWords .w3{
-  color: rgba(255,220,150,.98);
-  text-shadow: 0 0 14px rgba(255,220,150,.24), 0 0 22px rgba(255,220,150,.12), 0 12px 26px rgba(0,0,0,.30);
-}
-.centerSubtitle{ margin-top: 4px; font-weight: 800; color: rgba(255,255,255,.86); letter-spacing: .4px; }
 .oneLine{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+/* HUD */
 .hudGrid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .stat{
   padding: 10px;
@@ -346,12 +360,12 @@ body::before{
 .bonusBtn:active{ transform: translateY(0px) scale(1.00); }
 .bonusBtn.pop{ opacity: 0; transform: scale(.7); pointer-events: none; }
 
-/* ✅ bonus balloon also looks like a balloon */
+/* ✅ Bonus balloon circular too */
 .bonusBalloonCircle{
   position: relative;
   width: 84px;
-  height: 108px;
-  border-radius: 50% 50% 48% 48% / 56% 56% 44% 44%;
+  height: 84px;
+  border-radius: 999px;
   border: 1px solid rgba(255,255,255,.26);
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.52), rgba(255,255,255,0) 44%),
@@ -363,22 +377,10 @@ body::before{
   padding: 0;
   text-shadow: 0 10px 20px rgba(0,0,0,.35);
 }
-.bonusBalloonCircle::after{
-  content:"";
-  position: absolute;
-  left: 50%;
-  bottom: -10px;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-top: 12px solid rgba(255,255,255,.22);
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
-}
 .bonusBalloonCircle .string{
   position: absolute;
   left: 50%;
-  bottom: -34px;
+  top: calc(100% + 4px);
   transform: translateX(-50%);
   width: 2px;
   height: 40px;
@@ -430,7 +432,7 @@ body::before{
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
 }
 
-/* Wheel (no backdrop blur so balloons stay crisp) */
+/* Wheel */
 .wheelWrap{
   position: relative;
   width: min(1260px, 84vh, 72vw);
@@ -561,7 +563,7 @@ body::before{
 }
 .shopChip .k{ color: rgba(255,255,255,.78); }
 
-/* Prize Toys list: one vertical column */
+/* Prize Toys list */
 .allToysGrid{
   display: grid;
   grid-template-columns: 1fr;
@@ -867,7 +869,7 @@ body::before{
   font-size: 12px;
 }
 
-/* ✅ Glow / lighting effect for welcome title */
+/* ✅ Welcome title uses the SAME gradient/effect as "Congratulations!" */
 .neonTitle{
   margin: 6px 0 0;
   font-family: "Cinzel Decorative", serif;
@@ -875,7 +877,6 @@ body::before{
   font-size: clamp(22px, 3.6vw, 44px);
   line-height: 1.05;
   letter-spacing: 1.0px;
-  text-shadow: 0 18px 35px rgba(0,0,0,.55);
   text-transform: uppercase;
   display: inline-flex;
   gap: 10px;
@@ -884,20 +885,7 @@ body::before{
   white-space: nowrap;
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
-.neonTitle .w1{
-  color: rgba(255,110,220,.95);
-  text-shadow: 0 0 14px rgba(255,100,210,.40), 0 0 24px rgba(255,100,210,.18), 0 18px 35px rgba(0,0,0,.55);
-}
-.neonTitle .w2{
-  color: rgba(120,255,240,.95);
-  text-shadow: 0 0 14px rgba(110,255,240,.34), 0 0 24px rgba(110,255,240,.16), 0 18px 35px rgba(0,0,0,.55);
-}
-.neonTitle .w3{
-  color: rgba(255,220,150,.95);
-  text-shadow: 0 0 14px rgba(255,220,150,.26), 0 0 24px rgba(255,220,150,.12), 0 18px 35px rgba(0,0,0,.55);
-}
 
-/* ✅ Welcome subtitle font Bonheur Royale */
 .neonSub{
   margin: 10px auto 0;
   color: rgba(255,255,255,.92);
@@ -1123,6 +1111,18 @@ body::before{
   font-weight: 400;
   letter-spacing: .8px;
 }
+.bigTitle.spicy{
+  font-family: "Spicy Rice", cursive; /* ✅ */
+  font-weight: 400;
+  letter-spacing: 1.0px;
+  background-image: linear-gradient(90deg, #ff8acb, #ffe08a, #b8ffb1, #9ad1ff, #d2a6ff, #ff8acb);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbowShift 3.2s linear infinite;
+  filter: drop-shadow(0 0 14px rgba(255,255,255,.14)) drop-shadow(0 0 22px rgba(255,255,255,.08));
+}
 .bigSub{
   margin-top: 8px;
   color: rgba(255,255,255,.85);
@@ -1255,57 +1255,15 @@ body::before{
   letter-spacing: .2px;
 }
 
-/* ✅ Congratulations rainbow/pastel like your example */
-@keyframes rainbowShift{
-  0%{ background-position: 0% 50%; }
-  100%{ background-position: 100% 50%; }
-}
-.rainbowCongrats{
-  background-image: linear-gradient(90deg,
-    #ff8acb,
-    #9ad1ff,
-    #a7f4ff,
-    #b8ffb1,
-    #ffe08a,
-    #ffb07a,
-    #d2a6ff,
-    #ff8acb
-  );
-  background-size: 240% 100%;
-  background-position: 0% 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-
-  filter:
-    drop-shadow(0 0 14px rgba(255,255,255,.16))
-    drop-shadow(0 0 22px rgba(255,255,255,.08));
-  text-shadow: 0 18px 40px rgba(0,0,0,.55);
-
-  animation: rainbowShift 4.0s linear infinite;
-}
-
-/* 🔧 Wheel rainbow effect — copy the Congrats color animation to the wheel */
-@keyframes wheelHueRotate{
-  0%{ filter: hue-rotate(0deg); }
-  100%{ filter: hue-rotate(360deg); }
-}
-#wheelSvg.rainbow{
-  animation: wheelHueRotate 4s linear infinite;
-  /* subtle boost so the hues feel luminous like the Congrats text */
-  filter: drop-shadow(0 0 14px rgba(255,255,255,.12));
-}
-#wheelSvg.rainbow .slice{
-  transition: filter 0.15s linear;
-  filter: drop-shadow(0 0 10px rgba(255,255,255,.06)) drop-shadow(0 0 18px rgba(255,255,255,.04));
-}
-
 .endSub{
   margin: 0;
-  color: rgba(255,255,255,.88);
-  font-weight: 900;
+  color: rgba(255,255,255,.90);
+  font-weight: 400;
   white-space: pre-line;
-  line-height: 1.4;
+  line-height: 1.35;
+  font-family: "Playball", cursive; /* ✅ */
+  font-size: clamp(18px, 2.6vw, 30px);
+  text-shadow: 0 0 12px rgba(255,255,255,.14), 0 14px 30px rgba(0,0,0,.35);
 }
 
 /* Prize toys centered */
@@ -1429,11 +1387,13 @@ body::before{
             <div class="neonSign">
               <div class="neonKicker">NIGHT MARKET GAME</div>
 
+              <!-- ✅ same gradient effect as Congratulations -->
               <h2 class="neonTitle">
-                <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
+                <span class="rainbowCongrats">Color Memory Wheel</span>
               </h2>
 
-              <p class="neonSub">Spin • Remember • Win Tickets 🎟️</p>
+              <!-- ✅ removed ticket emoji -->
+              <p class="neonSub">Spin • Remember • Win Tickets</p>
 
               <div class="nmIcons" aria-hidden="true">
                 <div class="nmChip">🧸 Prizes</div>
@@ -1444,7 +1404,8 @@ body::before{
           </div>
 
           <div class="welcomeCTA">
-            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter the Night Market ✨</button>
+            <!-- ✅ Enter text -->
+            <button id="welcomeNextBtn" class="btn primary glowBtn" type="button">Enter</button>
           </div>
         </div>
       </div>
@@ -1609,8 +1570,8 @@ body::before{
 
         <section class="centerCol">
           <div class="centerHeader">
-            <div class="centerTitle titleWords">
-              <span class="w1">Color</span> <span class="w2">Memory</span> <span class="w3">Wheel</span>
+            <div class="centerTitle">
+              <span class="rainbowCongrats">Color Memory Wheel</span>
             </div>
             <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
           </div>
@@ -1922,9 +1883,11 @@ function showInstructionsPage(){
 }
 
 /* Big message overlay */
-async function showBigMessage({title, sub = "", ms = 900, tickerText = ""}){
+async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy = false}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
+
+  els.bigTitle.classList.toggle("spicy", !!spicy);
 
   if (tickerText){
     els.bigTickerTextA.textContent = tickerText;
@@ -2233,21 +2196,19 @@ function randomColorIndex(){
   return idx;
 }
 
-/* ✅ Round 5: a little faster (but not too fast) */
+/* ✅ Round 5: ONLY a little faster than the regular curve */
 function getFlashTiming(){
-  const pre5 = Math.min(round, 5);
-  const post5 = Math.max(0, round - 5);
+  let flashMs = 560 - (round * 12);
+  let gapMs   = 150 - (round * 3);
 
-  let flashMs = 560 - (pre5 * 14) - (post5 * 10);
-  let gapMs   = 150 - (pre5 * 3)  - (post5 * 2);
-
-  flashMs = clamp(Math.floor(flashMs), 280, 560);
-  gapMs   = clamp(Math.floor(gapMs),   75, 150);
-
-  if (round >= 12){
-    flashMs = Math.max(255, Math.floor(flashMs * 0.96));
-    gapMs   = Math.max(70,  Math.floor(gapMs   * 0.96));
+  if (round >= 5){
+    flashMs -= 40;  // small bump faster at round 5+
+    gapMs   -= 10;
   }
+
+  flashMs = clamp(Math.floor(flashMs), 290, 560);
+  gapMs   = clamp(Math.floor(gapMs),   80, 150);
+
   return { flashMs, gapMs };
 }
 
@@ -2296,7 +2257,8 @@ async function advanceRound(){
       title: `ROUND ${round}`,
       sub: "Proceeding...",
       ms: 1700,
-      tickerText: emojiRun + emojiRun + emojiRun
+      tickerText: emojiRun + emojiRun + emojiRun,
+      spicy: true   // ✅ Spicy Rice for Round 2+
     });
   }
   await playRound();
@@ -2319,7 +2281,13 @@ async function loseGame(reason){
   updateHUD();
 
   sfxBuzzer();
-  await showBigMessage({ title: "GAME OVER!", sub: `Reason: ${reason}`, ms: 950, tickerText: "" });
+  await showBigMessage({
+    title: "GAME OVER!",
+    sub: `Reason: ${reason}`,
+    ms: 950,
+    tickerText: "",
+    spicy: true   // ✅ Spicy Rice for GAME OVER
+  });
 
   if (newBest){
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 160, 4.4);
@@ -2488,16 +2456,10 @@ function openEndCongrats(){
 
   els.endCongratsModal.classList.remove("hidden");
   if (ownedItems.length){
-    els.wheelSvg.classList.add("rainbow");
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 180, 4.8);
-  } else {
-    els.wheelSvg.classList.remove("rainbow");
   }
 }
-function closeEndCongrats(){ 
-  els.endCongratsModal.classList.add("hidden");
-  els.wheelSvg.classList.remove("rainbow");
-}
+function closeEndCongrats(){ els.endCongratsModal.classList.add("hidden"); }
 
 async function playAgainFromEnd(){
   closeEndCongrats();
