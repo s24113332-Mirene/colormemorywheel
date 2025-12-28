@@ -2240,6 +2240,7 @@ async function loseGame(reason){
   updateHUD();
 
   sfxBuzzer();
+  stopBGM();
   await showBigMessage({
     title: "GAME OVER!",
     sub: `Reason: ${reason}`,
@@ -2293,6 +2294,7 @@ async function startNewGame({ resetTickets }){
   if (gameActive || busy) return;
   ensureAudio();
   sfxCoin();
+  startBGM();
 
   buildSegments();
   renderWheel();
@@ -2368,6 +2370,7 @@ function goHomeEnd(){
 
 /* End Screen */
 function openEndCongrats(){
+  stopBGM();
   dedupePrizesOwned();
 
   els.endTickets.textContent = String(tickets);
@@ -2618,6 +2621,83 @@ function sfxBuzzer(){
   tone(92, t + 0.12, 0.30, "square", 0.10);
 }
 
+// Click SFX for UI buttons
+function sfxClick(){
+  const t = audioCtx.currentTime;
+  tone(1800, t, 0.03, "square", 0.06);
+  tone(1200, t + 0.01, 0.06, "sine", 0.04);
+}
+
+// Background music (light ambient synth + arpeggio)
+let bgOsc1 = null;
+let bgOsc2 = null;
+let bgArpInterval = null;
+let bgGain = null;
+let bgPlaying = false;
+
+function startBGM(){
+  if (bgPlaying) return;
+  bgPlaying = true;
+  if (!audioCtx) return; // safety
+
+  // pad gain into master
+  bgGain = audioCtx.createGain();
+  bgGain.gain.value = 0.12;
+  bgGain.connect(master);
+
+  // pad 1 (sawtooth)
+  bgOsc1 = audioCtx.createOscillator();
+  bgOsc1.type = "sawtooth";
+  bgOsc1.frequency.value = 110;
+  const padGain1 = audioCtx.createGain();
+  padGain1.gain.value = 0.30;
+  bgOsc1.connect(padGain1).connect(bgGain);
+  bgOsc1.start();
+
+  // pad 2 (sine)
+  bgOsc2 = audioCtx.createOscillator();
+  bgOsc2.type = "sine";
+  bgOsc2.frequency.value = 165;
+  const padGain2 = audioCtx.createGain();
+  padGain2.gain.value = 0.10;
+  bgOsc2.connect(padGain2).connect(bgGain);
+  bgOsc2.start();
+
+  // subtle slow LFO on detune of pad1
+  const lfo = audioCtx.createOscillator();
+  lfo.type = "sine";
+  lfo.frequency.value = 0.04;
+  const lfoGain = audioCtx.createGain();
+  lfoGain.gain.value = 8;
+  lfo.connect(lfoGain);
+  lfoGain.connect(bgOsc1.detune);
+  lfo.start();
+  bgOsc1._lfo = lfo;
+
+  // arpeggio
+  const notes = [440, 523.25, 659.25, 880];
+  let i = 0;
+  bgArpInterval = setInterval(() => {
+    const f = notes[i % notes.length];
+    tone(f, audioCtx.currentTime, 0.20, "sine", 0.03);
+    i++;
+  }, 350);
+}
+
+function stopBGM(){
+  if (!bgPlaying) return;
+  bgPlaying = false;
+  if (bgArpInterval){ clearInterval(bgArpInterval); bgArpInterval = null; }
+  if (bgOsc1){
+    if (bgOsc1._lfo){ try{ bgOsc1._lfo.stop(); }catch(e){} bgOsc1._lfo.disconnect(); delete bgOsc1._lfo; }
+    try{ bgOsc1.stop(); }catch(e){}
+    try{ bgOsc1.disconnect(); }catch(e){}
+    bgOsc1 = null;
+  }
+  if (bgOsc2){ try{ bgOsc2.stop(); }catch(e){} try{ bgOsc2.disconnect(); }catch(e){} bgOsc2 = null; }
+  if (bgGain){ try{ bgGain.disconnect(); }catch(e){} bgGain = null; }
+}
+
 /* Coin drag-to-insert */
 let dragging = false;
 let ghost = null;
@@ -2838,6 +2918,16 @@ els.wheelSvg.addEventListener("pointerdown", (e) => {
   if (!target.classList.contains("slice")) return;
   e.preventDefault();
   onPlayerPick(Number(target.dataset.slice));
+}, { passive: false });
+
+// play small click SFX when pressing buttons/interactive elements
+window.addEventListener('pointerdown', (e) => {
+  const el = e.target;
+  const btn = el.closest('button, [role="button"], .bonusBtn, .coin');
+  if (btn){
+    ensureAudio();
+    sfxClick();
+  }
 }, { passive: false });
 
 /* Init */
