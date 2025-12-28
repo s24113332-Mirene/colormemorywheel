@@ -261,7 +261,6 @@ body::before{
   width: 160px;
   background: transparent;
   -webkit-appearance: none;
-  appearance: none;
 }
 .musicVolume:focus{ outline: none; }
 
@@ -1546,16 +1545,9 @@ body::before{
           <div class="musicOutsideWrapper" style="display:flex; gap:10px; align-items:center; justify-content:center; margin:12px 0 0 0; padding:8px;">
             <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
             <div style="display:flex; gap:8px; align-items:center;">
-              <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Master volume" />
+              <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
               <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
             </div>
-              <div id="bgmCredit" style="font-size:12px; color:var(--muted); text-align:center; margin-top:6px;">BGM: "Getting It Done" — Kevin MacLeod (YouTube)</div>
-
-              <!-- Hidden YouTube player container used to play original track when requested -->
-              <div id="ytPlayerContainer" style="display:none; width:0; height:0; overflow:hidden;">
-                <div id="ytPlayer"></div>
-              </div>
-
           </div>
 
         </aside>
@@ -2730,96 +2722,49 @@ let extObjectUrl = null;      // object URL to revoke
 let extAvailable = false;     // whether an external file exists
 let musicMuted = false;       // music mute state
 let prevMusicGain = 1.0;      // store previous music gain
-let prevMasterGain = 0.25;    // store previous master (game-wide) gain
 
 function startBGM(){
-  // 'Getting It Done' — chiptune arrangement (lead + bass + percussive click)
+  // Arcade-style, clean BGM: tight square arpeggio + bass pulse; no ambient pads or noisy textures
   if (bgPlaying) return;
   bgPlaying = true;
-  if (!audioCtx) return;
+  if (!audioCtx) return; // safety
 
-  stopBGM();
-
+  // music gain for BGM
   bgGain = audioCtx.createGain();
-  bgGain.gain.value = 0.28;
-  bgGain.connect(musicGain || master);
+  bgGain.gain.value = 0.22;
+  bgGain.connect(musicGain);
 
-  const bpm = 120; // energetic tempo inspired by the original
-  const stepSec = (60 / bpm) / 4; // 16th-note grid for tighter groove
-
-  // Lead motif (looped) — adapted for chiptune voice
-  const lead = [659.25, 587.33, 523.25, 587.33, 659.25, 698.46, 784.00, 880.00,
-                784.00, 698.46, 659.25, 587.33, 523.25, 493.88, 440.00, 493.88];
-
-  // Bass pattern (steady alternating roots)
-  const bass = [130.81, 110.00, 123.47, 98.00];
-
+  // Clean arcade arpeggio + bass pulse using short, percussive envelopes
+  const arpNotes = [880, 1046.5, 1318.5, 1760]; // A5, C6, E6, A6 (bright arcade register)
   let idx = 0;
+  let step = 0;
+  const bpm = 132; // arcade-leaning tempo
+  const stepMs = (60000 / bpm) / 2; // 8th-note stepping
 
+  // interval triggers short tone() calls (no sustained pads)
   bgArpInterval = setInterval(() => {
-    const t = audioCtx.currentTime;
-    const i = idx % 16;
+    const tNow = audioCtx.currentTime;
 
-    // Lead: stronger on downbeats, sparser on upbeats
-    if (i % 2 === 0){
-      const n = lead[(i) % lead.length];
-      const o = audioCtx.createOscillator();
-      o.type = 'square';
-      o.frequency.setValueAtTime(n, t);
-      const g = audioCtx.createGain();
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.16, t + 0.0015);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-      o.connect(g).connect(bgGain);
-      o.start(t);
-      o.stop(t + 0.14);
-
-      // small harmony (triangle) slightly delayed to thicken texture
-      const h = audioCtx.createOscillator();
-      h.type = 'triangle';
-      h.frequency.setValueAtTime(n * 0.5, t + 0.02);
-      const gh = audioCtx.createGain();
-      gh.gain.setValueAtTime(0.0001, t);
-      gh.gain.exponentialRampToValueAtTime(0.06, t + 0.006);
-      gh.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-      h.connect(gh).connect(bgGain);
-      h.start(t);
-      h.stop(t + 0.26);
+    // Bass pulse on downbeats (every 4 steps)
+    if (step % 4 === 0){
+      // punchy bass via tone helper
+      tone(110, tNow, 0.14, "square", 0.16);
     }
 
-    // Bass pulse on each quarter-note
-    if (i % 4 === 0){
-      const b = bass[(i / 4) % bass.length];
-      const ob = audioCtx.createOscillator();
-      ob.type = 'square';
-      ob.frequency.setValueAtTime(b, t);
-      const gb = audioCtx.createGain();
-      gb.gain.setValueAtTime(0.0001, t);
-      gb.gain.exponentialRampToValueAtTime(0.28, t + 0.004);
-      gb.gain.exponentialRampToValueAtTime(0.0001, t + 0.34);
-      ob.connect(gb).connect(bgGain);
-      ob.start(t);
-      ob.stop(t + 0.36);
-    }
+    // Main arpeggio note (short square) - prominent, but not noisy
+    const f = arpNotes[idx % arpNotes.length];
+    // Use square for retro feeling, short duration and modest gain
+    tone(f, tNow + 0.002, 0.12, "square", 0.08);
 
-    // Percussion-like click on offbeats
-    if (i % 2 === 1){
-      const oc = audioCtx.createOscillator();
-      oc.type = 'square';
-      oc.frequency.setValueAtTime(1800 + (i%4)*120, t);
-      const gc = audioCtx.createGain();
-      gc.gain.setValueAtTime(0.0001, t);
-      gc.gain.exponentialRampToValueAtTime(0.06, t + 0.001);
-      gc.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
-      oc.connect(gc).connect(bgGain);
-      oc.start(t);
-      oc.stop(t + 0.06);
+    // small octave hop every other cycle to add motion
+    if (step % 8 === 6){
+      tone(f * 2, tNow + 0.02, 0.08, "square", 0.05);
     }
 
     idx++;
-  }, stepSec * 1000);
+    step++;
+  }, stepMs);
 }
-
 
 function stopBGM(){
   if (!bgPlaying) return;
@@ -2861,143 +2806,12 @@ function loadExternalBGM(file){
   }
 }
 
-// Load a remote URL as external BGM (attempts to attach as MediaElementSource)
-function loadRemoteBGM(url){
-  if (!url) return;
-  ensureAudio();
-
-  // stop and clean previous
-  if (extAudio){ stopExternalBGM(); if (extObjectUrl){ try{ URL.revokeObjectURL(extObjectUrl); }catch(e){} extObjectUrl = null; } }
-
-  extAudio = new Audio(url);
-  extAudio.loop = true;
-  extAudio.crossOrigin = 'anonymous';
-  extAudio.preload = 'auto';
-
-  try{
-    extSource = audioCtx.createMediaElementSource(extAudio);
-    extSource.connect(musicGain);
-    extAvailable = true;
-    // try to start playback; may be blocked until user gesture
-    extAudio.play().catch(()=>{});
-  }catch(e){
-    extAvailable = false;
-  }
-}
-
-// -------------------------
-// YouTube integration
-// -------------------------
-let ytPlayer = null;
-let ytAvailable = false;
-let ytPlaying = false;
-
-function extractYouTubeId(url){
-  try{
-    const u = new URL(url);
-    if (u.hostname === 'youtu.be') return u.pathname.slice(1);
-    if (u.hostname.endsWith('youtube.com')) return u.searchParams.get('v');
-  }catch(e){
-    return null;
-  }
-  return null;
-}
-
-// Called to load a YouTube video as BGM (creates a hidden player)
-function loadYouTubeBGM(url){
-  if (!url) return;
-  const id = extractYouTubeId(url);
-  if (!id) return;
-
-  // create container if missing
-  const container = document.getElementById('ytPlayer');
-  if (!container) return;
-
-  // If YT API not loaded, insert script and rely on onYouTubeIframeAPIReady
-  if (typeof YT === 'undefined' || typeof YT.Player === 'undefined'){
-    // create a global requested id for later initialization
-    window.__requestedYtId = id;
-    if (!document.getElementById('yt-api')){
-      const s = document.createElement('script');
-      s.src = 'https://www.youtube.com/iframe_api';
-      s.id = 'yt-api';
-      document.body.appendChild(s);
-    }
-    return;
-  }
-
-  // If a player already exists, load the video
-  if (ytPlayer){
-    try{ ytPlayer.cueVideoById({videoId: id}); ytAvailable = true; }catch(e){ ytAvailable = false; }
-    return;
-  }
-
-  ytPlayer = new YT.Player('ytPlayer', {
-    height: '0', width: '0', videoId: id,
-    playerVars: { 'playsinline': 1, 'loop': 1, 'playlist': id, 'controls': 0, 'rel': 0 },
-    events: {
-      onReady: (e) => {
-        ytAvailable = true;
-        // sync initial volume with master gain
-        try{ const vol = Math.round((master && master.gain && typeof master.gain.value === 'number' ? master.gain.value : prevMasterGain) * 100); e.target.setVolume(vol); if (musicMuted) e.target.mute(); }
-        catch(e){}
-        // attempt autoplay; fallback will be handled by startBackgroundMusic
-        try{ e.target.playVideo(); setTimeout(()=>{ const st = e.target.getPlayerState && e.target.getPlayerState(); if (st !== YT.PlayerState.PLAYING){ startBGM(); } else { ytPlaying = true; } }, 700); }catch(e){ startBGM(); }
-      },
-      onStateChange: (e) => {
-        // loop handled by playlist param; track play state
-        if (e.data === YT.PlayerState.PLAYING) ytPlaying = true; else ytPlaying = false;
-      }
-    }
-  });
-}
-
-function playYouTubeBGM(){
-  if (!ytPlayer) return startBGM();
-  try{
-    stopBGM();
-    ytPlayer.playVideo();
-    ytPlaying = true;
-    return true;
-  }catch(e){
-    startBGM();
-    return false;
-  }
-}
-
-function stopYouTubeBGM(){
-  if (!ytPlayer) return;
-  try{ ytPlayer.pauseVideo(); ytPlaying = false; }catch(e){}
-}
-
-// When API script loads, initialize if an id was requested
-function onYouTubeIframeAPIReady(){
-  if (window.__requestedYtId) loadYouTubeBGM(window.__requestedYtId);
-}
-
-// Automatically load the requested track (will play if permitted by browser)
-try{
-  loadRemoteBGM('https://uppbeat.io/track/kevin-macleod/getting-it-done?utm_source=chatgpt.com');
-  // attempt immediate playback if possible
-  try{ playExternalBGM(); }catch(e){}
-}catch(e){}
-
-
 function playExternalBGM(){
   if (!extAudio) return;
   ensureAudio();
-  // stop synth/yt if running
+  // stop synth if running
   stopBGM();
-  stopYouTubeBGM();
-  // Try to play external audio; if playback is blocked/fails, fall back to synth BGM
-  extAudio.play().then(()=>{
-    // playback started
-    return true;
-  }).catch(()=>{
-    // autoplay blocked or failed — fallback to synth
-    startBGM();
-    return false;
-  });
+  extAudio.play().catch(()=>{});
 }
 function stopExternalBGM(){
   if (!extAudio) return;
@@ -3006,26 +2820,9 @@ function stopExternalBGM(){
   extSource = null;
 }
 
-function stopBackgroundYouTube(){
-  // convenience to stop yt specifically
-  stopYouTubeBGM();
-}
-
 function startBackgroundMusic(){
   ensureAudio();
-  // If the music bus was muted, restore it when a new game starts
-  if (musicMuted && musicGain){
-    try{
-      musicGain.gain.exponentialRampToValueAtTime(prevMusicGain || 1.0, audioCtx.currentTime + 0.02);
-    }catch(e){}
-    musicMuted = false;
-    const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: On';
-  }
-
-  // Prefer YouTube (if loaded), then external file, else synth
-  if (ytAvailable){
-    playYouTubeBGM();
-  } else if (extAvailable && extAudio){
+  if (extAvailable && extAudio){
     playExternalBGM();
   } else {
     startBGM();
@@ -3045,11 +2842,9 @@ function toggleMusicMute(){
     // smooth ramp to 0
     prevMusicGain = musicGain.gain.value || prevMusicGain;
     musicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
-    try{ if (ytPlayer && typeof ytPlayer.mute === 'function') ytPlayer.mute(); }catch(e){}
     if (btn) btn.textContent = 'Music: Off';
   } else {
     musicGain.gain.exponentialRampToValueAtTime(prevMusicGain, audioCtx.currentTime + 0.04);
-    try{ if (ytPlayer && typeof ytPlayer.unMute === 'function') ytPlayer.unMute(); }catch(e){}
     if (btn) btn.textContent = 'Music: On';
   }
 }
@@ -3286,7 +3081,7 @@ window.addEventListener('pointerdown', (e) => {
   }
 }, { passive: false });
 
-// Volume control UI handlers
+// Music control UI handlers
 const _musicToggle = document.getElementById('musicToggleSideBtn');
 const _musicSlider = document.getElementById('musicVolume');
 const _musicVolLabel = document.getElementById('musicVolLabel');
@@ -3294,40 +3089,46 @@ const _musicVolLabel = document.getElementById('musicVolLabel');
 _musicToggle && _musicToggle.addEventListener('click', (e) => { e.preventDefault(); ensureAudio(); toggleMusicMute(); });
 
 if (_musicSlider){
-  // initialize slider to current master gain (game-wide) or stored previous
+  // initialize slider to current music gain or stored previous
   try{
-    const current = (master && master.gain && typeof master.gain.value === 'number') ? master.gain.value : prevMasterGain;
+    const current = (musicGain && musicGain.gain && typeof musicGain.gain.value === 'number') ? musicGain.gain.value : prevMusicGain;
     _musicSlider.value = String(current);
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(Number(_musicSlider.value) * 100) + '%');
+    // if starts at 0, reflect off state
+    if (Number(_musicSlider.value) === 0){ musicMuted = true; const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: Off'; }
   }catch(e){ }
 
   _musicSlider.addEventListener('input', (ev) => {
     ensureAudio();
     const v = Number(ev.target.value);
-    prevMasterGain = v;
+    prevMusicGain = v;
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(v * 100) + '%');
-    if (master){
-      master.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+    if (musicGain){
+      musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
     }
-    // sync YouTube player volume (not routed through WebAudio)
-    try{ if (ytPlayer && typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(Math.round(v * 100)); }catch(e){}
+    // slider acts as on/off: if zero, set off state
+    const btn = document.getElementById('musicToggleSideBtn');
+    if (v === 0){ musicMuted = true; if (btn) btn.textContent = 'Music: Off'; } else { musicMuted = false; if (btn) btn.textContent = 'Music: On'; }
   });
 
-  // clicking the label toggles between 0 and previous value (master volume)
+  // clicking the label toggles between 0 and previous value
   _musicVolLabel.addEventListener('click', (ev) => {
     ensureAudio();
-    if (Number(_musicSlider.value) === 0){
-      // turn on (restore previous master gain)
-      const v = prevMasterGain || 0.25;
+    const btn = document.getElementById('musicToggleSideBtn');
+    if (musicMuted || Number(_musicSlider.value) === 0){
+      // turn on
+      const v = prevMusicGain || 1.0;
       _musicSlider.value = String(v);
       _musicVolLabel.textContent = Math.round(v * 100) + '%';
-      if (master) master.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+      if (musicGain) musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+      musicMuted = false; if (btn) btn.textContent = 'Music: On';
     } else {
-      // turn off (store previous master gain)
-      prevMasterGain = Number(_musicSlider.value) || prevMasterGain || 0.25;
+      // turn off
+      prevMusicGain = Number(_musicSlider.value) || prevMusicGain || 1.0;
       _musicSlider.value = '0';
       _musicVolLabel.textContent = '0%';
-      if (master) master.gain.setValueAtTime(0.0001, audioCtx.currentTime + 0.01);
+      if (musicGain) musicGain.gain.setValueAtTime(0.0001, audioCtx.currentTime + 0.01);
+      musicMuted = true; if (btn) btn.textContent = 'Music: Off';
     }
   });
 }
