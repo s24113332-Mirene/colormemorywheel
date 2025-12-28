@@ -1545,7 +1545,7 @@ body::before{
           <div class="musicOutsideWrapper" style="display:flex; gap:10px; align-items:center; justify-content:center; margin:12px 0 0 0; padding:8px;">
             <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
             <div style="display:flex; gap:8px; align-items:center;">
-              <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
+              <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Master volume" />
               <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
             </div>
           </div>
@@ -2722,6 +2722,7 @@ let extObjectUrl = null;      // object URL to revoke
 let extAvailable = false;     // whether an external file exists
 let musicMuted = false;       // music mute state
 let prevMusicGain = 1.0;      // store previous music gain
+let prevMasterGain = 0.25;    // store previous master (game-wide) gain
 
 function startBGM(){
   // Arcade-style, clean BGM: tight square arpeggio + bass pulse; no ambient pads or noisy textures
@@ -3081,7 +3082,7 @@ window.addEventListener('pointerdown', (e) => {
   }
 }, { passive: false });
 
-// Music control UI handlers
+// Volume control UI handlers
 const _musicToggle = document.getElementById('musicToggleSideBtn');
 const _musicSlider = document.getElementById('musicVolume');
 const _musicVolLabel = document.getElementById('musicVolLabel');
@@ -3089,46 +3090,38 @@ const _musicVolLabel = document.getElementById('musicVolLabel');
 _musicToggle && _musicToggle.addEventListener('click', (e) => { e.preventDefault(); ensureAudio(); toggleMusicMute(); });
 
 if (_musicSlider){
-  // initialize slider to current music gain or stored previous
+  // initialize slider to current master gain (game-wide) or stored previous
   try{
-    const current = (musicGain && musicGain.gain && typeof musicGain.gain.value === 'number') ? musicGain.gain.value : prevMusicGain;
+    const current = (master && master.gain && typeof master.gain.value === 'number') ? master.gain.value : prevMasterGain;
     _musicSlider.value = String(current);
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(Number(_musicSlider.value) * 100) + '%');
-    // if starts at 0, reflect off state
-    if (Number(_musicSlider.value) === 0){ musicMuted = true; const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: Off'; }
   }catch(e){ }
 
   _musicSlider.addEventListener('input', (ev) => {
     ensureAudio();
     const v = Number(ev.target.value);
-    prevMusicGain = v;
+    prevMasterGain = v;
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(v * 100) + '%');
-    if (musicGain){
-      musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
+    if (master){
+      master.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
     }
-    // slider acts as on/off: if zero, set off state
-    const btn = document.getElementById('musicToggleSideBtn');
-    if (v === 0){ musicMuted = true; if (btn) btn.textContent = 'Music: Off'; } else { musicMuted = false; if (btn) btn.textContent = 'Music: On'; }
   });
 
-  // clicking the label toggles between 0 and previous value
+  // clicking the label toggles between 0 and previous value (master volume)
   _musicVolLabel.addEventListener('click', (ev) => {
     ensureAudio();
-    const btn = document.getElementById('musicToggleSideBtn');
-    if (musicMuted || Number(_musicSlider.value) === 0){
-      // turn on
-      const v = prevMusicGain || 1.0;
+    if (Number(_musicSlider.value) === 0){
+      // turn on (restore previous master gain)
+      const v = prevMasterGain || 0.25;
       _musicSlider.value = String(v);
       _musicVolLabel.textContent = Math.round(v * 100) + '%';
-      if (musicGain) musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
-      musicMuted = false; if (btn) btn.textContent = 'Music: On';
+      if (master) master.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
     } else {
-      // turn off
-      prevMusicGain = Number(_musicSlider.value) || prevMusicGain || 1.0;
+      // turn off (store previous master gain)
+      prevMasterGain = Number(_musicSlider.value) || prevMasterGain || 0.25;
       _musicSlider.value = '0';
       _musicVolLabel.textContent = '0%';
-      if (musicGain) musicGain.gain.setValueAtTime(0.0001, audioCtx.currentTime + 0.01);
-      musicMuted = true; if (btn) btn.textContent = 'Music: Off';
+      if (master) master.gain.setValueAtTime(0.0001, audioCtx.currentTime + 0.01);
     }
   });
 }
