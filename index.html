@@ -2245,7 +2245,8 @@ async function playRound(){
   expected = [...sequence];
 
   setStatus(`Round ${round}: spinning...`);
-  await spinOnce(Math.min(6500, 3300 + round * 180));
+  // use a snappier base for initial rounds so round transitions feel immediate
+  await spinOnce(Math.min(5500, 2200 + round * 180));
 
   setStatus("Watch the pattern.");
   await showSequence();
@@ -2273,7 +2274,7 @@ async function advanceRound(){
     await showBigMessage({
       title: `ROUND ${round}`,
       sub: "Proceeding...",
-      ms: 1700,
+      ms: 900, // shortened so the round advances without long pause
       tickerText: emojiRun + emojiRun + emojiRun,
       spicy: true
     });
@@ -2344,7 +2345,8 @@ function onPlayerPick(colorIndex){
     confettiBurst(w.left + w.width/2, w.top + w.height/2, 110, 4.0);
 
     busy = true;
-    setTimeout(() => { busy = false; advanceRound(); }, 620);
+    // shorter delay so next round appears more promptly
+    setTimeout(() => { busy = false; advanceRound(); }, 220);
   }
 }
 
