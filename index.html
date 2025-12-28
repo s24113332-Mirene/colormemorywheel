@@ -1877,17 +1877,19 @@ function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   setTimeout(() => { if (b.isConnected) b.remove(); }, (t * 1000) + 1200);
 }
 function spawnBackgroundBalloons(){
-  // ✅ fewer balloons at start
-  for (let i = 0; i < 7; i++){
+  // ✅ more balloons at start
+  for (let i = 0; i < 14; i++){
     spawnOneBalloon({ durationS: 10 + Math.random() * 12 });
   }
   if (balloonInterval) clearInterval(balloonInterval);
 
-  // ✅ slower spawn rate + rare double spawn
+  // ✅ faster spawn rate + more frequent multiple spawns
   balloonInterval = setInterval(() => {
     spawnOneBalloon();
-    if (Math.random() < 0.10) spawnOneBalloon();
-  }, 2400);
+    if (Math.random() < 0.25) spawnOneBalloon();
+    // occasional triple burst
+    if (Math.random() < 0.08) spawnOneBalloon();
+  }, 1600);
 }
 
 /* Wheel lights */
