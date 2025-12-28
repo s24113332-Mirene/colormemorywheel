@@ -1517,6 +1517,14 @@ body::before{
               </div>
             </div>
 
+            <div style="display:flex; gap:8px; align-items:center; justify-content:center; margin:10px 0;">
+              <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
+                <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
+              </div>
+            </div>
+
 
 
             <div class="panel">
@@ -1541,13 +1549,6 @@ body::before{
 
               <div class="hint">Tip: Memorize the sequence as numbers (1–10), then tap in the same order.</div>
 
-              <div class="musicCenterControls" style="display:flex; gap:12px; align-items:center; justify-content:center; margin-top:10px;">
-                <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
-                <div style="display:flex; gap:8px; align-items:center;">
-                  <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
-                  <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
-                </div>
-              </div>
             </div>
           </div>
         </aside>
