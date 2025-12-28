@@ -2323,7 +2323,7 @@ async function startNewGame({ resetTickets }){
   if (gameActive || busy) return;
   ensureAudio();
   sfxCoin();
-  startBGM();
+  startBackgroundMusic();
 
   buildSegments();
   renderWheel();
@@ -2399,7 +2399,7 @@ function goHomeEnd(){
 
 /* End Screen */
 function openEndCongrats(){
-  stopBGM();
+  stopBackgroundMusic();
   dedupePrizesOwned();
 
   els.endTickets.textContent = String(tickets);
