@@ -1290,19 +1290,6 @@ body::before{
   justify-self: start;
   padding-left: 10px;
 }
-.footerRight{
-  grid-column: 3;
-  justify-self: end;
-  padding-right: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.footerRight .btn{
-  padding: 8px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-}
   </style>
 </head>
 
@@ -1563,9 +1550,6 @@ body::before{
 
       <footer class="footer">
         <span>Created by Mirene Jane Grejalde (貴敏希)</span>
-        <div class="footerRight">
-          <button id="musicToggleBtn" class="btn primary" type="button">Music: ON</button>
-        </div>
       </footer>
     </main>
   </div>
@@ -1660,8 +1644,6 @@ const els = {
   timerText: document.getElementById("timerText"),
   topRect: document.getElementById("topRect"),
   bottomRect: document.getElementById("bottomRect"),
-
-  musicToggleBtn: document.getElementById("musicToggleBtn"),
 };
 
 let best = Number(localStorage.getItem("mcw_best_carnival") || "0");
@@ -1694,18 +1676,6 @@ let lastTimerText = "";
 
 let audioCtx = null;
 let master = null;
-
-/* background music / ambience */
-let ambience = {
-  on: true,
-  started: false,
-  bellTimer: null,
-  noise: null,
-  pad: null,
-  pad2: null,
-  bgGain: null,
-  lpf: null
-};
 
 let coinInserted = false;
 let balloonInterval = null;
@@ -1987,262 +1957,19 @@ function setSlicesDim(dim){
   els.wheelSvg.classList.toggle("dimAll", !!dim);
 }
 
-/* =========================
-   AUDIO (SOLFEGE + MAGIC)
-   ========================= */
-const SOLFEGE_FREQS = [
-  261.63, // Do (C4)
-  293.66, // Re (D4)
-  329.63, // Mi (E4)
-  349.23, // Fa (F4)
-  392.00, // So (G4)
-  440.00, // La (A4)
-  493.88, // Ti (B4)
-  523.25, // Do (C5)
-  587.33, // Re (D5)
-  659.25  // Mi (E5)
-];
-
-let _noiseBufShort = null;
-let _noiseBufLong = null;
-
-function makeNoiseBuffer(ctx, seconds=0.4){
-  const sr = ctx.sampleRate;
-  const len = Math.floor(sr * seconds);
-  const buf = ctx.createBuffer(1, len, sr);
-  const data = buf.getChannelData(0);
-  for (let i=0;i<len;i++){
-    // gentle noise (not harsh)
-    data[i] = (Math.random()*2 - 1) * 0.35;
-  }
-  return buf;
-}
-
-function shimmer(t0, intensity = 0.08){
-  if (!audioCtx || !master) return;
-
-  const freqs = [1760, 2093, 2637]; // sparkly trio
-  for (let i = 0; i < freqs.length; i++){
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = "sine";
-    o.frequency.setValueAtTime(freqs[i] * (1 + (Math.random()*0.012 - 0.006)), t0);
-    g.gain.setValueAtTime(0.0001, t0);
-    g.gain.exponentialRampToValueAtTime(intensity * (0.86 - i*0.2), t0 + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16 + i*0.02);
-    o.connect(g).connect(master);
-    o.start(t0);
-    o.stop(t0 + 0.22 + i*0.02);
-  }
-}
-
-/* Solfege slice sound */
+/* Sounds */
+const COLOR_TONES = [262, 294, 330, 349, 392, 440, 494, 523, 587, 659];
+const COLOR_WAVES = ["sine","triangle","sine","triangle","sine","triangle","sine","triangle","sine","triangle"];
 function sfxColor(index, kind="tap"){
   if (!audioCtx || !master) return;
   const i = clamp(index|0, 0, 9);
- const t = audioCtx.currentTime;
-
-  const base = SOLFEGE_FREQS[i];
-  const dur = (kind === "flash") ? 0.08 : 0.11;
-  const g   = (kind === "flash") ? 0.07 : 0.11;
-
-  tone(base, t, dur, "sine", g);
-  tone(base * 2, t + 0.010, dur * 0.7, "triangle", g * 0.45);
-
-  // sparkle layer
-  shimmer(t + (kind === "flash" ? 0.00 : 0.02), kind === "flash" ? 0.075 : 0.045);
-}
-
-/* Whoosh for spinning */
-function sfxWhoosh(duration=0.60){
-  if (!audioCtx || !master) return;
-  const t0 = audioCtx.currentTime;
-
-  if (!_noiseBufShort) _noiseBufShort = makeNoiseBuffer(audioCtx, 0.8);
-
-  const src = audioCtx.createBufferSource();
-  src.buffer = _noiseBufShort;
-  src.loop = false;
-
-  const bp = audioCtx.createBiquadFilter();
-  bp.type = "bandpass";
-  bp.frequency.setValueAtTime(240, t0);
-  bp.frequency.linearRampToValueAtTime(920, t0 + duration);
-  bp.Q.value = 0.9;
-
-  const g = audioCtx.createGain();
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(0.14, t0 + 0.05);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
-
-  src.connect(bp).connect(g).connect(master);
-  src.start(t0);
-  src.stop(t0 + duration + 0.05);
-}
-
-/* Magical SFX: purchase, win, gameover, bonus pop */
-function sfxBonusPop(){
-  if (!audioCtx || !master) return;
   const t = audioCtx.currentTime;
-
-  // tiny pop sweep
-  tone(880, t, 0.06, "sine", 0.07);
-  tone(520, t + 0.01, 0.06, "triangle", 0.06);
-
-  if (!_noiseBufShort) _noiseBufShort = makeNoiseBuffer(audioCtx, 0.25);
-  const src = audioCtx.createBufferSource();
-  src.buffer = _noiseBufShort;
-  src.loop = false;
-
-  const hp = audioCtx.createBiquadFilter();
-  hp.type = "highpass";
-  hp.frequency.value = 700;
-
-  const g = audioCtx.createGain();
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.09, t + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-
-  src.connect(hp).connect(g).connect(master);
-  src.start(t);
-  src.stop(t + 0.14);
-
-  shimmer(t + 0.02, 0.06);
-}
-
-function sfxPurchase(){
-  if (!audioCtx || !master) return;
-  const t = audioCtx.currentTime;
-
-  // Do–Mi–So–Do (up) + sparkle
-  const seq = [SOLFEGE_FREQS[0], SOLFEGE_FREQS[2], SOLFEGE_FREQS[4], SOLFEGE_FREQS[7]];
-  for (let i=0;i<seq.length;i++){
-    tone(seq[i], t + i*0.07, 0.12, "triangle", 0.09);
-    tone(seq[i]*2, t + i*0.07 + 0.012, 0.10, "sine", 0.04);
-  }
-  shimmer(t + 0.08, 0.09);
-  shimmer(t + 0.20, 0.06);
-}
-
-function sfxWin(){
-  if (!audioCtx || !master) return;
-  const t = audioCtx.currentTime;
-
-  // So–La–Ti–Do–Re–Mi (sparkly run)
-  const seq = [SOLFEGE_FREQS[4], SOLFEGE_FREQS[5], SOLFEGE_FREQS[6], SOLFEGE_FREQS[7], SOLFEGE_FREQS[8], SOLFEGE_FREQS[9]];
-  for (let i=0;i<seq.length;i++){
-    const tt = t + i*0.055;
-    tone(seq[i], tt, 0.11, "sine", 0.085);
-    tone(seq[i]*2, tt + 0.010, 0.09, "triangle", 0.035);
-  }
-  shimmer(t + 0.10, 0.08);
-  shimmer(t + 0.22, 0.06);
-}
-
-function sfxGameOver(){
-  if (!audioCtx || !master) return;
-  const t = audioCtx.currentTime;
-
-  // Downward "sad" cadence: Mi–Re–Do (lower) + soft buzz
-  const mi = SOLFEGE_FREQS[2];
-  const re = SOLFEGE_FREQS[1];
-  const d0 = SOLFEGE_FREQS[0];
-
-  tone(mi, t, 0.16, "square", 0.06);
-  tone(re, t + 0.12, 0.18, "square", 0.06);
-  tone(d0, t + 0.24, 0.28, "square", 0.06);
-
-  // gentle low thud
-  tone(110, t + 0.06, 0.24, "triangle", 0.08);
-}
-
-/* Ambience (background “carnival magic”) */
-function startCarnivalAmbience(){
-  if (!audioCtx || !master) return;
-  if (!ambience.on || ambience.started) return;
-
-  ambience.started = true;
-
-  ambience.bgGain = audioCtx.createGain();
-  ambience.bgGain.gain.value = 0.045;
-
-  ambience.lpf = audioCtx.createBiquadFilter();
-  ambience.lpf.type = "lowpass";
-  ambience.lpf.frequency.value = 850;
-
-  ambience.bgGain.connect(ambience.lpf).connect(master);
-
-  // soft pad
-  ambience.pad = audioCtx.createOscillator();
-  ambience.pad2 = audioCtx.createOscillator();
-  ambience.pad.type = "sine";
-  ambience.pad2.type = "sine";
-  ambience.pad.frequency.value = 220;  // A3
-  ambience.pad2.frequency.value = 330; // E4-ish
-  ambience.pad.detune.value = -6;
-  ambience.pad2.detune.value = +6;
-
-  const padGain = audioCtx.createGain();
-  padGain.gain.value = 0.22;
-
-  ambience.pad.connect(padGain).connect(ambience.bgGain);
-  ambience.pad2.connect(padGain).connect(ambience.bgGain);
-  ambience.pad.start();
-  ambience.pad2.start();
-
-  // subtle “air/crowd” noise
-  if (!_noiseBufLong) _noiseBufLong = makeNoiseBuffer(audioCtx, 2.4);
-  const noiseSrc = audioCtx.createBufferSource();
-  noiseSrc.buffer = _noiseBufLong;
-  noiseSrc.loop = true;
-
-  const noiseBP = audioCtx.createBiquadFilter();
-  noiseBP.type = "bandpass";
-  noiseBP.frequency.value = 320;
-  noiseBP.Q.value = 0.7;
-
-  const noiseGain = audioCtx.createGain();
-  noiseGain.gain.value = 0.11;
-
-  noiseSrc.connect(noiseBP).connect(noiseGain).connect(ambience.bgGain);
-  noiseSrc.start();
-  ambience.noise = noiseSrc;
-
-  // occasional twinkles
-  const scheduleBell = () => {
-    if (!ambience.started || !ambience.on || !audioCtx) return;
-    const tt = audioCtx.currentTime + 0.02;
-    shimmer(tt, 0.03 + Math.random()*0.02);
-    shimmer(tt + 0.10, 0.02 + Math.random()*0.015);
-  };
-  ambience.bellTimer = setInterval(scheduleBell, 2400 + Math.random()*1600);
-}
-
-function stopCarnivalAmbience(){
-  if (!ambience.started) return;
-
-  if (ambience.bellTimer){ clearInterval(ambience.bellTimer); ambience.bellTimer = null; }
-  try{ ambience.noise?.stop(); } catch {}
-  try{ ambience.pad?.stop(); } catch {}
-  try{ ambience.pad2?.stop(); } catch {}
-
-  ambience.noise = ambience.pad = ambience.pad2 = null;
-  ambience.bgGain = ambience.lpf = null;
-  ambience.started = false;
-}
-
-function updateMusicToggleUI(){
-  if (!els.musicToggleBtn) return;
-  els.musicToggleBtn.textContent = ambience.on ? "Music: ON" : "Music: OFF";
-  els.musicToggleBtn.classList.toggle("primary", ambience.on);
-}
-
-function setAmbienceOn(on){
-  ambience.on = !!on;
-  updateMusicToggleUI();
-  if (!audioCtx) return;
-  if (ambience.on) startCarnivalAmbience();
-  else stopCarnivalAmbience();
+  const base = COLOR_TONES[i];
+  const type = COLOR_WAVES[i];
+  const g = (kind === "flash") ? 0.06 : 0.10;
+  const dur = (kind === "flash") ? 0.07 : 0.10;
+  tone(base, t, dur, type, g);
+  tone(base * 2, t + 0.015, dur * 0.7, "sine", g * 0.55);
 }
 
 /* Instant flash */
@@ -2275,10 +2002,6 @@ async function flashSliceAsync(sliceIndex, ms){
 /* Spin */
 function spinOnce(durationMs){
   return new Promise((resolve) => {
-    // whoosh sync with spin start
-    ensureAudio();
-    sfxWhoosh(Math.min(0.75, durationMs / 5200));
-
     rotationDeg += 1800 + Math.random() * 2400;
     els.rotator.style.transition = `transform ${durationMs}ms cubic-bezier(.18,.88,.1,1)`;
     els.rotator.style.transform = `rotate(${rotationDeg}deg) translateZ(0)`;
@@ -2373,7 +2096,7 @@ function spawnTicketBonus(){
     tickets += 1;
     updateHUD();
     setStatus("Bonus ticket! +1 ticket 🎟️");
-    sfxBonusPop();
+    sfxBell();
     const r = btn.getBoundingClientRect();
     confettiBurst(r.left + r.width/2, r.top + r.height/2, 60, 3.4);
     btn.classList.add("pop");
@@ -2400,7 +2123,7 @@ function spawnSecondsBalloon(){
     if (!gameActive) return;
     addTimeBonus(bonusMs);
     setStatus("Bonus time! +2.5 seconds ⏱️");
-    sfxBonusPop();
+    sfxBell();
     const r = btn.getBoundingClientRect();
     confettiBurst(r.left + r.width/2, r.top + r.height/2, 60, 3.4);
     btn.classList.add("pop");
@@ -2450,10 +2173,7 @@ function getFlashTiming(){
 
 async function showSequence(){
   setSlicesDim(true);
-  // small “ready” sparkle
-  ensureAudio();
-  shimmer(audioCtx.currentTime + 0.02, 0.05);
-
+  sfxBell();
   const { flashMs, gapMs } = getFlashTiming();
   for (const s of sequence){
     await wait(gapMs);
@@ -2519,9 +2239,7 @@ async function loseGame(reason){
   gameActive = false;
   updateHUD();
 
-  ensureAudio();
-  sfxGameOver();
-
+  sfxBuzzer();
   await showBigMessage({
     title: "GAME OVER!",
     sub: `Reason: ${reason}`,
@@ -2556,8 +2274,7 @@ function onPlayerPick(colorIndex){
     isPlayerTurn = false;
 
     tickets += 1;
-    ensureAudio();
-    sfxWin();
+    sfxCheer();
 
     clearBonusBalloons();
     setStatus("Correct! +1 ticket. Next round...");
@@ -2814,8 +2531,7 @@ function renderShopItems(){
       tickets -= item.cost;
       prizesOwned.push(item.id);
       dedupePrizesOwned();
-
-      sfxPurchase();
+      sfxBell();
 
       updateHUD();
       renderShopItems();
@@ -2855,24 +2571,16 @@ function updateHUD(){
   renderAllToys();
 }
 
-/* Audio core */
+/* Audio */
 function ensureAudio(){
   if (!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     master = audioCtx.createGain();
     master.gain.value = 0.25;
     master.connect(audioCtx.destination);
-
-    // create noise buffers after ctx exists
-    _noiseBufShort = null;
-    _noiseBufLong = null;
   }
   if (audioCtx.state === "suspended") audioCtx.resume();
-
-  // start ambience (after a user gesture)
-  if (ambience.on) startCarnivalAmbience();
 }
-
 function tone(freq, t0, dur, type="sine", gain=0.25){
   const o = audioCtx.createOscillator();
   const g = audioCtx.createGain();
@@ -2885,12 +2593,29 @@ function tone(freq, t0, dur, type="sine", gain=0.25){
   o.start(t0);
   o.stop(t0 + dur + 0.02);
 }
-
 function sfxCoin(){
   const t = audioCtx.currentTime;
   tone(220, t, 0.10, "triangle", 0.18);
   tone(440, t + 0.06, 0.12, "triangle", 0.18);
   tone(660, t + 0.12, 0.10, "triangle", 0.14);
+}
+function sfxBell(){
+  const t = audioCtx.currentTime;
+  tone(880, t, 0.08, "sine", 0.16);
+  tone(1320, t + 0.02, 0.10, "sine", 0.12);
+  tone(1760, t + 0.04, 0.10, "sine", 0.10);
+}
+function sfxCheer(){
+  const t = audioCtx.currentTime;
+  tone(330, t, 0.18, "sawtooth", 0.08);
+  tone(392, t + 0.05, 0.22, "sawtooth", 0.08);
+  tone(523, t + 0.10, 0.25, "sawtooth", 0.08);
+  tone(659, t + 0.16, 0.22, "sawtooth", 0.06);
+}
+function sfxBuzzer(){
+  const t = audioCtx.currentTime;
+  tone(110, t, 0.25, "square", 0.12);
+  tone(92, t + 0.12, 0.30, "square", 0.10);
 }
 
 /* Coin drag-to-insert */
@@ -3115,14 +2840,6 @@ els.wheelSvg.addEventListener("pointerdown", (e) => {
   onPlayerPick(Number(target.dataset.slice));
 }, { passive: false });
 
-/* Music toggle */
-els.musicToggleBtn.addEventListener("pointerdown", (e) => {
-  e.preventDefault();
-  // This is a user gesture, so it's a good place to ensure audio exists.
-  ensureAudio();
-  setAmbienceOn(!ambience.on);
-});
-
 /* Init */
 function init(){
   resizeConfettiCanvas();
@@ -3139,7 +2856,6 @@ function init(){
   updateHUD();
   resetCoinUI();
   clearBonusBalloons();
-  updateMusicToggleUI();
   showWelcome();
 
   requestAnimationFrame(() => {
