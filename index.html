@@ -2269,7 +2269,7 @@ async function loseGame(reason){
   updateHUD();
 
   sfxBuzzer();
-  stopBGM();
+  stopBackgroundMusic();
   await showBigMessage({
     title: "GAME OVER!",
     sub: `Reason: ${reason}`,
@@ -2686,7 +2686,7 @@ function startBGM(){
   // warmer pad + slightly higher level for carnival energy
   bgGain = audioCtx.createGain();
   bgGain.gain.value = 0.20;
-  bgGain.connect(master);
+  bgGain.connect(musicGain);
 
   // bright pad (sawtooth)
   bgOsc1 = audioCtx.createOscillator();
