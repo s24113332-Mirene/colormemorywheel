@@ -1122,6 +1122,7 @@ body::before{
   box-shadow: var(--shadow);
   width: min(760px, 92vw);
   overflow: hidden;
+  position: relative;
 }
 .bigTitle{
   font-family: "Protest Revolution", "Inter", system-ui;
@@ -2106,7 +2107,6 @@ function startTimer(){
   pendingTimeBonusMs = 0;
 
   timerStart = performance.now();
-  const tick = (now) => {
   const tick = (now) => {
     const elapsed = now - timerStart;
     const remaining = Math.max(0, timerTotal - elapsed);
