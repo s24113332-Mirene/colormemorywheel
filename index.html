@@ -6,16 +6,13 @@
   <title>Color Memory Wheel</title>
 
   <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Protest+Revolution&family=Cinzel+Decorative:wght@700&family=Molle:ital@1&family=Bonheur+Royale&display=swap');
 
 :root{
   --text: rgba(255,255,255,.95);
   --muted: rgba(255,255,255,.78);
   --shadow: 0 18px 50px rgba(0,0,0,.45);
   --appScale: 1;
-
-  /* ✅ Flags: lock to 2 rows (16 per row) with responsive size */
-  --flagSize: clamp(18px, 2.4vw, 30px);
 }
 
 *{ box-sizing: border-box; }
@@ -108,7 +105,7 @@ body::before{
   50%{ opacity:.82; transform: translate(-50%,-50%) scale(1.06); filter: brightness(1.18) blur(.10px); }
 }
 
-/* Background balloons (clearer visuals, fewer heavy effects) */
+/* Background balloons (more balloon-like, not plain circles) */
 #balloons{
   position: fixed;
   inset: 0;
@@ -120,15 +117,37 @@ body::before{
   position: absolute;
   left: var(--x);
   bottom: -22vh;
+
   width: var(--w);
-  height: var(--w);
-  border-radius: 50%;
-  background: hsla(var(--h), 85%, 60%, 0.86);
-  box-shadow: inset 0 -18px 24px rgba(0,0,0,.16), inset 0 16px 24px rgba(255,255,255,.20);
+  height: calc(var(--w) * 1.28);
+
+  /* balloon-ish oval */
+  border-radius: 55% 55% 50% 50% / 58% 58% 42% 42%;
+
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.58), rgba(255,255,255,0) 46%),
+    radial-gradient(circle at 55% 80%, rgba(0,0,0,.18), rgba(0,0,0,0) 58%),
+    hsla(var(--h), 85%, 60%, 0.88);
+
+  box-shadow:
+    inset 0 -18px 26px rgba(0,0,0,.16),
+    inset 0 16px 22px rgba(255,255,255,.18);
   filter: drop-shadow(0 14px 16px rgba(0,0,0,.20));
   animation: floatUp var(--t) linear forwards;
   opacity: 0;
   will-change: transform, opacity;
+}
+.balloon::before{
+  content:"";
+  position:absolute;
+  left: 30%;
+  top: 18%;
+  width: 34%;
+  height: 42%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,.55), rgba(255,255,255,0) 70%);
+  transform: rotate(-18deg);
+  opacity: .85;
 }
 .balloon::after{
   content:"";
@@ -139,7 +158,8 @@ body::before{
   width: 0; height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 10px solid rgba(255,255,255,.30);
+  border-top: 10px solid rgba(255,255,255,.28);
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.16));
 }
 .balloon .string{
   position: absolute;
@@ -153,9 +173,10 @@ body::before{
   opacity: .9;
 }
 @keyframes floatUp{
-  0%{ transform: translateY(0) rotate(-2deg); opacity: 0; }
-  8%{ opacity: .90; }
-  100%{ transform: translateY(-140vh) rotate(2deg); opacity: 0; }
+  0%{ transform: translateY(0) translateX(0) rotate(-2deg); opacity: 0; }
+  8%{ opacity: .92; }
+  50%{ transform: translateY(-70vh) translateX(8px) rotate(2deg); }
+  100%{ transform: translateY(-140vh) translateX(-6px) rotate(-1deg); opacity: 0; }
 }
 
 /* FX layers */
@@ -259,10 +280,30 @@ body::before{
   flex-wrap: nowrap;
   white-space: nowrap;
   max-width: 100%;
+  /* extra glow as requested */
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.10));
 }
-.titleWords .w1{ color: rgba(255,110,220,.98); text-shadow: 0 0 10px rgba(255,110,220,.18), 0 12px 26px rgba(0,0,0,.30); }
-.titleWords .w2{ color: rgba(120,255,240,.98); text-shadow: 0 0 10px rgba(120,255,240,.14), 0 12px 26px rgba(0,0,0,.30); }
-.titleWords .w3{ color: rgba(255,220,150,.98); text-shadow: 0 0 10px rgba(255,220,150,.12), 0 12px 26px rgba(0,0,0,.30); }
+.titleWords .w1{
+  color: rgba(255,110,220,.98);
+  text-shadow:
+    0 0 10px rgba(255,110,220,.22),
+    0 0 22px rgba(255,110,220,.14),
+    0 12px 26px rgba(0,0,0,.30);
+}
+.titleWords .w2{
+  color: rgba(120,255,240,.98);
+  text-shadow:
+    0 0 10px rgba(120,255,240,.18),
+    0 0 22px rgba(120,255,240,.12),
+    0 12px 26px rgba(0,0,0,.30);
+}
+.titleWords .w3{
+  color: rgba(255,220,150,.98);
+  text-shadow:
+    0 0 10px rgba(255,220,150,.16),
+    0 0 22px rgba(255,220,150,.10),
+    0 12px 26px rgba(0,0,0,.30);
+}
 .centerSubtitle{ margin-top: 4px; font-weight: 800; color: rgba(255,255,255,.86); letter-spacing: .4px; }
 .oneLine{ white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -323,9 +364,9 @@ body::before{
 
 .bonusBalloonCircle{
   position: relative;
-  width: 84px;
-  height: 84px;
-  border-radius: 999px;
+  width: 78px;
+  height: 96px;
+  border-radius: 55% 55% 50% 50% / 58% 58% 42% 42%;
   border: 1px solid rgba(255,255,255,.26);
   background:
     radial-gradient(circle at 30% 22%, rgba(255,255,255,.52), rgba(255,255,255,0) 44%),
@@ -468,11 +509,8 @@ body::before{
     drop-shadow(0 0 12px color-mix(in srgb, var(--glow) 90%, transparent))
     drop-shadow(0 0 20px color-mix(in srgb, var(--glow) 60%, transparent));
 }
-
-/* ✅ Fix "gray blocking" during flash:
-   dim everything ONLY via wheelSvg.dimAll, but keep the flashed slice full opacity */
-#wheelSvg.dimAll .slice{ opacity: .18; }
-#wheelSvg.dimAll .slice.activeFlash{ opacity: 1; }
+/* ✅ no gray blocking during pattern flashes */
+.sliceDim{ opacity: 1; }
 
 /* Lights around wheel */
 .wheelLights{
@@ -768,7 +806,7 @@ body::before{
   100%{ transform: translate(-50%,-50%) scale(.75); opacity:0; }
 }
 
-/* Flaglets: ONLY two rows */
+/* ✅ Flaglets: exactly 2 rows, exactly 16 flags each row (no extra lines / wrapping) */
 .flagRow{ position: relative; z-index: 2; display: grid; gap: 8px; margin-bottom: 10px; }
 .flagString{
   height: 10px;
@@ -778,20 +816,23 @@ body::before{
   box-shadow: 0 10px 18px rgba(0,0,0,.18);
   opacity: .9;
 }
-.flagsWrap{ display: grid; gap: 8px; }
-
-/* ✅ Exactly 16 flags per line (no wrapping into extra rows) */
+.flagsWrap{
+  display: grid;
+  gap: 8px;
+  width: min(640px, 100%);
+  margin: 0 auto;
+}
 .flagsLine{
   display: grid;
-  grid-template-columns: repeat(16, var(--flagSize));
+  grid-template-columns: repeat(16, minmax(0, 1fr));
   gap: 8px;
-  justify-content: center;
-  align-content: center;
+  align-items: start;
+  justify-items: center;
 }
-
 .flag{
-  width: var(--flagSize);
-  height: calc(var(--flagSize) * 0.93);
+  width: 100%;
+  max-width: 30px;
+  aspect-ratio: 30 / 28;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   background:
     radial-gradient(circle at 30% 20%, rgba(255,255,255,.36), rgba(255,255,255,0) 44%),
@@ -858,25 +899,52 @@ body::before{
   justify-content: center;
   flex-wrap: nowrap;
   white-space: nowrap;
+  /* extra lighting effect */
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.10));
 }
-.neonTitle .w1{ color: rgba(255,110,220,.95); text-shadow: 0 0 8px rgba(255,100,210,.35), 0 0 18px rgba(255,100,210,.18), 0 18px 35px rgba(0,0,0,.55); }
-.neonTitle .w2{ color: rgba(120,255,240,.95); text-shadow: 0 0 8px rgba(110,255,240,.28), 0 0 18px rgba(110,255,240,.16), 0 18px 35px rgba(0,0,0,.55); }
-.neonTitle .w3{ color: rgba(255,220,150,.95); text-shadow: 0 0 8px rgba(255,220,150,.22), 0 0 18px rgba(255,220,150,.12), 0 18px 35px rgba(0,0,0,.55); }
+.neonTitle .w1{
+  color: rgba(255,110,220,.95);
+  text-shadow:
+    0 0 10px rgba(255,100,210,.40),
+    0 0 22px rgba(255,100,210,.22),
+    0 0 34px rgba(255,100,210,.14),
+    0 18px 35px rgba(0,0,0,.55);
+}
+.neonTitle .w2{
+  color: rgba(120,255,240,.95);
+  text-shadow:
+    0 0 10px rgba(110,255,240,.34),
+    0 0 22px rgba(110,255,240,.18),
+    0 0 34px rgba(110,255,240,.12),
+    0 18px 35px rgba(0,0,0,.55);
+}
+.neonTitle .w3{
+  color: rgba(255,220,150,.95);
+  text-shadow:
+    0 0 10px rgba(255,220,150,.30),
+    0 0 22px rgba(255,220,150,.16),
+    0 0 34px rgba(255,220,150,.10),
+    0 18px 35px rgba(0,0,0,.55);
+}
 
 .neonSub{
   margin: 10px auto 0;
-  color: rgba(255,255,255,.90);
+  color: rgba(255,255,255,.92);
   max-width: 60ch;
-  line-height: 1.5;
-  font-family: "Protest Revolution", "Inter", system-ui;
+  line-height: 1.2;
+  /* ✅ Bonheur Royale font for welcome subtitle */
+  font-family: "Bonheur Royale", cursive;
   font-weight: 400;
-  font-size: 20px;
-  letter-spacing: .7px;
-  text-shadow: 0 10px 22px rgba(0,0,0,.35);
+  font-size: clamp(22px, 3.2vw, 34px);
+  letter-spacing: .4px;
+  text-shadow:
+    0 0 12px rgba(255,255,255,.18),
+    0 10px 22px rgba(0,0,0,.35);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .nmIcons{
   position: relative;
   z-index: 2;
@@ -1212,12 +1280,31 @@ body::before{
   text-shadow: 0 0 14px rgba(255,255,255,.18);
 }
 
-/* Better Luck + Congratulations both use Molle (as requested) */
+/* Better Luck + Congratulations both use Molle */
 .endTitle.lucky,
 .endTitle.congrats{
   font-family: "Molle", cursive;
   font-weight: 400;
   letter-spacing: .2px;
+}
+
+/* ✅ Congratulations gradient like your image */
+.congratsGradient{
+  background: linear-gradient(90deg,
+    rgb(246,176,232) 0%,
+    rgb(226,215,156) 20%,
+    rgb(176,223,240) 40%,
+    rgb(164,178,245) 60%,
+    rgb(176,247,164) 80%,
+    rgb(246,176,232) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter:
+    drop-shadow(0 0 8px rgba(255,200,240,.20))
+    drop-shadow(0 0 14px rgba(180,220,255,.14))
+    drop-shadow(0 18px 30px rgba(0,0,0,.40));
 }
 
 .endSub{
@@ -1759,15 +1846,14 @@ function buildEndTwinkles(){
   }
 }
 
-/* ✅ Two rows only: 16 flags each (no extra lines) */
+/* ✅ Two rows only, 16 flags each row */
 function buildFlags(){
   els.flagsTop.innerHTML = "";
   els.flagsBottom.innerHTML = "";
-
   const perRow = 16;
-  const total = perRow * 2;
+  const n = perRow * 2;
 
-  for (let i=0;i<total;i++){
+  for (let i=0;i<n;i++){
     const f = document.createElement("div");
     f.className = "flag";
     f.style.setProperty("--h", String(Math.floor(Math.random()*360)));
@@ -1825,6 +1911,7 @@ window.addEventListener("resize", () => {
   renderShopItems();
   buildStars();
   buildEndTwinkles();
+  buildFlags();
   buildTwinkles();
   buildSparkles();
 });
@@ -1960,10 +2047,9 @@ function renderWheel(){
     els.wheelSvg.appendChild(path);
   }
 }
-
-/* ✅ Dim wheel without "gray blocking" */
 function setSlicesDim(dim){
-  els.wheelSvg.classList.toggle("dimAll", !!dim);
+  // kept for compatibility, but does not dim (so no gray blocking)
+  els.wheelSvg.querySelectorAll(".slice").forEach(n => n.classList.toggle("sliceDim", dim));
 }
 
 /* Sounds */
@@ -1981,24 +2067,23 @@ function sfxColor(index, kind="tap"){
   tone(base * 2, t + 0.015, dur * 0.7, "sine", g * 0.55);
 }
 
-/* ✅ Instant flash (no CSS animation delays) + keep slice fully visible */
+/* ✅ Instant flash (no CSS animation delays) */
 function flashSliceNow(sliceIndex, ms){
-  const node = els.wheelSvg.querySelector(`.slice[data-slice="${sliceIndex}"]`);
+  const node = els.wheelSvg.querySelector(\`.slice[data-slice="\${sliceIndex}"]\`);
   if (!node) return;
   const glow = segments[sliceIndex]?.color || "#fff";
 
   if (node._flashTO) clearTimeout(node._flashTO);
 
-  node.classList.add("activeFlash");
   node.style.stroke = "rgba(255,255,255,1)";
   node.style.strokeWidth = "12";
-  node.style.filter = `drop-shadow(0 0 14px ${glow}) drop-shadow(0 0 22px ${glow})`;
+  node.style.filter =
+    \`drop-shadow(0 0 14px \${glow}) drop-shadow(0 0 22px \${glow})\`;
 
   node._flashTO = setTimeout(() => {
     node.style.stroke = "";
     node.style.strokeWidth = "";
     node.style.filter = "";
-    node.classList.remove("activeFlash");
     node._flashTO = null;
   }, ms);
 }
@@ -2012,8 +2097,8 @@ async function flashSliceAsync(sliceIndex, ms){
 function spinOnce(durationMs){
   return new Promise((resolve) => {
     rotationDeg += 1800 + Math.random() * 2400;
-    els.rotator.style.transition = `transform ${durationMs}ms cubic-bezier(.18,.88,.1,1)`;
-    els.rotator.style.transform = `rotate(${rotationDeg}deg) translateZ(0)`;
+    els.rotator.style.transition = \`transform \${durationMs}ms cubic-bezier(.18,.88,.1,1)\`;
+    els.rotator.style.transform = \`rotate(\${rotationDeg}deg) translateZ(0)\`;
     const onEnd = (ev) => {
       if (ev.propertyName !== "transform") return;
       els.rotator.removeEventListener("transitionend", onEnd);
@@ -2062,7 +2147,7 @@ function startTimer(){
     const frac = remaining / timerTotal;
     setHourglass(frac);
 
-    const txt = `${(remaining / 1000).toFixed(1)}s`;
+    const txt = \`\${(remaining / 1000).toFixed(1)}s\`;
     if (txt !== lastTimerText){
       els.timerText.textContent = txt;
       lastTimerText = txt;
@@ -2099,7 +2184,7 @@ function spawnTicketBonus(){
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "bonusBtn bonusTicket";
-  btn.innerHTML = `<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>`;
+  btn.innerHTML = \`<div class="ticketInner"><span class="ticketIcon">🎟️</span><span>+1 TICKET</span></div>\`;
   btn.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     ensureAudio();
@@ -2119,15 +2204,15 @@ function spawnSecondsBalloon(){
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "bonusBtn bonusBalloonCircle";
-  btn.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
+  btn.style.setProperty("--h", \`\${Math.floor(Math.random() * 360)}\`);
   const bonusMs = 2500;
-  btn.innerHTML = `
+  btn.innerHTML = \`
     <div>
       <div class="big">+2.5s</div>
       <div class="small">TIME</div>
     </div>
     <div class="string" aria-hidden="true"></div>
-  `;
+  \`;
   btn.addEventListener("pointerdown", (e) => {
     e.preventDefault();
     ensureAudio();
@@ -2166,10 +2251,22 @@ function randomColorIndex(){
   return idx;
 }
 
-/* Round speed (round 5 not too fast) */
+/* ✅ Round speed: gets a little faster starting at round 5 (but not too fast) */
 function getFlashTiming(){
-  let flashMs = clamp(560 - round * 16, 260, 560);
-  let gapMs   = clamp(150 - round * 3,  75, 150);
+  let flashMs, gapMs;
+
+  if (round < 5){
+    flashMs = 560 - round * 14;   // gentle
+    gapMs   = 150 - round * 2;
+  } else {
+    const r = round - 5;
+    flashMs = (560 - 5 * 14) - r * 22;  // noticeable faster after 5
+    gapMs   = (150 - 5 * 2)  - r * 6;
+  }
+
+  flashMs = clamp(flashMs, 250, 560);
+  gapMs   = clamp(gapMs,   78,  150);
+
   if (round >= 10){
     flashMs = Math.max(240, Math.floor(flashMs * 0.96));
     gapMs   = Math.max(70,  Math.floor(gapMs   * 0.96));
@@ -2178,14 +2275,13 @@ function getFlashTiming(){
 }
 
 async function showSequence(){
-  setSlicesDim(true);
+  // ✅ no dimming so wheel stays fully visible (no gray overlay)
   sfxBell();
   const { flashMs, gapMs } = getFlashTiming();
   for (const s of sequence){
     await wait(gapMs);
     await flashSliceAsync(s, flashMs);
   }
-  setSlicesDim(false);
 }
 async function playRound(){
   busy = true;
@@ -2195,7 +2291,7 @@ async function playRound(){
   renderSlots(sequence.length);
   expected = [...sequence];
 
-  setStatus(`Round ${round}: spinning...`);
+  setStatus(\`Round \${round}: spinning...\`);
   await spinOnce(Math.min(6500, 3300 + round * 180));
 
   setStatus("Watch the pattern.");
@@ -2217,9 +2313,9 @@ async function advanceRound(){
   spawnRoundBonus();
 
   if (round >= 2){
-    const emojiRun = `🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸 ✨🎏🏮 🍡🧋🍢 🧸🎡🎟️ `;
+    const emojiRun = \`🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸 ✨🎏🏮 🍡🧋🍢 🧸🎡🎟️ \`;
     await showBigMessage({
-      title: `ROUND ${round}`,
+      title: \`ROUND \${round}\`,
       sub: "Proceeding...",
       ms: 1700,
       tickerText: emojiRun + emojiRun + emojiRun
@@ -2245,7 +2341,7 @@ async function loseGame(reason){
   updateHUD();
 
   sfxBuzzer();
-  await showBigMessage({ title: "GAME OVER!", sub: `Reason: ${reason}`, ms: 950, tickerText: "" });
+  await showBigMessage({ title: "GAME OVER!", sub: \`Reason: \${reason}\`, ms: 950, tickerText: "" });
 
   if (newBest){
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.35, 160, 4.4);
@@ -2259,7 +2355,6 @@ function onPlayerPick(colorIndex){
   ensureAudio();
   sfxColor(colorIndex, "tap");
 
-  // instant visual feedback
   flashSliceNow(colorIndex, 140);
 
   player.push(colorIndex);
@@ -2299,7 +2394,7 @@ async function startNewGame({ resetTickets }){
   renderWheel();
 
   rotationDeg = 0;
-  els.rotator.style.transform = `rotate(${rotationDeg}deg) translateZ(0)`;
+  els.rotator.style.transform = \`rotate(\${rotationDeg}deg) translateZ(0)\`;
 
   round = 0;
   sequence = [];
@@ -2329,13 +2424,13 @@ function renderAllToys(){
     const owned = prizesOwned.includes(item.id);
     const c = document.createElement("div");
     c.className = "toyMini";
-    c.innerHTML = `
-      <div class="toyMiniEmoji">${item.emoji}</div>
+    c.innerHTML = \`
+      <div class="toyMiniEmoji">\${item.emoji}</div>
       <div class="toyMiniMid">
-        <div class="toyMiniName">${item.name}${owned ? " ✅" : ""}</div>
-        <div class="toyMiniDesc">${item.cost} 🎟️ • ${item.desc}</div>
+        <div class="toyMiniName">\${item.name}\${owned ? " ✅" : ""}</div>
+        <div class="toyMiniDesc">\${item.cost} 🎟️ • \${item.desc}</div>
       </div>
-    `;
+    \`;
     els.allToysGrid.appendChild(c);
   }
 }
@@ -2383,20 +2478,18 @@ function openEndCongrats(){
 
   if (ownedItems.length){
     els.endTitle.className = "endTitle congrats";
-    // ✅ Congratulations color matches "Memory" (aqua)
-    els.endTitle.innerHTML = `
-      <span style="--c: rgba(120,255,240,.95)">Congratulations!</span>
-    `;
+    // ✅ gradient Congratulations like your image
+    els.endTitle.innerHTML = \`<span class="congratsGradient">Congratulations!</span>\`;
     els.endSub.textContent = "Here are the prizes you collected 🎉";
     els.endPlayAgainBtn.classList.add("hiddenBtn");
   } else {
     els.endTitle.className = "endTitle lucky";
-    els.endTitle.innerHTML = `
+    els.endTitle.innerHTML = \`
       <span style="--c: rgba(255,120,220,.95)">Better</span>
       <span style="--c: rgba(120,255,240,.95)">Luck</span>
       <span style="--c: rgba(255,220,150,.95)">Next</span>
       <span style="--c: rgba(170,255,120,.95)">Time!</span>
-    `;
+    \`;
     els.endSub.textContent = "No prize this time — try again and win tickets! 🎟️";
     els.endToysGrid.classList.add("singleCenter");
     els.endPlayAgainBtn.classList.remove("hiddenBtn");
@@ -2407,13 +2500,13 @@ function openEndCongrats(){
     for (const it of ownedItems){
       const c = document.createElement("div");
       c.className = "endToy";
-      c.innerHTML = `<div class="e">${it.emoji}</div><div class="n">${it.name}</div>`;
+      c.innerHTML = \`<div class="e">\${it.emoji}</div><div class="n">\${it.name}</div>\`;
       els.endToysGrid.appendChild(c);
     }
   } else {
     const c = document.createElement("div");
     c.className = "endToy";
-    c.innerHTML = `<div class="e">🎡</div><div class="n">Play again to collect prizes!</div>`;
+    c.innerHTML = \`<div class="e">🎡</div><div class="n">Play again to collect prizes!</div>\`;
     els.endToysGrid.appendChild(c);
   }
 
@@ -2443,8 +2536,8 @@ function animatePrizeFly({ fromRect, toRect, emoji }){
   const el = document.createElement("div");
   el.textContent = emoji;
   el.style.position = "fixed";
-  el.style.left = `${fromRect.left + fromRect.width/2}px`;
-  el.style.top = `${fromRect.top + fromRect.height/2}px`;
+  el.style.left = \`\${fromRect.left + fromRect.width/2}px\`;
+  el.style.top = \`\${fromRect.top + fromRect.height/2}px\`;
   el.style.transform = "translate(-50%,-50%) scale(1)";
   el.style.fontSize = "40px";
   el.style.filter = "drop-shadow(0 14px 16px rgba(0,0,0,.28))";
@@ -2476,10 +2569,10 @@ function animatePrizeFly({ fromRect, toRect, emoji }){
     const e = easeOutCubic(t);
     const x = bezier(e, x0, ctrlX, x1);
     const y = bezier(e, y0, ctrlY, y1);
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
+    el.style.left = \`\${x}px\`;
+    el.style.top = \`\${y}px\`;
     const s = 1 - e * 0.55;
-    el.style.transform = `translate(-50%,-50%) scale(${s})`;
+    el.style.transform = \`translate(-50%,-50%) scale(\${s})\`;
     el.style.opacity = String(1 - e * 0.15);
 
     if (t < 1){
@@ -2505,7 +2598,7 @@ function renderShopItems(){
 
     const name = document.createElement("div");
     name.className = "shopName";
-    name.innerHTML = `<span class="shopEmoji">${item.emoji}</span> <span>${item.name}</span>`;
+    name.innerHTML = \`<span class="shopEmoji">\${item.emoji}</span> <span>\${item.name}</span>\`;
 
     const desc = document.createElement("div");
     desc.className = "shopDesc";
@@ -2516,7 +2609,7 @@ function renderShopItems(){
 
     const cost = document.createElement("div");
     cost.className = "shopCost";
-    cost.textContent = `Cost: ${item.cost} tickets`;
+    cost.textContent = \`Cost: \${item.cost} tickets\`;
 
     const btn = document.createElement("button");
     btn.className = "btn primary";
@@ -2531,7 +2624,6 @@ function renderShopItems(){
       ensureAudio();
       dedupePrizesOwned();
 
-      // hard guard against duplicates
       if (prizesOwned.includes(item.id)) return;
       if (tickets < item.cost) return;
 
@@ -2548,8 +2640,8 @@ function renderShopItems(){
       animatePrizeFly({ fromRect, toRect, emoji: item.emoji });
       confettiBurst(fromRect.left + fromRect.width/2, fromRect.top + fromRect.height/2, 110, 4.2);
 
-      setStatus(`Purchased: ${item.name} ✅`);
-      await showBigMessage({ title: "PURCHASED!", sub: `${item.emoji} ${item.name}\nTickets left: ${tickets}`, ms: 850 });
+      setStatus(\`Purchased: \${item.name} ✅\`);
+      await showBigMessage({ title: "PURCHASED!", sub: \`\${item.emoji} \${item.name}\nTickets left: \${tickets}\`, ms: 850 });
     });
 
     row.appendChild(cost);
@@ -2652,13 +2744,13 @@ function animateCoinIntoSlot(slotRect){
   const slitY = slotRect.top + slotRect.height * 0.46;
 
   ghost.classList.add("coinDrop");
-  ghost.style.left = `${slitX}px`;
-  ghost.style.top = `${slitY}px`;
+  ghost.style.left = \`\${slitX}px\`;
+  ghost.style.top = \`\${slitY}px\`;
 
   setTimeout(() => {
     if (!ghost) return;
     requestAnimationFrame(() => {
-      ghost.style.top = `${slitY + 26}px`;
+      ghost.style.top = \`\${slitY + 26}px\`;
       ghost.style.transform = "translate(-50%,-50%) scale(0.10)";
       ghost.style.opacity = "0";
       ghost.style.filter = "blur(1.2px)";
@@ -2690,16 +2782,16 @@ function onCoinPointerDown(e){
 
   const move = (ev) => {
     if (!dragging || !ghost) return;
-    ghost.style.left = `${ev.clientX}px`;
-    ghost.style.top = `${ev.clientY}px`;
+    ghost.style.left = \`\${ev.clientX}px\`;
+    ghost.style.top = \`\${ev.clientY}px\`;
   };
   const up = (ev) => {
     if (!dragging) return;
     dragging = false;
 
     if (ghost){
-      ghost.style.left = `${ev.clientX}px`;
-      ghost.style.top = `${ev.clientY}px`;
+      ghost.style.left = \`\${ev.clientX}px\`;
+      ghost.style.top = \`\${ev.clientY}px\`;
 
       const coinRect = ghost.getBoundingClientRect();
       const slotRect = els.coinSlot.getBoundingClientRect();
