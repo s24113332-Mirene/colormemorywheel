@@ -1401,6 +1401,16 @@ body::before{
           </ol>
         </div>
 
+        <div class="musicOuter" style="margin:12px 0; display:flex; justify-content:center;">
+          <div style="display:flex; gap:10px; align-items:center; background: rgba(255,255,255,0.03); padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.06);">
+            <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
+              <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
+            </div>
+          </div>
+        </div>
+
         <div class="coinArea">
           <div class="coinHint">Insert Coin (drag into the slot)</div>
           <div class="coinRow">
@@ -1517,13 +1527,6 @@ body::before{
               </div>
             </div>
 
-            <div style="display:flex; gap:8px; align-items:center; justify-content:center; margin:10px 0;">
-              <button id="musicToggleSideBtn" class="musicToggleBtn" type="button">Music: On</button>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Music volume" />
-                <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
-              </div>
-            </div>
 
 
 
