@@ -2879,7 +2879,15 @@ function playExternalBGM(){
   ensureAudio();
   // stop synth if running
   stopBGM();
-  extAudio.play().catch(()=>{});
+  // Try to play external audio; if playback is blocked/fails, fall back to synth BGM
+  extAudio.play().then(()=>{
+    // playback started
+    return true;
+  }).catch(()=>{
+    // autoplay blocked or failed — fallback to synth
+    startBGM();
+    return false;
+  });
 }
 function stopExternalBGM(){
   if (!extAudio) return;
@@ -2890,6 +2898,15 @@ function stopExternalBGM(){
 
 function startBackgroundMusic(){
   ensureAudio();
+  // If the music bus was muted, restore it when a new game starts
+  if (musicMuted && musicGain){
+    try{
+      musicGain.gain.exponentialRampToValueAtTime(prevMusicGain || 1.0, audioCtx.currentTime + 0.02);
+    }catch(e){}
+    musicMuted = false;
+    const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: On';
+  }
+
   if (extAvailable && extAudio){
     playExternalBGM();
   } else {
