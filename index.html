@@ -2077,7 +2077,7 @@ function flashSliceNow(sliceIndex, ms){
   outline.classList.add("flashOutline");
   outline.style.fill = "none";
   outline.style.stroke = "#ffffff";
-  outline.style.strokeWidth = "30"; /* thicker white border for stronger highlight */
+  outline.style.strokeWidth = "36"; /* thicker white border for stronger highlight */
   outline.style.strokeLinecap = "round";
   outline.style.strokeLinejoin = "round";
   outline.style.pointerEvents = "none";
@@ -2085,10 +2085,11 @@ function flashSliceNow(sliceIndex, ms){
   node.parentNode.insertBefore(outline, node);
   node._flashOutline = outline;
 
-  // Use the slice color for the visible stroke and glow (keeps color unchanged)
-  node.style.stroke = glow;
-  node.style.strokeWidth = "10";
+  // Keep the slice fill exactly the same; use the white outline as the visible border
+  node.style.stroke = "";  /* no colored stroke so border appears white */
+  node.style.strokeWidth = "";
   node.style.filter = `drop-shadow(0 0 12px ${glow}) drop-shadow(0 0 20px ${glow})`;
+  if (node._flashOutline) node._flashOutline.style.stroke = "#ffffff";
 
   node._flashTO = setTimeout(() => {
     // clean up styles and outline element
