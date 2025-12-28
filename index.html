@@ -1560,8 +1560,6 @@ body::before{
               <span class="rainbowCongrats">Color Memory Wheel</span>
             </div>
             <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
-
-
           </div>
 
           <div class="wheelWrap">
@@ -1736,6 +1734,9 @@ let coinInserted = false;
 let balloonInterval = null;
 
 function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+/* ✅ NEW: yield one frame so the browser paints immediately */
+const nextFrame = () => new Promise(requestAnimationFrame);
+
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 function shuffle(arr){
   const a = [...arr];
@@ -1876,8 +1877,8 @@ function showInstructionsPage(){
   els.instructionsPage.classList.remove("hiddenPage");
 }
 
-/* Big message overlay */
-async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy = false}){
+/* ✅ Big message overlay (fixed: paints immediately + optional confetti) */
+async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy = false, confetti = false}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
 
@@ -1894,7 +1895,14 @@ async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy
     els.bigTicker.classList.remove("show");
   }
 
+  // ✅ show, then yield a frame so the browser paints NOW (no perceived delay)
   els.bigMsg.classList.remove("hidden");
+  await nextFrame();
+
+  if (confetti){
+    confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.33, 100, 4.0);
+  }
+
   await wait(ms);
   els.bigMsg.classList.add("hidden");
   els.bigTicker.classList.remove("show");
@@ -2245,7 +2253,6 @@ async function playRound(){
   expected = [...sequence];
 
   setStatus(`Round ${round}: spinning...`);
-  // use a snappier base for initial rounds so round transitions feel immediate
   await spinOnce(Math.min(5500, 2200 + round * 180));
 
   setStatus("Watch the pattern.");
@@ -2267,16 +2274,16 @@ async function advanceRound(){
   spawnRoundBonus();
 
   if (round >= 2){
-    // small cue before announcing round
     ensureAudio(); sfxRoundAdvance();
 
     const emojiRun = `🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸 ✨🎏🏮 🍡🧋🍢 🧸🎡🎟️ `;
     await showBigMessage({
       title: `ROUND ${round}`,
       sub: "Proceeding...",
-      ms: 900, // shortened so the round advances without long pause
+      ms: 650,                 // ✅ snappier = no “delay” feel
       tickerText: emojiRun + emojiRun + emojiRun,
-      spicy: true
+      spicy: true,
+      confetti: true           // ✅ confetti appears immediately with ROUND box
     });
   }
   await playRound();
@@ -2298,7 +2305,6 @@ async function loseGame(reason){
   gameActive = false;
   updateHUD();
 
-  // sound and music stop for game over
   ensureAudio(); sfxGameOver();
   stopBackgroundMusic();
   await showBigMessage({
@@ -2345,7 +2351,6 @@ function onPlayerPick(colorIndex){
     confettiBurst(w.left + w.width/2, w.top + w.height/2, 110, 4.0);
 
     busy = true;
-    // shorter delay so next round appears more promptly
     setTimeout(() => { busy = false; advanceRound(); }, 220);
   }
 }
@@ -2420,7 +2425,7 @@ function hardResetAllProgress(){
   tickets = 0;
   localStorage.removeItem("mcw_prizes_owned_carnival");
   localStorage.removeItem("mcw_best_carnival");
-  updateHUD();
+  updateHUD({ rebuildToys: true });  // ✅ rebuild list because owned changed
 }
 function goHomeEnd(){
   closeShop();
@@ -2597,7 +2602,7 @@ function renderShopItems(){
       dedupePrizesOwned();
       sfxBell();
 
-      updateHUD();
+      updateHUD({ rebuildToys: true }); // ✅ only rebuild toy list when it changes
       renderShopItems();
 
       const fromRect = btn.getBoundingClientRect();
@@ -2624,15 +2629,16 @@ function renderShopItems(){
   els.shopBest.textContent = String(best);
 }
 
-/* HUD */
-function updateHUD(){
+/* ✅ HUD (fixed: don’t rebuild the whole prize list every round) */
+function updateHUD({ rebuildToys = false } = {}){
   els.roundEl.textContent = String(round);
   els.bestEl.textContent = String(best);
   els.ticketsEl.textContent = String(tickets);
   els.ticketsChip.textContent = String(tickets);
   els.prizesEl.textContent = String(prizesOwned.length);
   els.ownedCount.textContent = String(prizesOwned.length);
-  renderAllToys();
+
+  if (rebuildToys) renderAllToys();
 }
 
 /* Audio */
@@ -2658,7 +2664,6 @@ function tone(freq, t0, dur, type="sine", gain=0.25, dest){
   g.gain.setValueAtTime(0.0001, t0);
   g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  // route to provided destination (e.g., bgGain or musicGain) or fall back to master
   o.connect(g).connect(dest || master);
   o.start(t0);
   o.stop(t0 + dur + 0.02);
@@ -2687,82 +2692,71 @@ function sfxBuzzer(){
   tone(110, t, 0.25, "square", 0.12);
   tone(92, t + 0.12, 0.30, "square", 0.10);
 }
-
-// Round advance SFX — short ascending arpeggio (bright, non-distracting)
 function sfxRoundAdvance(){
   const t = audioCtx.currentTime;
-  // three quick notes (A4, C5, E5)
   tone(440, t, 0.06, "sine", 0.06);
   tone(523.25, t + 0.06, 0.06, "triangle", 0.05);
   tone(659.25, t + 0.12, 0.10, "sine", 0.05);
 }
-
-// Game over SFX — descending 'sad' motif, layered with a buzzer feel
 function sfxGameOver(){
   const t = audioCtx.currentTime;
   tone(196, t, 0.20, "square", 0.14);
   tone(164.81, t + 0.18, 0.28, "square", 0.10);
   tone(110, t + 0.40, 0.30, "square", 0.08);
 }
-
-// Click SFX for UI buttons
 function sfxClick(){
   const t = audioCtx.currentTime;
   tone(1800, t, 0.03, "square", 0.06);
   tone(1200, t + 0.01, 0.06, "sine", 0.04);
 }
 
-// Background music (light ambient synth + arpeggio)
+/* Background music */
 let bgOsc1 = null;
 let bgOsc2 = null;
 let bgArpInterval = null;
 let bgGain = null;
 let bgPlaying = false;
 
-// Music / external audio support
-let musicGain = null;          // music bus connect point
-let extAudio = null;          // HTMLAudioElement for external file
-let extSource = null;         // MediaElementSourceNode
-let extObjectUrl = null;      // object URL to revoke
-let extAvailable = false;     // whether an external file exists
-let musicMuted = false;       // music mute state
-let prevMusicGain = 1.0;      // store previous music gain
+/* Music / external audio support */
+let musicGain = null;
+let extAudio = null;
+let extSource = null;
+let extObjectUrl = null;
+let extAvailable = false;
+let musicMuted = false;
+let prevMusicGain = 1.0;
 
 function startBGM(){
-  // Richer arcade BGM: chord progression, syncopated rhythm, countermelody, and hi-hat ticks
   if (bgPlaying) return;
   bgPlaying = true;
-  if (!audioCtx) return; // safety
+  if (!audioCtx) return;
 
-  // ensure any previous BGM cleared
   if (bgArpInterval){ clearInterval(bgArpInterval); bgArpInterval = null; }
 
-  // music gain for BGM (keep headroom for SFX)
   bgGain = audioCtx.createGain();
-  bgGain.gain.value = 0.60; // increased to make BGM noticeably louder
+  bgGain.gain.value = 0.60;
   bgGain.connect(musicGain);
 
-  // Chord progression (I - V - vi - IV) in A major (triads in a compact arcade register)
   const progression = [
-    [880, 1108.73, 1318.5],   // A major
-    [659.25, 830.61, 987.77], // E major
-    [739.99, 880, 1108.73],   // F# minor
-    [587.33, 739.99, 880]     // D major
+    [880, 1108.73, 1318.5],
+    [659.25, 830.61, 987.77],
+    [739.99, 880, 1108.73],
+    [587.33, 739.99, 880]
   ];
 
   let bar = 0;
   let step = 0;
-  const bpm = 145; // snappier, lively tempo
-  const stepMs = (60000 / bpm) / 2; // 8th-note grid
+  const bpm = 145;
+  const stepMs = (60000 / bpm) / 2;
 
-  // small deterministic pattern to create a musical arp feel
   const pattern = [0,1,2,1,0,2,1,0];
 
   bgArpInterval = setInterval(() => {
-    const tNow = audioCtx.currentTime;
+    /* ✅ schedule a tiny bit ahead so brief main-thread work doesn't "lag" the music */
+    const tNow = audioCtx.currentTime + 0.04;
+
     const chord = progression[bar % progression.length];
 
-    // Bass pulse on strong beats (0 and 2)
     if (step % 4 === 0){
       tone(chord[0] / 4, tNow, 0.12, "square", 0.16, bgGain);
       if (Math.random() > 0.7) tone(chord[0] / 2, tNow + 0.02, 0.08, "square", 0.08, bgGain);
@@ -2770,34 +2764,28 @@ function startBGM(){
       tone(chord[0] / 4, tNow, 0.08, "square", 0.08, bgGain);
     }
 
-    // Main arpeggio voice (moves within the current triad)
     const note = chord[pattern[step % pattern.length] % chord.length];
     tone(note * (step % 8 < 4 ? 1 : 2), tNow + 0.002, 0.12, "square", 0.075, bgGain);
 
-    // Off-beat pluck for bounce
     if (step % 2 === 1){
       tone(note * (Math.random() > 0.6 ? 1.5 : 2), tNow + 0.01, 0.06, "triangle", 0.05, bgGain);
     }
 
-    // Countermelody: higher, bell-like notes that move with the bar
     if (step % 4 === 1){
       const cmNote = chord[(Math.floor(step / 4)) % 3] * 2;
       tone(cmNote, tNow + 0.015, 0.09, "sine", 0.045, bgGain);
     }
 
-    // Hi-hat / tick: bright short tick on off-beats
     if (step % 2 === 1){
       tone(12000 * (1 + Math.random() * 0.08), tNow + 0.001, 0.02, "triangle", 0.03, bgGain);
     }
 
-    // Chord stab at the start of each bar to add warmth
     if (step % 8 === 0){
       tone(chord[0] / 2, tNow + 0.004, 0.18, "sawtooth", 0.04, bgGain);
       tone(chord[1] / 2, tNow + 0.004, 0.18, "sawtooth", 0.03, bgGain);
       tone(chord[2] / 2, tNow + 0.004, 0.18, "sawtooth", 0.02, bgGain);
     }
 
-    // Occasional ascending fill for variety
     if (Math.random() > 0.92){
       tone(chord[0], tNow + 0.02, 0.06, "square", 0.05, bgGain);
       tone(chord[1], tNow + 0.08, 0.06, "square", 0.05, bgGain);
@@ -2823,12 +2811,10 @@ function stopBGM(){
   if (bgGain){ try{ bgGain.disconnect(); }catch(e){} bgGain = null; }
 }
 
-// External audio: load and play an uploaded looped file
 function loadExternalBGM(file){
   if (!file) return;
   ensureAudio();
 
-  // stop and clean previous
   if (extAudio){ stopExternalBGM(); if (extObjectUrl){ URL.revokeObjectURL(extObjectUrl); extObjectUrl = null; } }
 
   extObjectUrl = URL.createObjectURL(file);
@@ -2841,18 +2827,14 @@ function loadExternalBGM(file){
     extSource = audioCtx.createMediaElementSource(extAudio);
     extSource.connect(musicGain);
     extAvailable = true;
-    // start playback (user gesture already in file select)
     extAudio.play().catch(()=>{});
   }catch(e){
-    // Fallback: if audioCtx cannot attach, mark unavailable
     extAvailable = false;
   }
 }
-
 function playExternalBGM(){
   if (!extAudio) return;
   ensureAudio();
-  // stop synth if running
   stopBGM();
   extAudio.play().catch(()=>{});
 }
@@ -2882,7 +2864,6 @@ function toggleMusicMute(){
   musicMuted = !musicMuted;
   const btn = document.getElementById('musicToggleSideBtn');
   if (musicMuted){
-    // smooth ramp to 0
     prevMusicGain = musicGain.gain.value || prevMusicGain;
     musicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
     if (btn) btn.textContent = 'Music: Off';
@@ -3114,7 +3095,6 @@ els.wheelSvg.addEventListener("pointerdown", (e) => {
   onPlayerPick(Number(target.dataset.slice));
 }, { passive: false });
 
-// play small click SFX when pressing buttons/interactive elements
 window.addEventListener('pointerdown', (e) => {
   const el = e.target;
   const btn = el.closest('button, [role="button"], .bonusBtn, .coin');
@@ -3124,7 +3104,7 @@ window.addEventListener('pointerdown', (e) => {
   }
 }, { passive: false });
 
-// Music control UI handlers
+/* Music control UI handlers */
 const _musicToggle = document.getElementById('musicToggleSideBtn');
 const _musicSlider = document.getElementById('musicVolume');
 const _musicVolLabel = document.getElementById('musicVolLabel');
@@ -3132,12 +3112,10 @@ const _musicVolLabel = document.getElementById('musicVolLabel');
 _musicToggle && _musicToggle.addEventListener('click', (e) => { e.preventDefault(); ensureAudio(); toggleMusicMute(); });
 
 if (_musicSlider){
-  // initialize slider to current music gain or stored previous
   try{
     const current = (musicGain && musicGain.gain && typeof musicGain.gain.value === 'number') ? musicGain.gain.value : prevMusicGain;
     _musicSlider.value = String(current);
     _musicVolLabel && (_musicVolLabel.textContent = Math.round(Number(_musicSlider.value) * 100) + '%');
-    // if starts at 0, reflect off state
     if (Number(_musicSlider.value) === 0){ musicMuted = true; const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: Off'; }
   }catch(e){ }
 
@@ -3149,24 +3127,20 @@ if (_musicSlider){
     if (musicGain){
       musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
     }
-    // slider acts as on/off: if zero, set off state
     const btn = document.getElementById('musicToggleSideBtn');
     if (v === 0){ musicMuted = true; if (btn) btn.textContent = 'Music: Off'; } else { musicMuted = false; if (btn) btn.textContent = 'Music: On'; }
   });
 
-  // clicking the label toggles between 0 and previous value
   _musicVolLabel.addEventListener('click', (ev) => {
     ensureAudio();
     const btn = document.getElementById('musicToggleSideBtn');
     if (musicMuted || Number(_musicSlider.value) === 0){
-      // turn on
       const v = prevMusicGain || 1.0;
       _musicSlider.value = String(v);
       _musicVolLabel.textContent = Math.round(v * 100) + '%';
       if (musicGain) musicGain.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
       musicMuted = false; if (btn) btn.textContent = 'Music: On';
     } else {
-      // turn off
       prevMusicGain = Number(_musicSlider.value) || prevMusicGain || 1.0;
       _musicSlider.value = '0';
       _musicVolLabel.textContent = '0%';
@@ -3189,7 +3163,8 @@ function init(){
   buildSegments();
   renderWheel();
   setHourglass(1);
-  updateHUD();
+
+  updateHUD({ rebuildToys: true }); // ✅ build toys once on init
   resetCoinUI();
   clearBonusBalloons();
   showWelcome();
