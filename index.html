@@ -2063,18 +2063,40 @@ function flashSliceNow(sliceIndex, ms){
   const glow = segments[sliceIndex]?.color || "#fff";
 
   if (node._flashTO) clearTimeout(node._flashTO);
+  // Remove any previous outline clone
+  if (node._flashOutline){
+    try{ node._flashOutline.remove(); }catch(e){}
+    node._flashOutline = null;
+  }
 
   node.classList.add("activeFlash");
-  // Use the slice color for the stroke so the flash matches the exact color (not lighter)
+
+  // Create a white outline stroke underneath the slice so the visible border is white
+  // while the slice color itself remains exactly the same (not lightened).
+  const outline = node.cloneNode(false);
+  outline.classList.add("flashOutline");
+  outline.style.fill = "none";
+  outline.style.stroke = "#ffffff";
+  outline.style.strokeWidth = "18";
+  outline.style.strokeLinecap = "round";
+  outline.style.strokeLinejoin = "round";
+  outline.style.pointerEvents = "none";
+  // insert outline before the original node so it appears beneath
+  node.parentNode.insertBefore(outline, node);
+  node._flashOutline = outline;
+
+  // Use the slice color for the visible stroke and glow (keeps color unchanged)
   node.style.stroke = glow;
-  node.style.strokeWidth = "12";
-  node.style.filter = `drop-shadow(0 0 14px ${glow}) drop-shadow(0 0 22px ${glow})`;
+  node.style.strokeWidth = "10";
+  node.style.filter = `drop-shadow(0 0 12px ${glow}) drop-shadow(0 0 20px ${glow})`;
 
   node._flashTO = setTimeout(() => {
+    // clean up styles and outline element
     node.style.stroke = "";
     node.style.strokeWidth = "";
     node.style.filter = "";
     node.classList.remove("activeFlash");
+    if (node._flashOutline){ try{ node._flashOutline.remove(); }catch(e){} node._flashOutline = null; }
     node._flashTO = null;
   }, ms);
 }
@@ -2302,7 +2324,7 @@ async function advanceRound(){
     await showBigMessage({
       title: `ROUND ${round}`,
       sub: "Proceeding...",
-      ms: 1800,                // ✅ slightly longer so it reads smoothly with the fade transition
+      ms: 2400,                // ✅ noticeably longer so it reads smoothly with the fade transition
       tickerText: emojiRun + emojiRun + emojiRun,
       spicy: true,
       confetti: true           // ✅ confetti appears immediately with ROUND box
