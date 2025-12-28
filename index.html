@@ -232,6 +232,7 @@ body::before{
 /* Center */
 .centerCol{ display: grid; gap: 10px; justify-items: center; min-height: 0; }
 .centerHeader{
+  position: relative;
   text-align: center;
   padding: 10px 12px;
   border-radius: 18px;
@@ -240,6 +241,28 @@ body::before{
   box-shadow: var(--shadow);
   width: min(900px, 100%);
 }
+
+/* Music controls */
+.musicControls{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.musicBtn{
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  min-width: 44px;
+}
+.musicBtn:hover{ filter: brightness(1.08); }
+.musicBtn:active{ transform: translateY(0); }
 
 /* Glow pulse */
 @keyframes textGlowPulse{
@@ -1507,6 +1530,12 @@ body::before{
               <span class="rainbowCongrats">Color Memory Wheel</span>
             </div>
             <div class="centerSubtitle oneLine">Spin • Watch • Remember</div>
+
+            <div class="musicControls" aria-hidden="false">
+              <button id="musicToggleBtn" class="musicBtn" type="button" title="Toggle music">🔊</button>
+              <button id="uploadMusicBtn" class="musicBtn" type="button" title="Upload music loop">Upload</button>
+              <input id="musicFileInput" type="file" accept="audio/*" style="display:none" />
+            </div>
           </div>
 
           <div class="wheelWrap">
@@ -2581,6 +2610,11 @@ function ensureAudio(){
     master = audioCtx.createGain();
     master.gain.value = 0.25;
     master.connect(audioCtx.destination);
+
+    // separate music bus so we can mute or swap easily
+    musicGain = audioCtx.createGain();
+    musicGain.gain.value = 1.0;
+    musicGain.connect(master);
   }
   if (audioCtx.state === "suspended") audioCtx.resume();
 }
@@ -2634,6 +2668,15 @@ let bgOsc2 = null;
 let bgArpInterval = null;
 let bgGain = null;
 let bgPlaying = false;
+
+// Music / external audio support
+let musicGain = null;          // music bus connect point
+let extAudio = null;          // HTMLAudioElement for external file
+let extSource = null;         // MediaElementSourceNode
+let extObjectUrl = null;      // object URL to revoke
+let extAvailable = false;     // whether an external file exists
+let musicMuted = false;       // music mute state
+let prevMusicGain = 1.0;      // store previous music gain
 
 function startBGM(){
   if (bgPlaying) return;
@@ -2723,6 +2766,73 @@ function stopBGM(){
   }
   if (bgOsc2){ try{ bgOsc2.stop(); }catch(e){} try{ bgOsc2.disconnect(); }catch(e){} bgOsc2 = null; }
   if (bgGain){ try{ bgGain.disconnect(); }catch(e){} bgGain = null; }
+}
+
+// External audio: load and play an uploaded looped file
+function loadExternalBGM(file){
+  if (!file) return;
+  ensureAudio();
+
+  // stop and clean previous
+  if (extAudio){ stopExternalBGM(); if (extObjectUrl){ URL.revokeObjectURL(extObjectUrl); extObjectUrl = null; } }
+
+  extObjectUrl = URL.createObjectURL(file);
+  extAudio = new Audio(extObjectUrl);
+  extAudio.loop = true;
+  extAudio.crossOrigin = 'anonymous';
+  extAudio.preload = 'auto';
+
+  try{
+    extSource = audioCtx.createMediaElementSource(extAudio);
+    extSource.connect(musicGain);
+    extAvailable = true;
+    // start playback (user gesture already in file select)
+    extAudio.play().catch(()=>{});
+  }catch(e){
+    // Fallback: if audioCtx cannot attach, mark unavailable
+    extAvailable = false;
+  }
+}
+
+function playExternalBGM(){
+  if (!extAudio) return;
+  ensureAudio();
+  // stop synth if running
+  stopBGM();
+  extAudio.play().catch(()=>{});
+}
+function stopExternalBGM(){
+  if (!extAudio) return;
+  try{ extAudio.pause(); }catch(e){}
+  try{ extSource && extSource.disconnect(); }catch(e){}
+  extSource = null;
+}
+
+function startBackgroundMusic(){
+  ensureAudio();
+  if (extAvailable && extAudio){
+    playExternalBGM();
+  } else {
+    startBGM();
+  }
+}
+function stopBackgroundMusic(){
+  stopExternalBGM();
+  stopBGM();
+}
+
+function toggleMusicMute(){
+  if (!musicGain) return;
+  if (!audioCtx) ensureAudio();
+  musicMuted = !musicMuted;
+  if (musicMuted){
+    // smooth ramp to 0
+    musicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+    document.getElementById('musicToggleBtn').textContent = '🔇';
+  } else {
+    musicGain.gain.exponentialRampToValueAtTime(prevMusicGain, audioCtx.currentTime + 0.04);
+    document.getElementById('musicToggleBtn').textContent = '🔊';
+  }
 }
 
 /* Coin drag-to-insert */
@@ -2956,6 +3066,22 @@ window.addEventListener('pointerdown', (e) => {
     sfxClick();
   }
 }, { passive: false });
+
+// Music control UI handlers
+const _uploadBtn = document.getElementById('uploadMusicBtn');
+const _fileInput = document.getElementById('musicFileInput');
+const _musicToggle = document.getElementById('musicToggleBtn');
+
+_uploadBtn && _uploadBtn.addEventListener('click', () => _fileInput && _fileInput.click());
+_fileInput && _fileInput.addEventListener('change', (ev) => {
+  const f = ev.target.files && ev.target.files[0];
+  if (f){
+    loadExternalBGM(f);
+    _uploadBtn.textContent = f.name.length > 12 ? f.name.slice(0,10) + '…' : f.name;
+  }
+});
+
+_musicToggle && _musicToggle.addEventListener('click', (e) => { e.preventDefault(); ensureAudio(); toggleMusicMute(); });
 
 /* Init */
 function init(){
