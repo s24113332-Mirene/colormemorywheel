@@ -2240,6 +2240,9 @@ async function advanceRound(){
   spawnRoundBonus();
 
   if (round >= 2){
+    // small cue before announcing round
+    ensureAudio(); sfxRoundAdvance();
+
     const emojiRun = `🏮🎏✨ 🍢🧋🍡 🎟️🎡🧸 ✨🎏🏮 🍡🧋🍢 🧸🎡🎟️ `;
     await showBigMessage({
       title: `ROUND ${round}`,
@@ -2268,7 +2271,8 @@ async function loseGame(reason){
   gameActive = false;
   updateHUD();
 
-  sfxBuzzer();
+  // sound and music stop for game over
+  ensureAudio(); sfxGameOver();
   stopBackgroundMusic();
   await showBigMessage({
     title: "GAME OVER!",
@@ -2653,6 +2657,23 @@ function sfxBuzzer(){
   const t = audioCtx.currentTime;
   tone(110, t, 0.25, "square", 0.12);
   tone(92, t + 0.12, 0.30, "square", 0.10);
+}
+
+// Round advance SFX — short ascending arpeggio (bright, non-distracting)
+function sfxRoundAdvance(){
+  const t = audioCtx.currentTime;
+  // three quick notes (A4, C5, E5)
+  tone(440, t, 0.06, "sine", 0.06);
+  tone(523.25, t + 0.06, 0.06, "triangle", 0.05);
+  tone(659.25, t + 0.12, 0.10, "sine", 0.05);
+}
+
+// Game over SFX — descending 'sad' motif, layered with a buzzer feel
+function sfxGameOver(){
+  const t = audioCtx.currentTime;
+  tone(196, t, 0.20, "square", 0.14);
+  tone(164.81, t + 0.18, 0.28, "square", 0.10);
+  tone(110, t + 0.40, 0.30, "square", 0.08);
 }
 
 // Click SFX for UI buttons
