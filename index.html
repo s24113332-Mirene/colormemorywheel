@@ -1549,6 +1549,13 @@ body::before{
               <input id="musicVolume" class="musicVolume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Master volume" />
               <div id="musicVolLabel" class="musicVolLabel" style="min-width:48px; text-align:right; cursor:pointer;">100%</div>
             </div>
+              <div id="bgmCredit" style="font-size:12px; color:var(--muted); text-align:center; margin-top:6px;">BGM: "Getting It Done" — Kevin MacLeod (YouTube)</div>
+
+              <!-- Hidden YouTube player container used to play original track when requested -->
+              <div id="ytPlayerContainer" style="display:none; width:0; height:0; overflow:hidden;">
+                <div id="ytPlayer"></div>
+              </div>
+
           </div>
 
         </aside>
@@ -2878,6 +2885,96 @@ function loadRemoteBGM(url){
   }
 }
 
+// -------------------------
+// YouTube integration
+// -------------------------
+let ytPlayer = null;
+let ytAvailable = false;
+let ytPlaying = false;
+
+function extractYouTubeId(url){
+  try{
+    const u = new URL(url);
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1);
+    if (u.hostname.endsWith('youtube.com')) return u.searchParams.get('v');
+  }catch(e){
+    return null;
+  }
+  return null;
+}
+
+// Called to load a YouTube video as BGM (creates a hidden player)
+function loadYouTubeBGM(url){
+  if (!url) return;
+  const id = extractYouTubeId(url);
+  if (!id) return;
+
+  // create container if missing
+  const container = document.getElementById('ytPlayer');
+  if (!container) return;
+
+  // If YT API not loaded, insert script and rely on onYouTubeIframeAPIReady
+  if (typeof YT === 'undefined' || typeof YT.Player === 'undefined'){
+    // create a global requested id for later initialization
+    window.__requestedYtId = id;
+    if (!document.getElementById('yt-api')){
+      const s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api';
+      s.id = 'yt-api';
+      document.body.appendChild(s);
+    }
+    return;
+  }
+
+  // If a player already exists, load the video
+  if (ytPlayer){
+    try{ ytPlayer.cueVideoById({videoId: id}); ytAvailable = true; }catch(e){ ytAvailable = false; }
+    return;
+  }
+
+  ytPlayer = new YT.Player('ytPlayer', {
+    height: '0', width: '0', videoId: id,
+    playerVars: { 'playsinline': 1, 'loop': 1, 'playlist': id, 'controls': 0, 'rel': 0 },
+    events: {
+      onReady: (e) => {
+        ytAvailable = true;
+        // sync initial volume with master gain
+        try{ const vol = Math.round((master && master.gain && typeof master.gain.value === 'number' ? master.gain.value : prevMasterGain) * 100); e.target.setVolume(vol); if (musicMuted) e.target.mute(); }
+        catch(e){}
+        // attempt autoplay; fallback will be handled by startBackgroundMusic
+        try{ e.target.playVideo(); setTimeout(()=>{ const st = e.target.getPlayerState && e.target.getPlayerState(); if (st !== YT.PlayerState.PLAYING){ startBGM(); } else { ytPlaying = true; } }, 700); }catch(e){ startBGM(); }
+      },
+      onStateChange: (e) => {
+        // loop handled by playlist param; track play state
+        if (e.data === YT.PlayerState.PLAYING) ytPlaying = true; else ytPlaying = false;
+      }
+    }
+  });
+}
+
+function playYouTubeBGM(){
+  if (!ytPlayer) return startBGM();
+  try{
+    stopBGM();
+    ytPlayer.playVideo();
+    ytPlaying = true;
+    return true;
+  }catch(e){
+    startBGM();
+    return false;
+  }
+}
+
+function stopYouTubeBGM(){
+  if (!ytPlayer) return;
+  try{ ytPlayer.pauseVideo(); ytPlaying = false; }catch(e){}
+}
+
+// When API script loads, initialize if an id was requested
+function onYouTubeIframeAPIReady(){
+  if (window.__requestedYtId) loadYouTubeBGM(window.__requestedYtId);
+}
+
 // Automatically load the requested track (will play if permitted by browser)
 try{
   loadRemoteBGM('https://uppbeat.io/track/kevin-macleod/getting-it-done?utm_source=chatgpt.com');
@@ -2889,8 +2986,9 @@ try{
 function playExternalBGM(){
   if (!extAudio) return;
   ensureAudio();
-  // stop synth if running
+  // stop synth/yt if running
   stopBGM();
+  stopYouTubeBGM();
   // Try to play external audio; if playback is blocked/fails, fall back to synth BGM
   extAudio.play().then(()=>{
     // playback started
@@ -2908,6 +3006,11 @@ function stopExternalBGM(){
   extSource = null;
 }
 
+function stopBackgroundYouTube(){
+  // convenience to stop yt specifically
+  stopYouTubeBGM();
+}
+
 function startBackgroundMusic(){
   ensureAudio();
   // If the music bus was muted, restore it when a new game starts
@@ -2919,7 +3022,10 @@ function startBackgroundMusic(){
     const btn = document.getElementById('musicToggleSideBtn'); if (btn) btn.textContent = 'Music: On';
   }
 
-  if (extAvailable && extAudio){
+  // Prefer YouTube (if loaded), then external file, else synth
+  if (ytAvailable){
+    playYouTubeBGM();
+  } else if (extAvailable && extAudio){
     playExternalBGM();
   } else {
     startBGM();
@@ -2939,9 +3045,11 @@ function toggleMusicMute(){
     // smooth ramp to 0
     prevMusicGain = musicGain.gain.value || prevMusicGain;
     musicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+    try{ if (ytPlayer && typeof ytPlayer.mute === 'function') ytPlayer.mute(); }catch(e){}
     if (btn) btn.textContent = 'Music: Off';
   } else {
     musicGain.gain.exponentialRampToValueAtTime(prevMusicGain, audioCtx.currentTime + 0.04);
+    try{ if (ytPlayer && typeof ytPlayer.unMute === 'function') ytPlayer.unMute(); }catch(e){}
     if (btn) btn.textContent = 'Music: On';
   }
 }
@@ -3201,6 +3309,8 @@ if (_musicSlider){
     if (master){
       master.gain.setValueAtTime(v, audioCtx.currentTime + 0.01);
     }
+    // sync YouTube player volume (not routed through WebAudio)
+    try{ if (ytPlayer && typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(Math.round(v * 100)); }catch(e){}
   });
 
   // clicking the label toggles between 0 and previous value (master volume)
