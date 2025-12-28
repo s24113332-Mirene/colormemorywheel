@@ -1878,7 +1878,7 @@ function showInstructionsPage(){
 }
 
 /* ✅ Big message overlay (fixed: paints immediately + optional confetti) */
-async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy = false, confetti = false}){
+async function showBigMessage({title, sub = "", ms = 1100, tickerText = "", spicy = false, confetti = false}){
   els.bigTitle.textContent = title;
   els.bigSub.textContent = sub;
 
@@ -1895,18 +1895,17 @@ async function showBigMessage({title, sub = "", ms = 900, tickerText = "", spicy
     els.bigTicker.classList.remove("show");
   }
 
-  // ✅ show, then yield a frame so the browser paints NOW (no perceived delay)
+  // ✅ show and trigger confetti immediately so both appear without perceived delay
   els.bigMsg.classList.remove("hidden");
-  await nextFrame();
-
   if (confetti){
     confettiBurst(window.innerWidth * 0.5, window.innerHeight * 0.33, 100, 4.0);
   }
+  await nextFrame();
 
   await wait(ms);
   els.bigMsg.classList.add("hidden");
   els.bigTicker.classList.remove("show");
-}
+} 
 
 /* =========================
    BALLOONS (LESS + SIZES)
@@ -2280,7 +2279,7 @@ async function advanceRound(){
     await showBigMessage({
       title: `ROUND ${round}`,
       sub: "Proceeding...",
-      ms: 650,                 // ✅ snappier = no “delay” feel
+      ms: 1400,                // ✅ a bit longer so the player sees it clearly
       tickerText: emojiRun + emojiRun + emojiRun,
       spicy: true,
       confetti: true           // ✅ confetti appears immediately with ROUND box
