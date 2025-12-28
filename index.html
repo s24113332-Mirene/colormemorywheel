@@ -292,9 +292,9 @@ body::before{
   justify-content: center;
   align-items: baseline;
   gap: 10px;
-  flex-wrap: wrap;            /* ✅ prevents cutting */
-  white-space: normal;        /* ✅ prevents cutting */
-  line-height: 1.15;          /* ✅ */
+  flex-wrap: wrap;
+  white-space: normal;
+  line-height: 1.15;
   max-width: 100%;
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
@@ -441,14 +441,14 @@ body::before{
 .wheelWrap{
   position: relative;
 
-  /* ✅ fits to screen (accounts for header/footer) but still big */
-  width: min(1260px, 72vw, calc(100vh - 240px));
-  max-width: 96%;
-  aspect-ratio: 1;
+  /* ✅ Big wheel that always fits the viewport (width/height locked) */
+  --wheelSize: min(1400px, 92vmin, 94vw, calc(100vh - 190px));
+  width: var(--wheelSize);
+  height: var(--wheelSize);
 
   margin: 0 auto 6px;
   border-radius: 22px;
-  padding: 14px;
+  padding: clamp(10px, 1.6vmin, 16px);
   background: rgba(0,0,0,.18);
   border: 1px solid rgba(255,255,255,.14);
   box-shadow: var(--shadow);
@@ -847,7 +847,7 @@ body::before{
   position: relative;
   z-index: 2;
   border-radius: 22px;
-  padding: 18px 18px 16px; /* ✅ more padding so letters/glow never clip */
+  padding: 18px 18px 16px;
   margin: 6px auto 10px;
   width: min(620px, 100%);
   background: rgba(0,0,0,.22);
@@ -855,7 +855,7 @@ body::before{
   box-shadow:
     0 18px 55px rgba(0,0,0,.45),
     0 0 0 2px rgba(255,255,255,.06) inset;
-  overflow: visible; /* ✅ prevent the last letter from being cut */
+  overflow: visible;
 }
 .neonSign::before{
   content:"";
@@ -884,15 +884,15 @@ body::before{
   font-family: "Cinzel Decorative", serif;
   font-weight: 700;
   font-size: clamp(22px, 3.6vw, 44px);
-  line-height: 1.15;      /* ✅ */
+  line-height: 1.15;
   letter-spacing: 1.0px;
   text-transform: uppercase;
 
   display: inline-flex;
   gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;        /* ✅ prevent cut */
-  white-space: normal;    /* ✅ prevent cut */
+  flex-wrap: wrap;
+  white-space: normal;
   animation: textGlowPulse 2.6s ease-in-out infinite;
 }
 
@@ -1122,7 +1122,7 @@ body::before{
   letter-spacing: .8px;
 }
 .bigTitle.spicy{
-  font-family: "Ultra", serif; /* ✅ Round 2 + Game Over = Ultra */
+  font-family: "Ultra", serif;
   font-weight: 400;
   letter-spacing: 1.2px;
   background-image: linear-gradient(90deg, #ff8acb, #ffe08a, #b8ffb1, #9ad1ff, #d2a6ff, #ff8acb);
@@ -1265,16 +1265,17 @@ body::before{
   letter-spacing: .2px;
 }
 
-/* ✅ subtitle to Mystery Quest */
+/* ✅ subtitle to Mystery Quest (smaller so it won't overlap titles) */
 .endSub{
-  margin: 0;
+  margin: 6px auto 0;
   color: rgba(255,255,255,.90);
   font-weight: 400;
-  white-space: pre-line;
-  line-height: 1.35;
+  white-space: normal;
+  line-height: 1.25;
   font-family: "Mystery Quest", cursive;
-  font-size: clamp(18px, 2.6vw, 30px);
+  font-size: clamp(14px, 2.0vw, 22px);
   text-shadow: 0 0 12px rgba(255,255,255,.14), 0 14px 30px rgba(0,0,0,.35);
+  max-width: min(60ch, 92%);
 }
 
 /* Prize toys centered */
@@ -1925,13 +1926,18 @@ function spawnOneBalloon({xPct=null, durationS=null, sizePx=null} = {}){
   const b = document.createElement("div");
   b.className = "balloon";
   const x = xPct ?? (Math.random() * 100);
-  const w = sizePx ?? (44 + Math.random() * 56);
-  const t = durationS ?? (11 + Math.random() * 10);
+
+  /* ✅ bigger balloons */
+  const w = sizePx ?? (70 + Math.random() * 95);
+
+  /* ✅ slightly longer float looks nicer with big balloons */
+  const t = durationS ?? (12 + Math.random() * 12);
+
   b.style.setProperty("--x", `${x}%`);
   b.style.setProperty("--w", `${w}px`);
   b.style.setProperty("--h", `${Math.floor(Math.random() * 360)}`);
   b.style.setProperty("--t", `${t}s`);
-  b.style.setProperty("--s", `${60 + Math.random() * 120}px`);
+  b.style.setProperty("--s", `${80 + Math.random() * 160}px`);
   const string = document.createElement("div");
   string.className = "string";
   b.appendChild(string);
